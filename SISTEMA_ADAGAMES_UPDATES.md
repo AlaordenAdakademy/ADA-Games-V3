@@ -39,9 +39,13 @@ Este documento detalla las funcionalidades principales y la evolución del siste
 - **Filtrado Dinámico**: Backend y frontend separados por categoría.
 
 ### v4.2 - Optimización Seguidor de Línea
-- **Cronómetro Regresivo (2:00)**: El tiempo ahora descuenta desde los 2 minutos, con alerta visual (rojo/parpadeo) en los últimos 10 segundos.
-- **Registro de Tiempo Transcurrido**: Guardado automático del tiempo real de ejecución (Tiempo Límite - Tiempo Restante).
-- **Ranking Robusto**: Mejora en la visualización de Porcentaje y Tiempo con fallbacks automáticos para evitar celdas vacías.
+- **Cronómetro Regresivo (2:00)**: Tiempo límite oficial con alerta visual.
+- **Registro de Tiempo Transcurrido**: Guardado automático del tiempo real de ejecución.
+
+### v4.3 - Parche de Estabilidad y Persistencia
+- **Prevención de Pantalla en Blanco**: Solucionado error de renderizado por datos nulos y referencias de funciones fuera de scope.
+- **Merged-Update en Backend**: El guardado de equipos ahora preserva los datos de otras categorías (Prevención de pérdida de datos).
+- **Restauración de Iconos**: Re-implementación de Lucide Icons para una UI completa.
 
 ---
 

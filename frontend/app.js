@@ -48,7 +48,7 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const url = currentUser ? `${API_BASE}/data?category=${currentUser.category}` : `${API_BASE}/data`;
+        const url = currentUser?.category ? `${API_BASE}/data?category=${currentUser.category}` : `${API_BASE}/data`;
         const res = await fetch(url);
         const data = await res.json();
         setTeams(data.teams || []);
@@ -112,7 +112,13 @@ function App() {
   const logout = () => {
     localStorage.removeItem('ada_user');
     setCurrentUser(null);
-    setActiveTab('registro'); // Reset tab on logout
+    setActiveTab('registro');
+  };
+
+  const login = (userData) => {
+    localStorage.setItem('ada_user', JSON.stringify(userData));
+    setCurrentUser(userData);
+    setLoading(true);
   };
 
   const switchCategory = (newCat) => {
