@@ -952,7 +952,7 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
                     <div className="flex flex-col items-end">
                         {currentUser.category === 'line_follower' ? (
                           <>
-                            <span className="text-3xl font-black text-blue-600 tracking-tighter">{t.score}%</span>
+                            <span className="text-3xl font-black text-blue-600 tracking-tighter">{t.score || 0}%</span>
                             <p className="text-[10px] font-bold text-slate-400 uppercase leading-none">{formatResultTime(t.lastTime)}</p>
                           </>
                         ) : (
@@ -975,10 +975,10 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
 function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam }) {
   const [selTeam, setSelTeam] = useState('');
   const [percentage, setPercentage] = useState(0);
-  const [time, setTime] = useState(0); // en ms
+  const [time, setTime] = useState(120000); // 2 min en ms
   const [running, setRunning] = useState(false);
   const [penalties, setPenalties] = useState(0);
-  const [startTime, setStartTime] = useState(0);
+  const [startTime, setStartTime] = useState(null);
 
   const activeTeams = teams.filter(t => t.status === 'inspected');
 
@@ -986,19 +986,22 @@ function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam }
     let interval;
     if (running) {
       interval = setInterval(() => {
-        setTime(Date.now() - startTime);
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(0, 120000 - elapsed);
+        setTime(remaining);
+        if (remaining <= 0) setRunning(false);
       }, 10);
     }
     return () => clearInterval(interval);
   }, [running, startTime]);
 
   const handleStart = () => {
-    setStartTime(Date.now() - time);
+    setStartTime(Date.now() - (120000 - time));
     setRunning(true);
   };
 
   const handlePause = () => setRunning(false);
-  const handleReset = () => { setRunning(false); setTime(0); setPenalties(0); };
+  const handleReset = () => { setRunning(false); setTime(120000); setPenalties(0); setStartTime(null); };
 
   const formatStopwatch = (ms) => {
     const minutes = Math.floor(ms / 60000);
@@ -1009,7 +1012,8 @@ function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam }
 
   const handleSave = () => {
     if (!selTeam) return;
-    const finalTime = time + (penalties * 5000);
+    const timeTaken = 120000 - time;
+    const finalTime = timeTaken + (penalties * 5000);
     const updated = teams.map(t => {
         if (t.id === selTeam) {
             return {
@@ -1018,7 +1022,7 @@ function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam }
                 lastTime: finalTime,
                 history: [...t.history, { 
                     percentage, 
-                    timeBase: time, 
+                    timeBase: timeTaken, 
                     penalties,
                     finalTime,
                     date: new Date().toLocaleTimeString(),
@@ -1082,8 +1086,8 @@ function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam }
       <div className="flex flex-col gap-6">
         <div className="bg-slate-900 p-10 rounded-[3rem] shadow-2xl border-4 border-slate-800 text-center flex-1 flex flex-col justify-center relative overflow-hidden group">
             <div className="absolute top-0 inset-x-0 h-1 bg-blue-600 group-hover:bg-blue-400 transition-colors"></div>
-            <p className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em] mb-4">Cronómetro Principal</p>
-            <div className="text-6xl font-black font-mono text-white tracking-widest mb-10 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+            <p className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em] mb-4">Temporizador (2:00 Limite)</p>
+            <div className={`text-6xl font-black font-mono tracking-widest mb-10 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] transition-colors ${time < 10000 ? 'text-red-500 animate-pulse' : 'text-white'}`}>
                 {formatStopwatch(time)}
             </div>
             <div className="flex gap-4 justify-center">
@@ -1119,8 +1123,9 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
             const pA = a.score || 0; 
             const pB = b.score || 0;
             if (pB !== pA) return pB - pA;
-            const tA = a.lastTime || 999999;
-            const tB = b.lastTime || 999999;
+            // Desempate: Menor tiempo es mejor
+            const tA = a.lastTime || 9999999;
+            const tB = b.lastTime || 9999999;
             return tA - tB;
           });
         }
@@ -1180,7 +1185,7 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
                         </div>
                         <div className="bg-slate-800 px-8 py-4 rounded-2xl border border-slate-700 flex flex-col items-end justify-center min-w-[150px]">
                              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{category === 'line_follower' ? 'Porcentaje' : 'Puntaje Total'}</p>
-                             <p className="text-4xl font-black text-white">{t.score}{category === 'line_follower' ? '%' : ''}</p>
+                             <p className="text-4xl font-black text-white">{t.score || 0}{category === 'line_follower' ? '%' : ''}</p>
                              {category === 'line_follower' && (
                                 <p className="text-xs font-bold text-blue-400 mt-1">{formatResultTime(t.lastTime)}</p>
                              )}
