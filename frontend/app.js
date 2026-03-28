@@ -115,9 +115,12 @@ function App() {
     setActiveTab('registro'); // Reset tab on logout
   };
 
-  const login = (user) => {
-    localStorage.setItem('ada_user', JSON.stringify(user));
-    setCurrentUser(user);
+  const switchCategory = (newCat) => {
+    const updatedUser = { ...currentUser, category: newCat };
+    localStorage.setItem('ada_user', JSON.stringify(updatedUser));
+    setCurrentUser(updatedUser);
+    setLoading(true); // Trigger re-fetch
+    showToast(`Cambiado a ${newCat === 'quest' ? 'Robotics Quest' : 'Seguidor de Línea'}`);
   };
 
   // Lógica del Cronómetro
@@ -290,7 +293,7 @@ function App() {
             <div className="bg-blue-500 p-1.5 rounded-lg shadow-lg shadow-blue-500/20">
               <Icon name="trophy" className="text-white w-6 h-6" />
             </div>
-            <h1 className="font-black text-xl tracking-tighter leading-tight">ADAGAMES<br/><span className="text-[10px] text-blue-400 font-bold tracking-widest uppercase">Robotics Quest</span></h1>
+            <h1 className="font-black text-xl tracking-tighter leading-tight">ADAGAMES<br/><span className="text-[10px] text-blue-400 font-bold tracking-widest uppercase">{currentUser.category === 'line_follower' ? 'Line Follower' : 'Robotics Quest'}</span></h1>
           </div>
           <div className="bg-blue-900/50 p-3 rounded-xl">
             <div className="flex items-center gap-2 overflow-hidden mb-2">
@@ -302,6 +305,25 @@ function App() {
                   <p className="text-xs font-black truncate">{currentUser.name}</p>
                </div>
             </div>
+            {currentUser.role === 'admin' && (
+                <div className="mt-3 pt-3 border-t border-blue-800/50">
+                    <p className="text-[8px] font-black text-blue-400 uppercase tracking-widest mb-2 text-center">Cambiar Categoría</p>
+                    <div className="flex gap-1 p-1 bg-blue-950 rounded-xl border border-blue-800">
+                        <button 
+                            onClick={() => switchCategory('quest')}
+                            className={`flex-1 py-1.5 rounded-lg text-[9px] font-black transition-all ${currentUser.category === 'quest' ? 'bg-blue-600 text-white shadow-lg' : 'text-blue-300 hover:bg-black/20'}`}
+                        >
+                            QUEST
+                        </button>
+                        <button 
+                            onClick={() => switchCategory('line_follower')}
+                            className={`flex-1 py-1.5 rounded-lg text-[9px] font-black transition-all ${currentUser.category === 'line_follower' ? 'bg-blue-600 text-white shadow-lg' : 'text-blue-300 hover:bg-black/20'}`}
+                        >
+                            LINE
+                        </button>
+                    </div>
+                </div>
+            )}
           </div>
         </div>
         
