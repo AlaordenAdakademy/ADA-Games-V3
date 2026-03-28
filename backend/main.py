@@ -1,0 +1,82 @@
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import List, Dict, Any, Optional
+import json
+import os
+
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+app = FastAPI(title="Adagames API v2")
+
+# Allow CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+DATA_FILE = "data.json"
+USERS_FILE = "users.json"
+
+def generate_initial_tracks():
+    structure = {}
+    for r in range(1, 6):
+        structure[str(r)] = {}
+        for p in range(1, 6):
+            structure[str(r)][str(p)] = {"sequence": [], "obstacles": []}
+    return structure
+
+def load_data():
+    if not os.path.exists(DATA_FILE):
+        return {"teams": [], "tracks": generate_initial_tracks()}
+    with open(DATA_FILE, "r") as f:
+        return json.load(f)
+
+def load_users():
+    if not os.path.exists(USERS_FILE):
+        # Default users if file missing
+        return [
+            {"id": "admin", "name": "Administrador Central", "role": "admin", "password": "ada123admin"},
+            {"id": "juez1", "name": "Juez Principal - Pista A", "role": "judge", "password": "juez1"}
+        ]
+    with open(USERS_FILE, "r") as f:
+        return json.load(f)
+
+def save_data(data):
+    with open(DATA_FILE, "w") as f:
+        json.dump(data, f, indent=4)
+
+# API Routes
+@app.get("/api/data")
+def get_all_data():
+    return load_data()
+
+@app.get("/api/users")
+def get_users():
+    return load_users()
+
+@app.post("/api/teams")
+def update_teams(teams: List[Dict[str, Any]]):
+    data = load_data()
+    data["teams"] = teams
+    save_data(data)
+    return {"status": "ok"}
+
+@app.post("/api/tracks")
+def update_tracks(tracks: Dict[str, Any]):
+    data = load_data()
+    data["tracks"] = tracks
+    save_data(data)
+    return {"status": "ok"}
+
+# Serve frontend files at root
+frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend"))
+app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
+
+if __name__ == "__main__":
+    import uvicorn
+    # Use 0.0.0.0 to allow access from other devices on the network
+    uvicorn.run(app, host="0.0.0.0", port=8000)
