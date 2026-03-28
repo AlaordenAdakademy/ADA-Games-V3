@@ -47,9 +47,13 @@ Este documento detalla las funcionalidades principales y la evolución del siste
 - **Merged-Update en Backend**: El guardado de equipos ahora preserva los datos de otras categorías.
 
 ### v4.4 - Versión Final Estable
-- **Restauración Total de Flujo (Login)**: Re-implementación de lógica de acceso y recarga dinámica de categoría.
-- **Categorización de Datos**: Migración completa de `data.json` con separación estricta de equipos por competencia.
-- **Iconografía Activa**: Vinculación definitiva de Lucide Icons en el HTML.
+- **Restauración Total de Flujo (Login)**: Re-implementación de lógica de acceso.
+- **Categorización de Datos**: Migración completa de `data.json`.
+
+### v4.5 - Configuración de Servidor de Red
+- **Detección Automática de IP**: El script de inicio (`start_adagames.bat`) ahora detecta y muestra la IP local.
+- **Acceso WiFi**: Los jueces pueden conectarse desde cualquier dispositivo en la misma red usando la URL generada.
+- **Logs de Servidor**: El backend ahora imprime claramente las direcciones de acceso local y de red al iniciar.
 
 ---
 

@@ -4,6 +4,18 @@ from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 import json
 import os
+import socket
+
+def get_local_ip():
+    try:
+        # Crea un socket temporal para detectar la IP local
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except:
+        return "127.0.0.1"
 
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -100,5 +112,10 @@ app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
 
 if __name__ == "__main__":
     import uvicorn
-    # Use 0.0.0.0 to allow access from other devices on the network
+    local_ip = get_local_ip()
+    print(f"\n{'#'*50}")
+    print(f"ADAGAMES v4.5 INICIADO")
+    print(f"ACCESO LOCAL: http://localhost:8000")
+    print(f"ACCESO WIFI:  http://{local_ip}:8000")
+    print(f"{'#'*50}\n")
     uvicorn.run(app, host="0.0.0.0", port=8000)
