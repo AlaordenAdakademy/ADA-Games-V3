@@ -33,7 +33,19 @@ def load_data():
     if not os.path.exists(DATA_FILE):
         return {"teams": [], "tracks": generate_initial_tracks()}
     with open(DATA_FILE, "r") as f:
-        return json.load(f)
+        data = json.load(f)
+    
+    # Migración: Asegurar que todos los equipos tengan categoría
+    changed = False
+    for team in data.get("teams", []):
+        if "category" not in team:
+            team["category"] = "quest"
+            changed = True
+    
+    if changed:
+        save_data(data)
+        
+    return data
 
 def load_users():
     if not os.path.exists(USERS_FILE):
@@ -51,8 +63,12 @@ def save_data(data):
 
 # API Routes
 @app.get("/api/data")
-def get_all_data():
-    return load_data()
+def get_all_data(category: Optional[str] = None):
+    data = load_data()
+    if category:
+        # Filtrar equipos por categoría
+        data["teams"] = [t for t in data["teams"] if t.get("category") == category]
+    return data
 
 @app.get("/api/users")
 def get_users():

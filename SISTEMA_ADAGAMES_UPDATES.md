@@ -31,9 +31,15 @@ Este documento detalla las funcionalidades principales y la evolución del siste
 
 ### v3.2 - Modo Televisión y Polish Final
 - **Modo Competencia (TV View)**: Interfaz de pantalla completa para proyectar el ranking con diseño de alto contraste.
-- **Cronómetro Regresivo (30 Min)**: Temporizador oficial de competencia sincronizado globalmente (si se inicia en un PC, se ve en todos).
-- **Refactorización UI**: Botón de cierre de sesión movido a la parte inferior de la barra lateral para evitar errores durante la competencia.
-- **Toast Notifications**: Feedback visual inmediato para todas las acciones de guardado y error.
+- **Cronómetro Regresivo (30 Min)**: Temporizador oficial de competencia sincronizado globalmente.
+- **Refactorización UI**: Botón de cierre de sesión movido a la parte inferior de la barra lateral.
+
+### v4.0 - Escalabilidad Multi-Categoría
+- **Motor Dual de Competencia**: Soporte nativo para "Robotics Quest" y "Seguidor de Línea" desde una sola plataforma.
+- **Filtrado Dinámico**: El backend y frontend ahora separan datos y vistas basados en la categoría seleccionada al iniciar sesión.
+- **Mesa de Juez (Seguidor)**: Interfaz especializada con cronómetro de alta precisión (ms), selector de porcentaje de recorrido y control de penalizaciones (+5s).
+- **Ranking Bidimensional**: Lógica de desempate oficial (Porcentaje DESC > Tiempo ASC).
+- **UI Contextual**: La barra lateral y pestañas se adaptan automáticamente a la categoría activa (ej. oculta configuración de mapa para Seguidor).
 
 ---
 

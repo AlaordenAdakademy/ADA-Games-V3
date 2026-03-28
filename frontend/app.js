@@ -44,26 +44,42 @@ function App() {
   const [confirmDialog, setConfirmDialog] = useState(null);
   const [toastMessage, setToastMessage] = useState('');
 
-  // 1. Cargar datos iniciales desde el servidor
+  // 1. Cargar datos iniciales desde el servidor y sincronización periódica
   useEffect(() => {
-    Promise.all([
-        fetch(`${API_BASE}/data`).then(r => r.json()),
-        fetch(`${API_BASE}/users`).then(r => r.json())
-    ])
-      .then(([data, usersData]) => {
+    const fetchData = async () => {
+      try {
+        const url = currentUser ? `${API_BASE}/data?category=${currentUser.category}` : `${API_BASE}/data`;
+        const res = await fetch(url);
+        const data = await res.json();
         setTeams(data.teams || []);
         setTracks(data.tracks || {});
-        setUsers(usersData || []);
         
         // Sincronizar localmente para otras pestañas
         localStorage.setItem('ada_teams', JSON.stringify(data.teams));
         localStorage.setItem('ada_tracks', JSON.stringify(data.tracks));
         setLoading(false);
-      })
-      .catch(err => {
+      } catch (err) {
         console.error("Error cargando datos:", err);
         setToastMessage("Error conectando con el servidor");
-      });
+      }
+    };
+    fetchData();
+    const interval = setInterval(fetchData, 10000);
+    return () => clearInterval(interval);
+  }, [currentUser]);
+
+  // Cargar usuarios
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/users`);
+        const data = await res.json();
+        setUsers(data || []);
+      } catch (err) {
+        console.error("Error cargando usuarios:", err);
+      }
+    };
+    fetchUsers();
   }, []);
 
   // 2. Sincronización entre Pestañas (Pilar 3)
@@ -90,23 +106,6 @@ function App() {
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);
   }, [teams, tracks]);
-
-  // 3. Sincronización periódica con Backend (Persistence)
-  useEffect(() => {
-    const interval = setInterval(() => {
-        if (document.visibilityState === 'visible') {
-            fetch(`${API_BASE}/data`)
-            .then(r => r.json())
-            .then(data => {
-                if (JSON.stringify(data.teams) !== JSON.stringify(teams)) {
-                    setTeams(data.teams);
-                    localStorage.setItem('ada_teams', JSON.stringify(data.teams));
-                }
-            });
-        }
-    }, 10000); 
-    return () => clearInterval(interval);
-  }, [teams]);
 
   // --- MÉTODOS DE API Y LOCAL ---
 
@@ -187,7 +186,7 @@ function App() {
 
   const addTeam = (teamData) => {
     const newId = Date.now().toString();
-    const updated = [...teams, { id: newId, ...teamData, status: 'pending', score: 0, history: [] }];
+    const updated = [...teams, { id: newId, ...teamData, status: 'pending', score: 0, history: [], category: currentUser.category }];
     postTeams(updated);
     showToast('Equipo registrado con éxito');
   };
@@ -259,7 +258,7 @@ function App() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row font-sans text-slate-800 relative">
       <HistorialModal teams={teams} selectedId={selectedTeamHistory} onClose={() => setSelectedTeamHistory(null)} />
-      {competitionMode && <CompetitionOverlay teams={teams} timer={timer} timerActive={timerActive} toggleTimer={toggleTimer} resetTimer={resetTimer} formatTime={formatTime} onExit={() => setCompetitionMode(false)} />}
+      {competitionMode && <CompetitionOverlay teams={teams} timer={timer} timerActive={timerActive} toggleTimer={toggleTimer} resetTimer={resetTimer} formatTime={formatTime} onExit={() => setCompetitionMode(false)} category={currentUser.category} />}
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-4 right-4 z-50 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl font-bold text-sm flex items-center gap-3 animate-fadeIn">
@@ -311,7 +310,9 @@ function App() {
             <>
               <NavButton active={activeTab === 'registro'} onClick={() => setActiveTab('registro')} icon={<Icon name="users" />} label="Registro" />
               <NavButton active={activeTab === 'inspeccion'} onClick={() => setActiveTab('inspeccion')} icon={<Icon name="clipboard-check" />} label="Inspección" />
-              <NavButton active={activeTab === 'config'} onClick={() => setActiveTab('config')} icon={<Icon name="settings" />} label="Config. Pistas" />
+              {currentUser.category === 'quest' && (
+                <NavButton active={activeTab === 'config'} onClick={() => setActiveTab('config')} icon={<Icon name="settings" />} label="Config. Pistas" />
+              )}
             </>
           )}
           <NavButton active={activeTab === 'evaluacion'} onClick={() => setActiveTab('evaluacion')} icon={<Icon name="play-circle" />} label="Evaluación" />
@@ -358,15 +359,16 @@ function App() {
 }
 
 function Login({ onLogin, users }) {
-  const [selectedUser, setSelectedUser] = useState('');
+  const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
+  const [category, setCategory] = useState('quest');
   const [error, setError] = useState('');
 
   const handleLogin = (e) => {
     e.preventDefault();
-    const user = users.find(u => u.id === selectedUser);
-    if (user && user.password === password) {
-      onLogin(user);
+    const user = users.find(u => u.id === userId && u.password === password);
+    if (user) {
+      onLogin({ ...user, category });
     } else {
       setError('Credenciales incorrectas');
     }
@@ -379,16 +381,33 @@ function Login({ onLogin, users }) {
           <div className="bg-white/20 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 backdrop-blur-md shadow-inner border border-white/30">
             <Icon name="trophy" className="w-10 h-10 text-white" />
           </div>
-          <h2 className="text-3xl font-black uppercase tracking-tighter">Adagames v3.1</h2>
-          <p className="text-blue-100 font-bold mt-2 uppercase text-[10px] tracking-widest">Panel de Control Multiusuario</p>
+          <h2 className="text-3xl font-black uppercase tracking-tighter italic">Adagames v4.0</h2>
+          <p className="text-blue-100 font-bold mt-2 uppercase text-[10px] tracking-widest leading-none">Plataforma de Competencia de Robótica</p>
         </div>
-        <form onSubmit={handleLogin} className="p-8 space-y-6">
+        <form onSubmit={handleLogin} className="p-8 space-y-4">
           <div>
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Seleccionar Usuario</label>
+            <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2 block">Categoría de Competencia</label>
             <div className="relative">
                 <select 
-                    value={selectedUser} 
-                    onChange={e => {setSelectedUser(e.target.value); setError('');}}
+                    value={category} 
+                    onChange={e => setCategory(e.target.value)}
+                    className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 transition-all text-slate-800 appearance-none cursor-pointer"
+                >
+                    <option value="quest">Robotics Quest (Mapa de Puntajes)</option>
+                    <option value="line_follower">Seguidor de Línea (Velocidad/Porcentaje)</option>
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    <Icon name="chevron-right" className="w-5 h-5 rotate-90" />
+                </div>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2 block">Usuario / Rol</label>
+            <div className="relative">
+                <select 
+                    value={userId} 
+                    onChange={e => {setUserId(e.target.value); setError('');}}
                     className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 transition-all text-slate-800 appearance-none"
                     required
                 >
@@ -398,13 +417,13 @@ function Login({ onLogin, users }) {
                     ))}
                 </select>
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                    <Icon name="chevron-right" className="w-5 h-5 rotate-90" />
+                    <Icon name="users" className="w-5 h-5" />
                 </div>
             </div>
           </div>
 
           <div>
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Contraseña</label>
+            <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2 block">Contraseña</label>
             <div className="relative">
                 <input 
                     type="password"
@@ -623,6 +642,10 @@ function ConfigTab({ tracks, updateTrackData }) {
 }
 
 function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam }) {
+  if (currentUser.category === 'line_follower') {
+    return <LineFollowerEvaluacion teams={teams} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} />;
+  }
+
   const [selTeam, setSelTeam] = useState('');
   const [selRonda, setSelRonda] = useState(1);
   const [selPista, setSelPista] = useState(1);
@@ -843,14 +866,44 @@ function InspeccionTab({ teams, updateTeamStatus, disqualifyTeam }) {
 }
 
 function ResultadosTab({ teams, currentUser, onShowHistory }) {
-  const sorted = useMemo(() => [...teams].sort((a,b) => b.score - a.score), [teams]);
+  const sorted = useMemo(() => {
+    if (currentUser.category === 'line_follower') {
+      return [...teams].sort((a, b) => {
+        // Factor 1: Porcentaje (Mayor a Menor)
+        const pA = a.score || 0; 
+        const pB = b.score || 0;
+        if (pB !== pA) return pB - pA;
+        // Factor 2: Tiempo (Menor a Mayor) - Usamos el último tiempo registrado
+        const tA = a.lastTime || 999999;
+        const tB = b.lastTime || 999999;
+        return tA - tB;
+      });
+    }
+    return [...teams].sort((a,b) => b.score - a.score);
+  }, [teams, currentUser.category]);
+
+  const formatResultTime = (ms) => {
+    if (!ms || ms === 999999) return "--:--.--";
+    const minutes = Math.floor(ms / 60000);
+    const seconds = Math.floor((ms % 60000) / 1000);
+    const msecs = Math.floor((ms % 1000) / 10);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}.${msecs.toString().padStart(2, '0')}`;
+  };
+
   return (
     <div className="space-y-8 animate-fadeIn max-w-5xl mx-auto">
-      <h2 className="text-4xl font-black text-blue-900 tracking-tighter uppercase italic">Ranking Global</h2>
+      <h2 className="text-4xl font-black text-blue-900 tracking-tighter uppercase italic">Ranking {currentUser.category === 'line_follower' ? 'Seguidor de Línea' : 'Global'}</h2>
       <div className="bg-white rounded-[2.5rem] shadow-2xl border border-slate-200 overflow-hidden">
         <table className="w-full text-left">
           <thead className="bg-blue-600 text-white">
-            <tr><th className="p-6 text-[10px] uppercase w-24 text-center">Puesto</th><th className="p-6 text-[10px] uppercase">Institución</th><th className="p-6 text-[10px] uppercase text-center">Estado</th><th className="p-6 text-[10px] uppercase text-right">Score</th></tr>
+            <tr>
+              <th className="p-6 text-[10px] uppercase w-24 text-center">Puesto</th>
+              <th className="p-6 text-[10px] uppercase">Institución</th>
+              <th className="p-6 text-[10px] uppercase text-center">Estado</th>
+              <th className="p-6 text-[10px] uppercase text-right">
+                {currentUser.category === 'line_follower' ? 'Porcentaje / Tiempo' : 'Score'}
+              </th>
+            </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {sorted.map((t, i) => (
@@ -859,18 +912,13 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
                 onClick={() => currentUser.role === 'admin' && onShowHistory(t.id)}
                 className={`${t.status === 'disqualified' ? 'bg-red-50 opacity-50' : 'hover:bg-blue-50'} ${currentUser.role === 'admin' ? 'cursor-pointer hover:bg-slate-50 transition-colors' : ''}`}
               >
-                <td className="p-6 text-center font-black">
-                    <div className="flex flex-col items-center">
-                        <span className="text-2xl">{i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}</span>
-                    </div>
+                <td className="p-6 text-center font-black text-xl">
+                  {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}
                 </td>
                 <td className="p-6">
-                    <div className="flex items-center gap-3">
-                        <div>
-                            <p className="text-blue-900 font-black text-lg">{t.school}</p>
-                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{t.captainName}</p>
-                        </div>
-                        {currentUser.role === 'admin' && <Icon name="info" className="w-3 h-3 text-blue-400 opacity-0 group-hover:opacity-100" />}
+                    <div>
+                        <p className="text-blue-900 font-black text-lg">{t.school}</p>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{t.captainName}</p>
                     </div>
                 </td>
                 <td className="p-6 text-center">
@@ -880,8 +928,17 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
                 </td>
                 <td className="p-6 text-right">
                     <div className="flex flex-col items-end">
-                        <span className="text-4xl font-black text-blue-600 tracking-tighter">{t.score}</span>
-                        <p className="text-[8px] font-bold text-slate-300 uppercase leading-none">puntos totales</p>
+                        {currentUser.category === 'line_follower' ? (
+                          <>
+                            <span className="text-3xl font-black text-blue-600 tracking-tighter">{t.score}%</span>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase leading-none">{formatResultTime(t.lastTime)}</p>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-4xl font-black text-blue-600 tracking-tighter">{t.score}</span>
+                            <p className="text-[8px] font-bold text-slate-300 uppercase leading-none">puntos totales</p>
+                          </>
+                        )}
                     </div>
                 </td>
               </tr>
@@ -893,8 +950,168 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
   );
 }
 
-function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer, formatTime, onExit }) {
-    const sorted = [...teams].sort((a,b) => b.score - a.score);
+function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam }) {
+  const [selTeam, setSelTeam] = useState('');
+  const [percentage, setPercentage] = useState(0);
+  const [time, setTime] = useState(0); // en ms
+  const [running, setRunning] = useState(false);
+  const [penalties, setPenalties] = useState(0);
+  const [startTime, setStartTime] = useState(0);
+
+  const activeTeams = teams.filter(t => t.status === 'inspected');
+
+  useEffect(() => {
+    let interval;
+    if (running) {
+      interval = setInterval(() => {
+        setTime(Date.now() - startTime);
+      }, 10);
+    }
+    return () => clearInterval(interval);
+  }, [running, startTime]);
+
+  const handleStart = () => {
+    setStartTime(Date.now() - time);
+    setRunning(true);
+  };
+
+  const handlePause = () => setRunning(false);
+  const handleReset = () => { setRunning(false); setTime(0); setPenalties(0); };
+
+  const formatStopwatch = (ms) => {
+    const minutes = Math.floor(ms / 60000);
+    const seconds = Math.floor((ms % 60000) / 1000);
+    const msecs = Math.floor((ms % 1000) / 10);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}.${msecs.toString().padStart(2, '0')}`;
+  };
+
+  const handleSave = () => {
+    if (!selTeam) return;
+    const finalTime = time + (penalties * 5000);
+    const updated = teams.map(t => {
+        if (t.id === selTeam) {
+            return {
+                ...t,
+                score: percentage,
+                lastTime: finalTime,
+                history: [...t.history, { 
+                    percentage, 
+                    timeBase: time, 
+                    penalties,
+                    finalTime,
+                    date: new Date().toLocaleTimeString(),
+                    judgeId: currentUser.id,
+                    judgeName: currentUser.name
+                }]
+            };
+        }
+        return t;
+    });
+    postTeams(updated);
+    showToast('Resultado guardado');
+    setSelTeam(''); setPercentage(0); handleReset();
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fadeIn">
+      <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-200">
+        <h2 className="text-2xl font-black text-blue-900 mb-8 uppercase italic flex items-center gap-3">
+            <Icon name="play-circle" className="text-blue-600 w-8 h-8" /> Mesa del Juez
+        </h2>
+        
+        <div className="space-y-6">
+          <div>
+            <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Robot en Pista</label>
+            <select value={selTeam} onChange={e => setSelTeam(e.target.value)} className="w-full p-4 rounded-2xl bg-blue-50/50 border-2 border-blue-100 font-bold outline-none focus:border-blue-500 transition-all text-blue-900">
+              <option value="">-- Seleccionar Equipo --</option>
+              {activeTeams.map(t => <option key={t.id} value={t.id}>{t.school}</option>)}
+            </select>
+          </div>
+
+          <div>
+            <div className="flex justify-between items-end mb-4">
+                <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block">Porcentaje de Recorrido</label>
+                <span className="text-4xl font-black text-blue-600 tracking-tighter">{percentage}%</span>
+            </div>
+            <input type="range" min="0" max="100" value={percentage} onChange={e => setPercentage(parseInt(e.target.value))} className="w-full h-3 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+            <div className="flex justify-between mt-2 text-[10px] font-bold text-slate-300">
+                <span>INICIO (0%)</span><span>PROGRESO</span><span>META (100%)</span>
+            </div>
+          </div>
+
+          <div className="pt-6 border-t border-slate-100 flex gap-4">
+              <button 
+                onClick={() => setPenalties(p => p + 1)}
+                className="flex-1 bg-orange-50 hover:bg-orange-100 text-orange-600 p-4 rounded-2xl border-2 border-orange-100 font-black text-xs flex flex-col items-center gap-1 transition-all"
+              >
+                  <Icon name="alert-triangle" /> Penalización (+5s)
+                  <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-[10px]">{penalties}</span>
+              </button>
+              <button 
+                onClick={() => { setPercentage(0); handleReset(); }}
+                className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 p-4 rounded-2xl border-2 border-red-100 font-black text-xs flex flex-col items-center gap-1 transition-all"
+              >
+                  <Icon name="ban" /> Intento Nulo
+              </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-6">
+        <div className="bg-slate-900 p-10 rounded-[3rem] shadow-2xl border-4 border-slate-800 text-center flex-1 flex flex-col justify-center relative overflow-hidden group">
+            <div className="absolute top-0 inset-x-0 h-1 bg-blue-600 group-hover:bg-blue-400 transition-colors"></div>
+            <p className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em] mb-4">Cronómetro Principal</p>
+            <div className="text-6xl font-black font-mono text-white tracking-widest mb-10 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                {formatStopwatch(time)}
+            </div>
+            <div className="flex gap-4 justify-center">
+                {!running ? (
+                    <button onClick={handleStart} className="bg-blue-600 hover:bg-blue-500 text-white px-10 py-5 rounded-2xl font-black uppercase text-xs shadow-xl shadow-blue-600/30 transition-all flex items-center gap-2">
+                        <Icon name="play-circle" /> Iniciar
+                    </button>
+                ) : (
+                    <button onClick={handlePause} className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-5 rounded-2xl font-black uppercase text-xs shadow-xl shadow-orange-500/30 transition-all flex items-center gap-2">
+                        <Icon name="pause" /> Pausar
+                    </button>
+                )}
+                <button onClick={handleReset} className="bg-slate-700 hover:bg-slate-600 text-white px-10 py-5 rounded-2xl font-black uppercase text-xs transition-all">Reiniciar</button>
+            </div>
+        </div>
+
+        <button 
+           onClick={handleSave}
+           disabled={!selTeam}
+           className="w-full bg-green-500 hover:bg-green-600 disabled:bg-slate-200 text-white font-black py-6 rounded-3xl shadow-2xl shadow-green-500/30 text-xl uppercase tracking-[0.2em] transition-all hover:scale-[1.02] active:scale-95"
+        >
+            Guardar Resultado
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer, formatTime, onExit, category }) {
+    const sorted = useMemo(() => {
+        if (category === 'line_follower') {
+          return [...teams].sort((a, b) => {
+            const pA = a.score || 0; 
+            const pB = b.score || 0;
+            if (pB !== pA) return pB - pA;
+            const tA = a.lastTime || 999999;
+            const tB = b.lastTime || 999999;
+            return tA - tB;
+          });
+        }
+        return [...teams].sort((a,b) => b.score - a.score);
+    }, [teams, category]);
+
+    const formatResultTime = (ms) => {
+        if (!ms || ms === 999999) return "--:--.--";
+        const minutes = Math.floor(ms / 60000);
+        const seconds = Math.floor((ms % 60000) / 1000);
+        const msecs = Math.floor((ms % 1000) / 10);
+        return `${minutes}:${seconds.toString().padStart(2, '0')}.${msecs.toString().padStart(2, '0')}`;
+    };
     
     return (
         <div className="fixed inset-0 z-[100] bg-slate-950 text-white flex flex-col p-8 overflow-hidden animate-fadeIn font-sans">
@@ -905,7 +1122,9 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
                     </div>
                     <div>
                         <h1 className="text-5xl font-black italic tracking-tighter uppercase leading-none">Ranking en Vivo</h1>
-                        <p className="text-blue-400 font-bold uppercase tracking-[0.3em] text-sm mt-2">Adagames Robotics Quest</p>
+                        <p className="text-blue-400 font-bold uppercase tracking-[0.3em] text-sm mt-2">
+                            {category === 'line_follower' ? 'Seguidor de Línea' : 'Robotics Quest'}
+                        </p>
                     </div>
                 </div>
 
@@ -937,9 +1156,12 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
                                 <Icon name="users" className="w-3 h-3"/> {t.captainName}
                             </p>
                         </div>
-                        <div className="bg-slate-800 px-8 py-4 rounded-2xl border border-slate-700">
-                             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Puntaje Total</p>
-                             <p className="text-4xl font-black text-white">{t.score}</p>
+                        <div className="bg-slate-800 px-8 py-4 rounded-2xl border border-slate-700 flex flex-col items-end justify-center min-w-[150px]">
+                             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{category === 'line_follower' ? 'Porcentaje' : 'Puntaje Total'}</p>
+                             <p className="text-4xl font-black text-white">{t.score}{category === 'line_follower' ? '%' : ''}</p>
+                             {category === 'line_follower' && (
+                                <p className="text-xs font-bold text-blue-400 mt-1">{formatResultTime(t.lastTime)}</p>
+                             )}
                         </div>
                     </div>
                 ))}
@@ -949,7 +1171,7 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
                 <p className="text-xs font-bold uppercase tracking-widest flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Datos sincronizados en tiempo real
                 </p>
-                <p className="text-xs font-black italic tracking-tighter">ADAGAMES V3.2 COMPETITION ENGINE</p>
+                <p className="text-xs font-black italic tracking-tighter">ADAGAMES V4.0 - {category === 'line_follower' ? 'LINE FOLLOWER' : 'ROBOTICS QUEST'} ENGINE</p>
             </div>
         </div>
     );
