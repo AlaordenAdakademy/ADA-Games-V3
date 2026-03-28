@@ -43,9 +43,13 @@ Este documento detalla las funcionalidades principales y la evolución del siste
 - **Registro de Tiempo Transcurrido**: Guardado automático del tiempo real de ejecución.
 
 ### v4.3 - Parche de Estabilidad y Persistencia
-- **Prevención de Pantalla en Blanco**: Solucionado error de renderizado por datos nulos y referencias de funciones fuera de scope.
-- **Merged-Update en Backend**: El guardado de equipos ahora preserva los datos de otras categorías (Prevención de pérdida de datos).
-- **Restauración de Iconos**: Re-implementación de Lucide Icons para una UI completa.
+- **Prevención de Pantalla en Blanco**: Solucionado error de renderizado por datos nulos.
+- **Merged-Update en Backend**: El guardado de equipos ahora preserva los datos de otras categorías.
+
+### v4.4 - Versión Final Estable
+- **Restauración Total de Flujo (Login)**: Re-implementación de lógica de acceso y recarga dinámica de categoría.
+- **Categorización de Datos**: Migración completa de `data.json` con separación estricta de equipos por competencia.
+- **Iconografía Activa**: Vinculación definitiva de Lucide Icons en el HTML.
 
 ---
 
