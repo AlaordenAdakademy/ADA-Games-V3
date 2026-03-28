@@ -8,7 +8,7 @@ const Icon = ({ name, className = "w-5 h-5", ...props }) => {
             try { lucide.createIcons(); } catch (e) { }
         }
     }, [name]);
-    return <i data-lucide={name} className={className} {...props}></i>;
+    return <i data-lucide={name || 'help-circle'} className={className} {...props}></i>;
 };
 
 // --- CONSTANTES ---
@@ -86,7 +86,7 @@ function App() {
   useEffect(() => {
     const handleStorage = (e) => {
       if (e.key === 'ada_teams') {
-        const newTeams = JSON.parse(e.newValue);
+        const newTeams = JSON.parse(e.newValue) || [];
         if (JSON.stringify(newTeams) !== JSON.stringify(teams)) setTeams(newTeams);
       }
       if (e.key === 'ada_tracks') {
@@ -161,10 +161,10 @@ function App() {
 
   const postTeams = (newTeams) => {
     setTeams(newTeams);
-    // Disparar evento storage para otras pestañas
     localStorage.setItem('ada_teams', JSON.stringify(newTeams));
     
-    fetch(`${API_BASE}/teams`, {
+    const url = currentUser?.category ? `${API_BASE}/teams?category=${currentUser.category}` : `${API_BASE}/teams`;
+    fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newTeams)
@@ -372,7 +372,7 @@ function App() {
         {activeTab === 'registro' && currentUser.role === 'admin' && <RegistroTab addTeam={addTeam} />}
         {activeTab === 'inspeccion' && currentUser.role === 'admin' && <InspeccionTab teams={teams} updateTeamStatus={updateTeamStatus} disqualifyTeam={disqualifyTeam} />}
         {activeTab === 'config' && currentUser.role === 'admin' && <ConfigTab tracks={tracks} updateTrackData={updateTrackData} />}
-        {activeTab === 'evaluacion' && <EvaluacionTab teams={teams} tracks={tracks} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} />}
+        {activeTab === 'evaluacion' && <EvaluacionTab teams={teams} tracks={tracks} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} />}
         {activeTab === 'resultados' && <ResultadosTab teams={teams} currentUser={currentUser} onShowHistory={setSelectedTeamHistory} />}
       </main>
 
@@ -663,9 +663,9 @@ function ConfigTab({ tracks, updateTrackData }) {
   );
 }
 
-function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam }) {
+function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, postTeams, showToast }) {
   if (currentUser.category === 'line_follower') {
-    return <LineFollowerEvaluacion teams={teams} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} />;
+    return <LineFollowerEvaluacion teams={teams} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} />;
   }
 
   const [selTeam, setSelTeam] = useState('');
@@ -889,8 +889,9 @@ function InspeccionTab({ teams, updateTeamStatus, disqualifyTeam }) {
 
 function ResultadosTab({ teams, currentUser, onShowHistory }) {
   const sorted = useMemo(() => {
+    const list = Array.isArray(teams) ? teams : [];
     if (currentUser.category === 'line_follower') {
-      return [...teams].sort((a, b) => {
+      return [...list].sort((a, b) => {
         // Factor 1: Porcentaje (Mayor a Menor)
         const pA = a.score || 0; 
         const pB = b.score || 0;
@@ -972,7 +973,7 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
   );
 }
 
-function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam }) {
+function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam, postTeams, showToast }) {
   const [selTeam, setSelTeam] = useState('');
   const [percentage, setPercentage] = useState(0);
   const [time, setTime] = useState(120000); // 2 min en ms
@@ -1118,8 +1119,9 @@ function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam }
 
 function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer, formatTime, onExit, category }) {
     const sorted = useMemo(() => {
+        const list = Array.isArray(teams) ? teams : [];
         if (category === 'line_follower') {
-          return [...teams].sort((a, b) => {
+          return [...list].sort((a, b) => {
             const pA = a.score || 0; 
             const pB = b.score || 0;
             if (pB !== pA) return pB - pA;

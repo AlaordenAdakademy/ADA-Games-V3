@@ -75,9 +75,15 @@ def get_users():
     return load_users()
 
 @app.post("/api/teams")
-def update_teams(teams: List[Dict[str, Any]]):
+def update_teams(teams: List[Dict[str, Any]], category: Optional[str] = None):
     data = load_data()
-    data["teams"] = teams
+    if category:
+        # Mantener los equipos de otras categorías y solo actualizar la actual
+        other_teams = [t for t in data["teams"] if t.get("category") != category]
+        data["teams"] = other_teams + teams
+    else:
+        # Si no hay categoría (admin global o legacy), reemplaza todo
+        data["teams"] = teams
     save_data(data)
     return {"status": "ok"}
 
