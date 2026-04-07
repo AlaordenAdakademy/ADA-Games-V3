@@ -219,6 +219,21 @@ function App() {
     });
   };
 
+  const deleteTeam = (id) => {
+    const team = teams.find(t => t.id === id);
+    if (!team) return;
+    setConfirmDialog({
+      message: `¿Estás seguro de eliminar permanentemente al equipo "${team.teamName || team.school}"?`,
+      onConfirm: () => {
+        const updated = teams.filter(t => t.id !== id);
+        postTeams(updated);
+        setConfirmDialog(null);
+        showToast('Equipo eliminado');
+      },
+      onCancel: () => setConfirmDialog(null)
+    });
+  };
+
   const addScore = (teamId, ronda, pista, points) => {
     const updated = teams.map(t => {
       if (t.id === teamId) {
@@ -382,7 +397,7 @@ function App() {
         {activeTab === 'usuarios' && currentUser.role === 'admin' && <UsuariosTab users={users} fetchUsers={fetchUsers} showToast={showToast} setConfirmDialog={setConfirmDialog} />}
         {activeTab === 'config' && currentUser.role === 'admin' && <ConfigTab tracks={tracks} updateTrackData={updateTrackData} />}
         {activeTab === 'evaluacion' && <EvaluacionTab teams={teams} tracks={tracks} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} />}
-        {activeTab === 'resultados' && <ResultadosTab teams={teams} currentUser={currentUser} onShowHistory={setSelectedTeamHistory} />}
+        {activeTab === 'resultados' && <ResultadosTab teams={teams} currentUser={currentUser} onShowHistory={setSelectedTeamHistory} deleteTeam={deleteTeam} />}
       </main>
 
     </div>
@@ -1056,7 +1071,7 @@ function InspeccionTab({ teams, updateTeamStatus, disqualifyTeam }) {
   );
 }
 
-function ResultadosTab({ teams, currentUser, onShowHistory }) {
+function ResultadosTab({ teams, currentUser, onShowHistory, deleteTeam }) {
   const sorted = useMemo(() => {
     const list = Array.isArray(teams) ? teams : [];
     if (currentUser.category === 'line_follower') {
@@ -1095,6 +1110,7 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
               <th className="p-6 text-[10px] uppercase text-right">
                 {currentUser.category === 'line_follower' ? 'Porcentaje / Tiempo' : 'Score'}
               </th>
+              {currentUser.role === 'admin' && <th className="p-6 text-[10px] uppercase text-center w-24">Acciones</th>}
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -1136,6 +1152,17 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
                     )}
                   </div>
                 </td>
+                {currentUser.role === 'admin' && (
+                  <td className="p-6 text-center">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); deleteTeam(t.id); }}
+                      className="p-3 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
+                      title="Eliminar Equipo"
+                    >
+                      <Icon name="trash-2" className="w-5 h-5" />
+                    </button>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
