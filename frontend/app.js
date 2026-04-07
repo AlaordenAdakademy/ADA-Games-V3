@@ -923,37 +923,95 @@ function UsuariosTab({ users, fetchUsers, showToast, setConfirmDialog }) {
 }
 
 function RegistroTab({ addTeam }) {
-  const [name, setName] = useState('');
-  const [cap, setCap] = useState('');
-  const [count, setCount] = useState(3);
+  const [schoolName, setSchoolName] = useState('');
+  const [teamName, setTeamName] = useState('');
+  const [memberCount, setMemberCount] = useState(3);
+  const [members, setMembers] = useState([
+    { name: '', surname: '' },
+    { name: '', surname: '' },
+    { name: '', surname: '' }
+  ]);
+
+  const handleMemberChange = (index, field, value) => {
+    const newMembers = [...members];
+    newMembers[index][field] = value;
+    setMembers(newMembers);
+  };
+
+  const handleCountChange = (val) => {
+    const count = Math.min(3, Math.max(1, parseInt(val) || 1));
+    setMemberCount(count);
+  };
 
   const handleAdd = () => {
-    if (!name || !cap) return;
-    addTeam({ school: name, captainName: cap, studentsCount: count });
-    setName(''); setCap(''); setCount(3);
+    console.log("Intentando añadir equipo:", { schoolName, teamName, memberCount, members });
+    if (!schoolName || !teamName) {
+      showToast("Nombre de colegio y equipo son obligatorios");
+      return;
+    }
+    const activeMembers = members.slice(0, memberCount);
+    if (activeMembers.some(m => !m.name || !m.surname)) {
+      showToast("Completa todos los nombres y apellidos");
+      return;
+    }
+
+    console.log("Enviando datos a addTeam");
+    addTeam({
+      school: schoolName,
+      teamName: teamName,
+      members: activeMembers,
+      studentsCount: memberCount
+    });
+
+    setSchoolName('');
+    setTeamName('');
+    setMemberCount(3);
+    setMembers([
+      { name: '', surname: '' },
+      { name: '', surname: '' },
+      { name: '', surname: '' }
+    ]);
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8 animate-fadeIn">
+    <div className="max-w-3xl mx-auto space-y-8 animate-fadeIn">
       <div className="bg-white p-6 md:p-10 rounded-[3rem] shadow-2xl border border-slate-200">
         <h2 className="text-3xl md:text-4xl font-black text-blue-900 mb-8 tracking-tighter uppercase italic text-center">Registro de Equipos</h2>
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="md:col-span-1">
+              <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2 block">Nombre del Colegio</label>
+              <input value={schoolName} onChange={e => setSchoolName(e.target.value)} className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 text-lg" placeholder="Nombre de la Institución" />
+            </div>
+            <div className="md:col-span-1">
+              <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2 block">Nombre del Equipo</label>
+              <input value={teamName} onChange={e => setTeamName(e.target.value)} className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 text-lg" placeholder="Nombre único del equipo" />
+            </div>
             <div className="md:col-span-2">
-              <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2 block">Institución Educativa</label>
-              <input value={name} onChange={e => setName(e.target.value)} className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 text-lg" placeholder="Nombre del Colegio o Equipo" />
-            </div>
-            <div>
-              <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2 block">Capitán / Líder</label>
-              <input value={cap} onChange={e => setCap(e.target.value)} className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500" placeholder="Nombre completo" />
-            </div>
-            <div>
-              <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2 block">Nº Integrantes</label>
-              <input type="number" min="1" max="10" value={count} onChange={e => setCount(e.target.value)} className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500" />
+              <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2 block">Nº Integrantes (Máx 3)</label>
+              <input type="number" min="1" max="3" value={memberCount} onChange={e => handleCountChange(e.target.value)} className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500" />
             </div>
           </div>
-          <button onClick={handleAdd} disabled={!name || !cap} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl shadow-2xl shadow-blue-600/30 transition-all flex items-center justify-center gap-3 text-lg uppercase tracking-widest mt-4">
-            <Icon name="plus" className="w-6 h-6" /> Unirse a la Competencia
+
+          <div className="space-y-4 pt-4 border-t border-slate-100">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Datos de los Integrantes</p>
+            {members.slice(0, memberCount).map((member, idx) => (
+              <div key={idx} className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-6 rounded-3xl border border-slate-100">
+                <div className="md:col-span-2 text-[10px] font-black text-blue-500 uppercase tracking-widest">Integrante #{idx + 1}</div>
+                <div>
+                  <label className="text-[9px] font-bold text-slate-400 uppercase mb-1 block">Nombre</label>
+                  <input value={member.name} onChange={e => handleMemberChange(idx, 'name', e.target.value)} className="w-full p-3 rounded-xl bg-white border border-slate-200 font-bold outline-none focus:border-blue-500 text-sm" placeholder="Ej: Juan" />
+                </div>
+                <div>
+                  <label className="text-[9px] font-bold text-slate-400 uppercase mb-1 block">Apellido</label>
+                  <input value={member.surname} onChange={e => handleMemberChange(idx, 'surname', e.target.value)} className="w-full p-3 rounded-xl bg-white border border-slate-200 font-bold outline-none focus:border-blue-500 text-sm" placeholder="Ej: Pérez" />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <button onClick={handleAdd} disabled={!schoolName || !teamName} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl shadow-2xl shadow-blue-600/30 transition-all flex items-center justify-center gap-3 text-lg uppercase tracking-widest mt-4">
+            <Icon name="plus" className="w-6 h-6" /> Registrar Equipo
           </button>
         </div>
       </div>
@@ -976,7 +1034,15 @@ function InspeccionTab({ teams, updateTeamStatus, disqualifyTeam }) {
         {pending.map(t => (
           <div key={t.id} className="bg-white p-6 rounded-[2rem] shadow-xl border border-slate-200">
             <div className="flex justify-between items-start mb-6">
-              <div><h3 className="font-black text-blue-900 text-xl">{t.school}</h3><p className="text-sm font-bold text-slate-400 mt-1 uppercase">{t.captainName}</p></div>
+              <div>
+                <h3 className="font-black text-blue-900 text-xl">{t.teamName || 'Equipo Sin Nombre'}</h3>
+                <p className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">{t.school}</p>
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {(t.members || []).map((m, i) => (
+                    <span key={i} className="text-[9px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md font-bold uppercase">{m.name} {m.surname}</span>
+                  ))}
+                </div>
+              </div>
               <div className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-[10px] font-black">ESPERA</div>
             </div>
             <div className="flex gap-3">
@@ -1043,8 +1109,11 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
                 </td>
                 <td className="p-6">
                   <div>
-                    <p className="text-blue-900 font-black text-lg">{t.school}</p>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{t.captainName}</p>
+                    <p className="text-blue-900 font-black text-lg">{t.teamName || t.school}</p>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                      {t.teamName ? `${t.school} • ` : ''}
+                      {(t.members || []).map(m => `${m.name} ${m.surname}`).join(', ') || t.captainName}
+                    </p>
                   </div>
                 </td>
                 <td className="p-6 text-center">
