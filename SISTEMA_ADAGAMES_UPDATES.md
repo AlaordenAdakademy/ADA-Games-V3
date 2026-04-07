@@ -60,6 +60,11 @@ Este documento detalla las funcionalidades principales y la evolución del siste
 - **Persistencia en Tiempo Real**: Las modificaciones en la lista de usuarios se guardan instantáneamente en `users.json`, actualizando el portal de acceso sin necesidad de reiniciar el servidor.
 - **Protección de Seguridad**: Bloqueo incorporado para evitar la auto-eliminación de la cuenta de administrador central.
 
+### v4.7 - Registro de Equipos y Miembros
+- **Gestión de Integrantes**: Ampliación del formulario de registro para incluir nombres de los miembros del equipo.
+- **Campos Dinámicos**: Soporte para añadir y eliminar hasta 3 integrantes por equipo directamente en la interfaz de registro.
+- **Persistencia Extendida**: Se ha actualizado la estructura de datos para almacenar el nombre del equipo y su lista de participantes.
+
 ---
 
 ## 📁 Estructura del Proyecto
