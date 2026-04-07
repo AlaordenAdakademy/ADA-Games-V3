@@ -8,7 +8,7 @@ Este documento detalla las funcionalidades principales y la evolución del siste
 2.  **Configurador de Mapas**: Diseño dinámico de pistas de competencia con puntos de ruta y obstáculos.
 3.  **Evaluación de Competencia**: Interfaz de juez para asignar puntos en tiempo real con soporte para Bonos.
 4.  **Ranking Global**: Tabla de posiciones automática basada en puntajes acumulados.
-5.  **Persistencia Centralizada**: Backend en FastAPI que guarda todos los datos en `data.json` y `users.json`.
+5.  **Gestión Dinámica de Usuarios**: Interfaz para añadir y eliminar jueces con persistencia inmediata en `users.json`.
 
 ---
 
@@ -51,9 +51,14 @@ Este documento detalla las funcionalidades principales y la evolución del siste
 - **Categorización de Datos**: Migración completa de `data.json`.
 
 ### v4.5 - Configuración de Servidor de Red
-- **Detección Automática de IP**: El script de inicio (`start_adagames.bat`) ahora detecta y muestra la IP local.
-- **Acceso WiFi**: Los jueces pueden conectarse desde cualquier dispositivo en la misma red usando la URL generada.
 - **Logs de Servidor**: El backend ahora imprime claramente las direcciones de acceso local y de red al iniciar.
+- **Acceso WiFi**: Los jueces pueden conectarse desde cualquier dispositivo en la misma red usando la URL generada.
+
+### v4.6 - Gestión de Usuarios desde Panel
+- **Módulo de Administración de Jueces**: Nueva sección en la barra lateral exclusiva para el administrador.
+- **CRUD de Jueces**: El administrador ahora puede añadir nuevos jueces con nombre y contraseña, y eliminar cuentas existentes directamente desde la interfaz.
+- **Persistencia en Tiempo Real**: Las modificaciones en la lista de usuarios se guardan instantáneamente en `users.json`, actualizando el portal de acceso sin necesidad de reiniciar el servidor.
+- **Protección de Seguridad**: Bloqueo incorporado para evitar la auto-eliminación de la cuenta de administrador central.
 
 ---
 
