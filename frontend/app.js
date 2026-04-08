@@ -17,6 +17,60 @@ const COLS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
 const API_BASE = "/api";
 
+const LINE_TRACKS = {
+  "1": {
+    "1": {
+      maxPoints: 120,
+      image: "/assets/pista1.png",
+      quadrants: [
+        {
+          id: "q1",
+          name: "Cuadrante Superior Izquierdo",
+          cols: 2,
+          pieces: [
+            { id: "q1_1", code: "C2.07", pts: 10 },
+            { id: "q1_2", code: "C1.04", pts: 5 },
+            { id: "q1_3", code: "C2.10", pts: 10 },
+            { id: "q1_4", code: "C2.07", pts: 10 }
+          ]
+        },
+        {
+          id: "q2",
+          name: "Cuadrante Superior Derecho",
+          cols: 3,
+          pieces: [
+            { id: "q2_1", code: "C1.03", pts: 5 },
+            { id: "q2_2", code: "C2.10", pts: 10 },
+            { id: "q2_3", code: "C2.07", pts: 10 },
+            { id: "q2_4", code: "C2.09", pts: 10 },
+            { id: "q2_spacer_1", spacer: true },
+            { id: "q2_6", code: "C1.01", pts: 5 }
+          ]
+        },
+        {
+          id: "q3",
+          name: "Cuadrante Inferior Izquierdo",
+          cols: 2,
+          pieces: [
+            { id: "q3_1", code: "C2.07", pts: 10 },
+            { id: "q3_2", code: "C2.10", pts: 10 }
+          ]
+        },
+        {
+          id: "q4",
+          name: "Cuadrante Inferior Derecho",
+          cols: 3,
+          pieces: [
+            { id: "q4_1", code: "C2.09", pts: 10 },
+            { id: "q4_2", code: "C2.08", pts: 10 },
+            { id: "q4_3", code: "C1.06", pts: 5 }
+          ]
+        }
+      ]
+    }
+  }
+};
+
 // --- COMPONENTE PRINCIPAL ---
 function App() {
   const [activeTab, setActiveTab] = useState('registro');
@@ -1174,13 +1228,33 @@ function ResultadosTab({ teams, currentUser, onShowHistory, deleteTeam }) {
 
 function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam, postTeams, showToast }) {
   const [selTeam, setSelTeam] = useState('');
-  const [percentage, setPercentage] = useState(0);
+  const [selRonda, setSelRonda] = useState(1);
+  const [selPista, setSelPista] = useState(1);
+  const [selectedPieces, setSelectedPieces] = useState([]);
   const [time, setTime] = useState(120000); // 2 min en ms
   const [running, setRunning] = useState(false);
   const [penalties, setPenalties] = useState(0);
   const [startTime, setStartTime] = useState(null);
 
   const activeTeams = teams.filter(t => t.status === 'inspected');
+  const currentTrack = (LINE_TRACKS[selRonda] && LINE_TRACKS[selRonda][selPista])
+    ? LINE_TRACKS[selRonda][selPista]
+    : null;
+
+  const activeTeam = teams.find(t => t.id === selTeam);
+  const existingAttempts = activeTeam ? activeTeam.history.filter(h => h.ronda === selRonda && h.pista === selPista).length : 0;
+  const canAttempt = existingAttempts < 3;
+
+  const totalPoints = useMemo(() => {
+    if (!currentTrack) return 0;
+    return currentTrack.quadrants.reduce((sum, q) => {
+      return sum + q.pieces.reduce((qSum, p) => {
+        return qSum + (selectedPieces.includes(p.id) ? p.pts : 0);
+      }, 0);
+    }, 0);
+  }, [selectedPieces, currentTrack]);
+
+  const percentage = currentTrack ? Math.round((totalPoints / currentTrack.maxPoints) * 100) : 0;
 
   useEffect(() => {
     let interval;
@@ -1201,7 +1275,15 @@ function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam, 
   };
 
   const handlePause = () => setRunning(false);
-  const handleReset = () => { setRunning(false); setTime(120000); setPenalties(0); setStartTime(null); };
+  const handleReset = () => { setRunning(false); setTime(120000); setPenalties(0); setStartTime(null); setSelectedPieces([]); };
+
+  const togglePiece = (id) => {
+    if (selectedPieces.includes(id)) {
+      setSelectedPieces(selectedPieces.filter(p => p !== id));
+    } else {
+      setSelectedPieces([...selectedPieces, id]);
+    }
+  };
 
   const formatStopwatch = (ms) => {
     const minutes = Math.floor(ms / 60000);
@@ -1211,106 +1293,201 @@ function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam, 
   };
 
   const handleSave = () => {
-    if (!selTeam) return;
+    if (!selTeam || !canAttempt) return;
     const timeTaken = 120000 - time;
     const finalTime = timeTaken + (penalties * 5000);
+    
+    const newAttempt = {
+      ronda: selRonda,
+      pista: selPista,
+      percentage,
+      totalPoints,
+      timeBase: timeTaken,
+      penalties,
+      finalTime,
+      date: new Date().toLocaleTimeString(),
+      judgeId: currentUser.id,
+      judgeName: currentUser.name,
+      pieces: selectedPieces
+    };
+
     const updated = teams.map(t => {
       if (t.id === selTeam) {
+        const updatedHistory = [...t.history, newAttempt];
+        
+        let bestScore = -1;
+        let bestTime = 9999999;
+        
+        updatedHistory.forEach(h => {
+          if (h.percentage > bestScore || (h.percentage === bestScore && h.finalTime < bestTime)) {
+             bestScore = h.percentage;
+             bestTime = h.finalTime;
+          }
+        });
+
         return {
           ...t,
-          score: percentage,
-          lastTime: finalTime,
-          history: [...t.history, {
-            percentage,
-            timeBase: timeTaken,
-            penalties,
-            finalTime,
-            date: new Date().toLocaleTimeString(),
-            judgeId: currentUser.id,
-            judgeName: currentUser.name
-          }]
+          score: bestScore,
+          lastTime: bestTime,
+          history: updatedHistory
         };
       }
       return t;
     });
     postTeams(updated);
-    showToast('Resultado guardado');
-    setSelTeam(''); setPercentage(0); handleReset();
+    showToast(`Intento ${existingAttempts + 1} de 3 guardado exitosamente`);
+    setSelTeam(''); handleReset();
   };
 
   return (
-    <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fadeIn">
-      <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-200">
-        <h2 className="text-2xl font-black text-blue-900 mb-8 uppercase italic flex items-center gap-3">
-          <Icon name="play-circle" className="text-blue-600 w-8 h-8" /> Mesa del Juez
-        </h2>
+    <div className="max-w-6xl mx-auto space-y-8 animate-fadeIn text-slate-800">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Mesa del Juez */}
+        <div className="lg:col-span-4 space-y-6">
+          <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-200">
+            <h2 className="text-2xl font-black text-blue-900 mb-8 uppercase italic flex items-center gap-3">
+              <Icon name="play-circle" className="text-blue-600 w-8 h-8" /> Mesa del Juez
+            </h2>
 
-        <div className="space-y-6">
-          <div>
-            <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Robot en Pista</label>
-            <select value={selTeam} onChange={e => setSelTeam(e.target.value)} className="w-full p-4 rounded-2xl bg-blue-50/50 border-2 border-blue-100 font-bold outline-none focus:border-blue-500 transition-all text-blue-900">
-              <option value="">-- Seleccionar Equipo --</option>
-              {activeTeams.map(t => <option key={t.id} value={t.id}>{t.school}</option>)}
-            </select>
+            <div className="space-y-6">
+              <div>
+                <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Robot en Pista</label>
+                <select value={selTeam} onChange={e => { setSelTeam(e.target.value); handleReset(); }} className="w-full p-4 rounded-2xl bg-blue-50/50 border-2 border-blue-100 font-bold outline-none focus:border-blue-500 transition-all text-blue-900">
+                  <option value="">-- Seleccionar Equipo --</option>
+                  {activeTeams.map(t => <option key={t.id} value={t.id}>{t.teamName || t.school}</option>)}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Ronda</label>
+                  <select value={selRonda} onChange={e => setSelRonda(parseInt(e.target.value))} className="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 font-bold text-sm">
+                    {[1, 2, 3, 4, 5].map(r => <option key={r} value={r}>Ronda {r}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Pista</label>
+                  <select value={selPista} onChange={e => setSelPista(parseInt(e.target.value))} className="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 font-bold text-sm">
+                    {[1, 2, 3, 4, 5].map(p => <option key={p} value={p}>Pista {p}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div className="bg-blue-600 rounded-3xl p-6 text-center shadow-2xl shadow-blue-600/30">
+                <p className="text-blue-100 text-[10px] font-black uppercase tracking-widest mb-1">Puntos Totales</p>
+                <div className="text-6xl font-black text-white">{totalPoints}</div>
+                <p className="text-blue-200 text-[10px] font-bold mt-1 uppercase">Equivale a {percentage}%</p>
+              </div>
+
+              <div className="pt-6 border-t border-slate-100 flex gap-4">
+                <button onClick={() => setPenalties(p => p + 1)} className="flex-1 bg-orange-50 hover:bg-orange-100 text-orange-600 p-4 rounded-2xl border-2 border-orange-100 font-black text-xs flex flex-col items-center gap-1 transition-all">
+                  <Icon name="alert-triangle" /> Penalización (+5s)
+                  <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-[10px]">{penalties}</span>
+                </button>
+                <button onClick={() => handleReset()} className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 p-4 rounded-2xl border-2 border-red-100 font-black text-xs flex flex-col items-center gap-1 transition-all">
+                  <Icon name="ban" /> Intento Nulo
+                </button>
+              </div>
+
+              {selTeam && (
+                <div className="bg-slate-100 p-4 rounded-2xl text-center mb-4">
+                  <p className="text-[10px] font-black uppercase text-slate-500">Intentos Registrados</p>
+                  <p className={`text-xl font-black ${existingAttempts >= 3 ? 'text-red-500' : 'text-blue-600'}`}>{existingAttempts} / 3</p>
+                </div>
+              )}
+              <button onClick={handleSave} disabled={!selTeam || !canAttempt} className="w-full bg-green-500 hover:bg-green-600 disabled:bg-slate-200 text-white font-black py-5 rounded-2xl shadow-xl uppercase tracking-widest transition-all">
+                {selTeam && !canAttempt ? 'Límite de Intentos Alcanzado' : 'Guardar Resultado'}
+              </button>
+            </div>
           </div>
 
-          <div>
-            <div className="flex justify-between items-end mb-4">
-              <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block">Porcentaje de Recorrido</label>
-              <span className="text-4xl font-black text-blue-600 tracking-tighter">{percentage}%</span>
+          <div className="bg-slate-900 p-8 rounded-[2.5rem] shadow-2xl border-4 border-slate-800 text-center relative overflow-hidden group">
+            <div className="absolute top-0 inset-x-0 h-1 bg-blue-600"></div>
+            <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2">Temporizador</p>
+            <div className={`text-5xl font-black font-mono tracking-widest mb-6 ${time < 10000 ? 'text-red-500 animate-pulse' : 'text-white'}`}>
+              {formatStopwatch(time)}
             </div>
-            <input type="range" min="0" max="100" value={percentage} onChange={e => setPercentage(parseInt(e.target.value))} className="w-full h-3 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600" />
-            <div className="flex justify-between mt-2 text-[10px] font-bold text-slate-300">
-              <span>INICIO (0%)</span><span>PROGRESO</span><span>META (100%)</span>
+            <div className="flex gap-3 justify-center">
+              {!running ? (
+                <button onClick={handleStart} className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-xl font-black uppercase text-[10px] flex items-center gap-2">
+                  <Icon name="play-circle" /> Iniciar
+                </button>
+              ) : (
+                <button onClick={handlePause} className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-xl font-black uppercase text-[10px] flex items-center gap-2">
+                  <Icon name="pause" /> Pausar
+                </button>
+              )}
             </div>
-          </div>
-
-          <div className="pt-6 border-t border-slate-100 flex gap-4">
-            <button
-              onClick={() => setPenalties(p => p + 1)}
-              className="flex-1 bg-orange-50 hover:bg-orange-100 text-orange-600 p-4 rounded-2xl border-2 border-orange-100 font-black text-xs flex flex-col items-center gap-1 transition-all"
-            >
-              <Icon name="alert-triangle" /> Penalización (+5s)
-              <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-[10px]">{penalties}</span>
-            </button>
-            <button
-              onClick={() => { setPercentage(0); handleReset(); }}
-              className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 p-4 rounded-2xl border-2 border-red-100 font-black text-xs flex flex-col items-center gap-1 transition-all"
-            >
-              <Icon name="ban" /> Intento Nulo
-            </button>
           </div>
         </div>
-      </div>
 
-      <div className="flex flex-col gap-6">
-        <div className="bg-slate-900 p-10 rounded-[3rem] shadow-2xl border-4 border-slate-800 text-center flex-1 flex flex-col justify-center relative overflow-hidden group">
-          <div className="absolute top-0 inset-x-0 h-1 bg-blue-600 group-hover:bg-blue-400 transition-colors"></div>
-          <p className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em] mb-4">Temporizador (2:00 Limite)</p>
-          <div className={`text-6xl font-black font-mono tracking-widest mb-10 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] transition-colors ${time < 10000 ? 'text-red-500 animate-pulse' : 'text-white'}`}>
-            {formatStopwatch(time)}
-          </div>
-          <div className="flex gap-4 justify-center">
-            {!running ? (
-              <button onClick={handleStart} className="bg-blue-600 hover:bg-blue-500 text-white px-10 py-5 rounded-2xl font-black uppercase text-xs shadow-xl shadow-blue-600/30 transition-all flex items-center gap-2">
-                <Icon name="play-circle" /> Iniciar
-              </button>
+        {/* Visual Track Panel */}
+        <div className="lg:col-span-8 space-y-6">
+          <div className="bg-white p-6 rounded-[2.5rem] shadow-xl border border-slate-200 overflow-hidden">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-black text-blue-900 uppercase italic">Mapa de Evaluación - Pista {selPista}</h3>
+              <div className="flex gap-4">
+                {currentTrack?.quadrants.map(q => {
+                  const qPts = q.pieces.reduce((s, p) => s + (selectedPieces.includes(p.id) ? p.pts : 0), 0);
+                  const qMax = q.pieces.reduce((s, p) => s + p.pts, 0);
+                  return (
+                    <div key={q.id} className="text-center">
+                      <p className="text-[8px] font-black text-slate-400 uppercase">{q.id.toUpperCase()}</p>
+                      <p className={`text-sm font-black ${qPts === qMax ? 'text-green-500' : 'text-blue-600'}`}>{qPts}/{qMax}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {currentTrack ? (
+              <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden border-4 border-blue-600 bg-white shadow-inner">
+                <img src={currentTrack.image} alt="Track" className="absolute inset-0 w-full h-full object-contain" />
+
+                {/* Cuadrantes interactivos */}
+                <div className="absolute inset-0 grid grid-cols-[2fr_3fr] grid-rows-[2fr_1fr] gap-4 p-4">
+                  {currentTrack.quadrants.map((q, idx) => {
+                    const qMaxPts = q.pieces.reduce((sum, p) => sum + p.pts, 0);
+                    return (
+                    <div key={q.id} className="relative group border-2 border-dashed border-slate-300/80 hover:border-blue-500 transition-all rounded-2xl overflow-hidden flex flex-col">
+                      <div className="bg-blue-600/90 text-white text-[10px] font-black px-3 py-1.5 absolute top-0 left-0 z-10 rounded-br-2xl shadow-lg">
+                        {q.name}: {qMaxPts} PTS
+                      </div>
+                      <div className={`flex-1 p-6 grid ${q.cols === 3 ? 'grid-cols-3' : 'grid-cols-2'} gap-2 content-center overflow-y-auto custom-scrollbar`}>
+                        {q.pieces.map(p => {
+                          if (p.spacer) {
+                            return <div key={p.id} className="w-full aspect-square md:aspect-auto md:h-12 border-2 border-transparent"></div>;
+                          }
+                          return (
+                            <button
+                              key={p.id}
+                              onClick={() => togglePiece(p.id)}
+                              className={`w-full aspect-square md:aspect-auto md:h-12 rounded-lg border-2 transition-all shadow-sm flex items-center justify-center font-black text-xs ${selectedPieces.includes(p.id) ? 'bg-green-500/90 border-green-400 text-white shadow-green-500/30 scale-105 active:scale-95' : 'bg-white/80 border-slate-200/50 text-slate-500 hover:bg-white hover:border-blue-400 hover:text-blue-600 active:scale-95'}`}
+                            >
+                              {p.pts} PTS
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )})}
+                </div>
+              </div>
             ) : (
-              <button onClick={handlePause} className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-5 rounded-2xl font-black uppercase text-xs shadow-xl shadow-orange-500/30 transition-all flex items-center gap-2">
-                <Icon name="pause" /> Pausar
-              </button>
+              <div className="aspect-[16/10] w-full flex flex-col items-center justify-center bg-slate-50 border-4 border-dashed border-slate-200 rounded-[2.5rem] opacity-50">
+                <Icon name="image" className="w-16 h-16 text-slate-300 mb-4" />
+                <p className="text-slate-400 font-bold uppercase tracking-widest text-sm">Pista no configurada</p>
+              </div>
             )}
-            <button onClick={handleReset} className="bg-slate-700 hover:bg-slate-600 text-white px-10 py-5 rounded-2xl font-black uppercase text-xs transition-all">Reiniciar</button>
+
+            <div className="mt-6 flex items-center gap-4 p-5 bg-blue-50 rounded-[2rem] border border-blue-100">
+              <div className="bg-blue-500 p-2 rounded-xl">
+                <Icon name="info" className="text-white w-5 h-5 flex-shrink-0" />
+              </div>
+              <p className="text-xs text-blue-900 font-bold">Instrucciones: Pulsa sobre cada pieza para marcarla como completada. El sistema calcula automáticamente el puntaje y el porcentaje de recorrido para el ranking.</p>
+            </div>
           </div>
         </div>
-
-        <button
-          onClick={handleSave}
-          disabled={!selTeam}
-          className="w-full bg-green-500 hover:bg-green-600 disabled:bg-slate-200 text-white font-black py-6 rounded-3xl shadow-2xl shadow-green-500/30 text-xl uppercase tracking-[0.2em] transition-all hover:scale-[1.02] active:scale-95"
-        >
-          Guardar Resultado
-        </button>
       </div>
     </div>
   );
