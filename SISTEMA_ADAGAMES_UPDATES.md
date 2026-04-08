@@ -65,6 +65,12 @@ Este documento detalla las funcionalidades principales y la evolución del siste
 - **Campos Dinámicos**: Soporte para añadir y eliminar hasta 3 integrantes por equipo directamente en la interfaz de registro.
 - **Persistencia Extendida**: Se ha actualizado la estructura de datos para almacenar el nombre del equipo y su lista de participantes.
 
+### v4.8 - Sistema de Cuadrantes Interactivos (Seguidor de Línea)
+- **Interfaz Visual de Trazado**: Implementación de tablero de evaluación basado en la pista real, respetando filas y columnas de la geometría original para alinear cada pieza.
+- **Asignación Rápida Automática**: El juez ahora evalúa tocando las piezas superadas en pantalla, autocalculando la puntuación de 120 pts por sectores.
+- **Control Antidopaje (Límite 3 Intentos)**: Sistema que impone un uso máximo de 3 evaluaciones y filtra la mejor nota como puntuación final de torneo por equipo (mejor % y mejor tiempo).
+- **HUD No Invasivo**: Integración de modo translúcido y transparente de la UI del mapa para permitir completa visión del trazado inferior, incluyendo soporte de espaciadores huecos de cuadricula.
+
 ---
 
 ## 📁 Estructura del Proyecto
