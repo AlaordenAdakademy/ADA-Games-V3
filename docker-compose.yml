@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  adagames:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - PORT=8000
+      - HOST=0.0.0.0
+      - DATA_DIR=/app/data
+    restart: unless-stopped

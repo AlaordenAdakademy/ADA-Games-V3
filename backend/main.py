@@ -5,22 +5,46 @@ from typing import List, Dict, Any, Optional
 import json
 import os
 import socket
+import sys
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file if it exists
+load_dotenv()
+
+# Configuration
+HOST = os.getenv("HOST", "0.0.0.0")
+PORT = int(os.getenv("PORT", 8000))
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = Path(os.getenv("DATA_DIR", BASE_DIR))
+DATA_FILE = DATA_DIR / "data.json"
+USERS_FILE = DATA_DIR / "users.json"
+
+# Ensure DATA_DIR exists
+DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 def get_local_ip():
+    """Detect local IP for development convenience."""
     try:
-        # Crea un socket temporal para detectar la IP local
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
+        s.settimeout(0.1)
+        # doesn't even have to be reachable
+        s.connect(("10.254.254.254", 1))
         ip = s.getsockname()[0]
         s.close()
         return ip
-    except:
+    except Exception:
         return "127.0.0.1"
 
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
 app = FastAPI(title="Adagames API v2")
+
+# Health check for cloud monitoring
+@app.get("/health")
+def health_check():
+    return {"status": "healthy", "version": "4.5"}
 
 # Allow CORS
 app.add_middleware(
@@ -136,15 +160,25 @@ def update_tracks(tracks: Dict[str, Any]):
     return {"status": "ok"}
 
 # Serve frontend files at root
-frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend"))
-app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
+frontend_path = BASE_DIR / "frontend"
+if frontend_path.exists():
+    app.mount("/", StaticFiles(directory=str(frontend_path), html=True), name="frontend")
+else:
+    print(f"Warning: Frontend path not found at {frontend_path}", file=sys.stderr)
 
 if __name__ == "__main__":
     import uvicorn
-    local_ip = get_local_ip()
-    print(f"\n{'#'*50}")
-    print(f"ADAGAMES v4.5 INICIADO")
-    print(f"ACCESO LOCAL: http://localhost:8000")
-    print(f"ACCESO WIFI:  http://{local_ip}:8000")
-    print(f"{'#'*50}\n")
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    
+    # Only print local access info if we aren't explicitly told we're in "production"
+    # or if we are binding to localhost/0.0.0.0
+    if HOST in ["0.0.0.0", "127.0.0.1", "localhost"]:
+        local_ip = get_local_ip()
+        print(f"\n{'#'*50}")
+        print(f"ADAGAMES v4.5 INICIADO")
+        print(f"MODO: {'Desarrollo' if os.getenv('DEBUG') else 'Producción'}")
+        print(f"ACCESO LOCAL: http://localhost:{PORT}")
+        if HOST == "0.0.0.0":
+            print(f"ACCESO RED:   http://{local_ip}:{PORT}")
+        print(f"{'#'*50}\n")
+    
+    uvicorn.run("main:app", host=HOST, port=PORT, reload=bool(os.getenv("DEBUG")))
