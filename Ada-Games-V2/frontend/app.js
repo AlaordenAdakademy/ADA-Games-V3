@@ -43,6 +43,7 @@ function App() {
   // Estados para UI
   const [confirmDialog, setConfirmDialog] = useState(null);
   const [toastMessage, setToastMessage] = useState('');
+  const [showReset, setShowReset] = useState(false);
 
   // 1. Cargar datos iniciales desde el servidor y sincronización periódica
   useEffect(() => {
@@ -200,6 +201,46 @@ function App() {
     showToast('Equipo registrado con éxito');
   };
 
+  const handleResetCompetition = async (password) => {
+      try {
+          const res = await fetch(`${API_BASE}/reset`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ userId: currentUser.id, password })
+          });
+          if (res.ok) {
+              localStorage.removeItem('ada_teams');
+              localStorage.removeItem('ada_tracks');
+              window.location.reload();
+          } else {
+              showToast("Error de credenciales. No autorizado.");
+          }
+      } catch (err) {
+          showToast("Error al reiniciar competencia");
+      }
+  };
+
+  const deleteEvaluation = (teamId, historyIndex) => {
+      const team = teams.find(t => t.id === teamId);
+      if (!team) return;
+      
+      const newHistory = [...team.history];
+      newHistory.splice(historyIndex, 1);
+      
+      const newScore = newHistory.reduce((s, h) => s + (h.points || h.percentage || 0), 0);
+      const newTime = newHistory.reduce((s, h) => s + (h.finalTimeMs || h.finalTime || 0), 0);
+
+      const updated = teams.map(t => t.id === teamId ? {
+          ...t,
+          history: newHistory,
+          score: newScore,
+          lastTime: newTime > 0 ? newTime : 0
+      } : t);
+
+      postTeams(updated);
+      showToast("Evaluación eliminada correctamente");
+  };
+
   const updateTeamStatus = (teamId, status) => {
     const updated = teams.map(t => t.id === teamId ? { ...t, status } : t);
     postTeams(updated);
@@ -268,7 +309,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row font-sans text-slate-800 relative">
-      <HistorialModal teams={teams} selectedId={selectedTeamHistory} onClose={() => setSelectedTeamHistory(null)} />
+      <HistorialModal teams={teams} selectedId={selectedTeamHistory} onClose={() => setSelectedTeamHistory(null)} onDeleteEvaluation={(idx) => deleteEvaluation(selectedTeamHistory, idx)} currentUser={currentUser} />
       {competitionMode && <CompetitionOverlay teams={teams} timer={timer} timerActive={timerActive} toggleTimer={toggleTimer} resetTimer={resetTimer} formatTime={formatTime} onExit={() => setCompetitionMode(false)} category={currentUser.category} />}
       {/* Toast Notification */}
       {toastMessage && (
@@ -350,12 +391,20 @@ function App() {
         {/* Sección Inferior de la Sidebar */}
         <div className="p-4 border-t border-blue-900 space-y-3">
             {currentUser.role === 'admin' && (
+                <>
                 <button 
                     onClick={() => setCompetitionMode(true)}
                     className="w-full flex items-center gap-3 p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all font-black text-[10px] uppercase tracking-widest shadow-lg shadow-blue-500/20"
                 >
                     <Icon name="monitor" className="w-4 h-4" /> Lanzar TV Ranking
                 </button>
+                <button 
+                    onClick={() => setShowReset(true)}
+                    className="w-full flex items-center gap-3 p-3 bg-red-900/30 hover:bg-red-600 text-red-500 hover:text-white rounded-xl transition-all font-black text-[10px] uppercase tracking-widest border border-red-500/30"
+                >
+                    <Icon name="alert-triangle" className="w-4 h-4" /> Reset Competencia
+                </button>
+                </>
             )}
             
             <button 
@@ -389,6 +438,29 @@ function App() {
         )}
         {activeTab === 'resultados' && <ResultadosTab teams={teams} currentUser={currentUser} onShowHistory={setSelectedTeamHistory} />}
       </main>
+
+      {/* MODAL RESET GLOBAL */}
+      {showReset && (
+        <div className="fixed inset-0 z-[200] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white max-w-sm w-full rounded-[2rem] shadow-2xl p-8 transform animate-fadeIn border-2 border-red-500">
+                <div className="bg-red-100 text-red-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Icon name="alert-triangle" className="w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-black text-center uppercase text-slate-800 mb-2">Peligro: Reset Global</h3>
+                <p className="text-[10px] text-center font-bold text-slate-500 mb-6 uppercase tracking-widest">Se borrará toda la data actual. Backup automático activo.</p>
+                <input type="password" id="reset_pwd" placeholder="Contraseña Admin" className="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 mb-4 font-bold focus:outline-none focus:ring-2 focus:ring-red-400" />
+                <div className="flex gap-2">
+                    <button onClick={() => setShowReset(false)} className="flex-1 py-3 rounded-xl bg-slate-100 text-slate-500 font-black text-xs uppercase hover:bg-slate-200">Cancelar</button>
+                    <button onClick={() => {
+                        const pwd = document.getElementById('reset_pwd').value;
+                        if(pwd) handleResetCompetition(pwd);
+                    }} className="flex-1 py-3 rounded-xl bg-red-600 text-white font-black text-xs uppercase hover:bg-red-700 shadow-lg shadow-red-500/30">Aniquilar</button>
+                </div>
+            </div>
+        </div>
+      )}
+
+
 
     </div>
   );
@@ -495,7 +567,7 @@ function Login({ onLogin, users }) {
   );
 }
 
-function HistorialModal({ teams, selectedId, onClose }) {
+function HistorialModal({ teams, selectedId, onClose, onDeleteEvaluation, currentUser }) {
     if (!selectedId) return null;
     const team = teams.find(t => t.id === selectedId);
     if (!team) return null;
@@ -530,9 +602,18 @@ function HistorialModal({ teams, selectedId, onClose }) {
                                         <Icon name="users" className="w-3 h-3" /> {h.judgeName || 'Juez Desconocido'}
                                     </p>
                                 </div>
-                                <div className="text-right">
-                                    <p className="text-xs font-black text-blue-600 uppercase tracking-widest">{h.date}</p>
-                                    <p className="text-[10px] font-bold text-slate-300 uppercase mt-1">Sincronizado</p>
+                                <div className="text-right flex items-center gap-4">
+                                    <div>
+                                        <p className="text-xs font-black text-blue-600 uppercase tracking-widest">{h.date}</p>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase mt-1">{`${Math.floor((h.finalTimeMs || h.finalTime || 0) / 60000)}:${Math.floor(((h.finalTimeMs || h.finalTime || 0) % 60000) / 1000).toString().padStart(2, '0')}`}</p>
+                                    </div>
+                                    {currentUser?.role === 'admin' && (
+                                        <button onClick={() => {
+                                            if(window.confirm("¿Estás seguro de eliminar este registro del equipo en tiempo real? Esta acción re-calculará todo el puntaje global.")) onDeleteEvaluation(i);
+                                        }} className="w-10 h-10 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white rounded-xl flex items-center justify-center transition-all border border-red-200">
+                                            <Icon name="trash-2" className="w-4 h-4" />
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         ))

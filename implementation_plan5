@@ -1,0 +1,26 @@
+# Plan: Reset Global & Sistema de Auditoría de Evaluaciones
+
+Este es un paso vital para llevar ADAGAMES a un nivel profesional. Así protegeremos la integridad de los resultados y aseguraremos el flujo para futuras competencias.
+
+## 1. Módulo de Reset (Backend y Frontend)
+### Backend (`backend/main.py`)
+- Crearé un nuevo Endpoint `POST /api/reset`.
+- Este endpoint solicitará **Credenciales de Administrador**. Si la contraseña no es correcta, bloqueará la acción.
+- **Respaldo Automático:** Antes de borrar nada, hará una copia exacta de `data.json` y la guardará en una nueva carpeta `backups/` (ej: `backup_2024-04-10_13-00.json`).
+- Después de respaldar, restablecerá todas las tablas (Equipos, Puntajes, Pistas) a su estado original de fábrica.
+
+### Frontend (`frontend/app.js`)
+- Añadiré un botón rojo de **"Panel de Peligro"** en la interfaz del Administrador.
+- Al presionarlo, saltará un modal estricto (`ResetModal`) pidiendo ingresar la contraseña maestra para confirmar la aniquilación de los datos.
+
+## 2. Sistema de Auditoría (Edición de Errores)
+### Frontend (`frontend/app.js`)
+- En la pestaña de Resultados (`ResultadosTab`), habilitaré el clic sobre cualquier equipo de la tabla.
+- Al hacer clic, se abrirá un nuevo **Modal de Auditoría**.
+- Este panel listará detalladamente el historial de todos los envíos (Ronda, Pista, Tiempo, Puntos, qué Juez lo evaluó y a qué hora).
+- **Control de Daños:** Al lado de cada registro, el Admin tendrá un botón rojo `🗑️ Eliminar Registro`. Al presionarlo, ese puntaje se borrará del equipo, el score global del equipo se recalculará automáticamente restando esos puntos/tiempo, y se liberará esa ronda/pista para que el equipo pueda ser evaluado nuevamente por los jueces de pista de manera correcta.
+
+> [!WARNING]
+> La función de borrado de evaluaciones (Auditoría) recalculará permanentemente el score del equipo en tiempo real. 
+
+¿Estás de acuerdo con este plan? Una vez aprobado procederé a modificar el servidor Python y la interfaz principal de la app.

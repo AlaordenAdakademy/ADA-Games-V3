@@ -6,6 +6,7 @@ from typing import List, Dict, Any, Optional
 import json
 import os
 import socket
+from datetime import datetime
 
 def get_local_ip():
     try:
@@ -105,6 +106,28 @@ def update_tracks(tracks: Dict[str, Any]):
     data = load_data()
     data["tracks"] = tracks
     save_data(data)
+    return {"status": "ok"}
+
+class ResetAuth(BaseModel):
+    userId: str
+    password: str
+
+@app.post("/api/reset")
+def reset_competition(auth: ResetAuth):
+    users = load_users()
+    admin_user = next((u for u in users if u["id"] == auth.userId and u["password"] == auth.password and u.get("role") == "admin"), None)
+    if not admin_user:
+        raise HTTPException(status_code=401, detail="Credenciales de administrador inválidas o insuficientes")
+        
+    if os.path.exists(DATA_FILE):
+        backups_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "backups"))
+        os.makedirs(backups_dir, exist_ok=True)
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        backup_path = os.path.join(backups_dir, f"data_backup_{timestamp}.json")
+        shutil.copy2(DATA_FILE, backup_path)
+        
+    initial_data = {"teams": [], "tracks": generate_initial_tracks()}
+    save_data(initial_data)
     return {"status": "ok"}
 
 @app.post("/api/upload_map")
