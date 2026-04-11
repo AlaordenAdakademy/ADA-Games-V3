@@ -576,6 +576,10 @@ function ConfigTab({ tracks, updateTrackData }) {
           obstacles: currentTrack.obstacles.filter(c => c !== id)
         });
       }
+    } else if (mode === 'bonus_start') {
+      updateTrackData(selRonda, selPista, { 
+        bonusStart: currentTrack.bonusStart === id ? '' : id
+      });
     } else {
       const isObs = currentTrack.obstacles.includes(id);
       updateTrackData(selRonda, selPista, { 
@@ -607,12 +611,15 @@ function ConfigTab({ tracks, updateTrackData }) {
             </div>
           </div>
           
-          <div className="flex gap-2 p-1 bg-slate-100 rounded-2xl w-full lg:w-auto">
-            <button onClick={() => setMode('sequence')} className={`flex-1 lg:flex-none px-6 py-3 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all ${mode === 'sequence' ? 'bg-white text-blue-600 shadow-md' : 'text-slate-500 hover:bg-slate-200'}`}>
-              <div className="w-3 h-3 rounded-full bg-blue-600" /> RUTA (1 PT)
+          <div className="flex gap-2 p-1 bg-slate-100 rounded-2xl w-full lg:w-auto mt-4 lg:mt-0">
+            <button onClick={() => setMode('sequence')} className={`flex-1 lg:flex-none px-4 py-3 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all ${mode === 'sequence' ? 'bg-white text-blue-600 shadow-md' : 'text-slate-500 hover:bg-slate-200'}`}>
+              <div className="w-3 h-3 rounded-full bg-blue-600" /> RUTA
             </button>
-            <button onClick={() => setMode('obstacle')} className={`flex-1 lg:flex-none px-6 py-3 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all ${mode === 'obstacle' ? 'bg-white text-red-600 shadow-md' : 'text-slate-500 hover:bg-slate-200'}`}>
+            <button onClick={() => setMode('obstacle')} className={`flex-1 lg:flex-none px-4 py-3 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all ${mode === 'obstacle' ? 'bg-white text-red-600 shadow-md' : 'text-slate-500 hover:bg-slate-200'}`}>
               <Icon name="x-circle" className="w-3 h-3 text-red-600" /> OBSTÁCULO
+            </button>
+            <button onClick={() => setMode('bonus_start')} className={`flex-1 lg:flex-none px-4 py-3 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all ${mode === 'bonus_start' ? 'bg-white text-yellow-600 shadow-md' : 'text-slate-500 hover:bg-slate-200'}`}>
+              ⭐ INICIO BONUS
             </button>
           </div>
         </div>
@@ -632,8 +639,14 @@ function ConfigTab({ tracks, updateTrackData }) {
                       const id = `${c}${r}`;
                       const seqIdx = currentTrack.sequence.indexOf(id);
                       const isObs = currentTrack.obstacles.includes(id);
+                      const isBonusStart = currentTrack.bonusStart === id;
                       return (
                         <button key={id} onClick={() => toggleCell(id)} className={`aspect-square border-r border-blue-50 last:border-0 flex items-center justify-center relative hover:bg-blue-50 transition-colors ${isObs ? 'bg-red-50' : ''}`}>
+                          {isBonusStart && (
+                              <div className="absolute -top-2 -right-2 w-6 h-6 md:w-8 md:h-8 bg-yellow-400 flex items-center justify-center shadow-xl rounded-full transform border-2 border-yellow-200 z-20 text-xs md:text-sm">
+                                ⭐
+                              </div>
+                          )}
                           {seqIdx > -1 && (
                             <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-600 text-white font-black flex items-center justify-center shadow-lg border-2 border-blue-300 text-xs md:text-sm">
                               {seqIdx + 1}
@@ -666,7 +679,35 @@ function ConfigTab({ tracks, updateTrackData }) {
                 <p className="text-[10px] font-bold text-red-400 mb-1 uppercase">Obstáculos</p>
                 <p className="text-3xl font-black text-red-500">{currentTrack.obstacles.length}</p>
               </div>
-              <button onClick={() => updateTrackData(selRonda, selPista, { sequence: [], obstacles: [] })} className="w-full py-4 text-red-500 text-[10px] font-black hover:bg-red-50 rounded-2xl transition-all border border-red-200 flex items-center justify-center gap-2 uppercase">
+
+              {/* BONUS SETTINGS */}
+              <div className="bg-yellow-50/50 p-4 rounded-2xl shadow-sm border border-yellow-200 mt-4 space-y-4">
+                  <h4 className="text-[10px] font-black text-yellow-600 uppercase tracking-widest flex items-center gap-1">
+                      <Icon name="star" className="w-3 h-3"/> Ajustes de Bonus
+                  </h4>
+                  <div>
+                      <p className="text-[10px] font-bold text-yellow-600 mb-1 uppercase">Orientación (Apunta hacia)</p>
+                      <div className="flex gap-1">
+                          {['N', 'S', 'E', 'O'].map(dir => (
+                              <button key={dir} onClick={() => updateTrackData(selRonda, selPista, { bonusDir: dir === currentTrack.bonusDir ? '' : dir })} className={`flex-1 py-1.5 rounded-lg text-xs font-black transition-all ${currentTrack.bonusDir === dir ? 'bg-yellow-500 text-white shadow-md' : 'bg-white text-yellow-600 border border-yellow-200 hover:bg-yellow-100'}`}>
+                                  {dir === 'N' ? 'N ⬆' : dir === 'S' ? 'S ⬇' : dir === 'E' ? 'E ➡' : 'O ⬅'}
+                              </button>
+                          ))}
+                      </div>
+                  </div>
+                  <div>
+                      <p className="text-[10px] font-bold text-yellow-600 mb-1 uppercase">Reglas / Condiciones</p>
+                      <textarea 
+                          value={currentTrack.bonusRules || ''} 
+                          onChange={(e) => updateTrackData(selRonda, selPista, { bonusRules: e.target.value })}
+                          className="w-full text-xs p-3 rounded-xl border border-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-yellow-800 placeholder-yellow-300 font-bold"
+                          placeholder="Ej: No debe cruzar la celda D4..."
+                          rows={2}
+                      />
+                  </div>
+              </div>
+
+              <button onClick={() => updateTrackData(selRonda, selPista, { sequence: [], obstacles: [], bonusStart: '', bonusDir: '', bonusRules: '' })} className="w-full py-4 text-red-500 text-[10px] font-black hover:bg-red-50 rounded-2xl transition-all border border-red-200 flex items-center justify-center gap-2 uppercase">
                 <Icon name="trash-2" className="w-4 h-4" /> Limpiar Pista
               </button>
             </div>
@@ -687,6 +728,7 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
   const [selPista, setSelPista] = useState(1);
   const [progressIdx, setProgressIdx] = useState(-1);
   const [bonus, setBonus] = useState(false);
+  const [bonusIntention, setBonusIntention] = useState(null);
   
   const activeTeams = teams.filter(t => t.status === 'inspected');
   const track = (tracks[selRonda] && tracks[selRonda][selPista])
@@ -707,6 +749,7 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
     setSelTeam('');
     setProgressIdx(-1);
     setBonus(false);
+    setBonusIntention(null);
   };
 
   return (
@@ -720,7 +763,7 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
             <div className="space-y-4">
               <div>
                 <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Equipo en Pista</label>
-                <select value={selTeam} onChange={e => {setSelTeam(e.target.value); setProgressIdx(-1);}} className="w-full p-4 rounded-2xl bg-blue-50/50 border-2 border-blue-100 font-bold outline-none focus:border-blue-500 transition-all text-blue-900">
+                <select value={selTeam} onChange={e => {setSelTeam(e.target.value); setProgressIdx(-1); setBonusIntention(null);}} className="w-full p-4 rounded-2xl bg-blue-50/50 border-2 border-blue-100 font-bold outline-none focus:border-blue-500 transition-all text-blue-900">
                   <option value="">-- Seleccionar Equipo --</option>
                   {activeTeams.map(t => <option key={t.id} value={t.id}>{t.school}</option>)}
                 </select>
@@ -728,13 +771,13 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Ronda</label>
-                  <select value={selRonda} onChange={e => {setSelRonda(parseInt(e.target.value)); setProgressIdx(-1);}} className="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 font-bold text-sm">
+                  <select value={selRonda} onChange={e => {setSelRonda(parseInt(e.target.value)); setProgressIdx(-1); setBonusIntention(null);}} className="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 font-bold text-sm">
                     {[1, 2, 3, 4, 5].map(r => <option key={r} value={r}>{r === 5 ? 'Final' : `Ronda ${r}`}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Pista</label>
-                  <select value={selPista} onChange={e => {setSelPista(parseInt(e.target.value)); setProgressIdx(-1);}} className="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 font-bold text-sm">
+                  <select value={selPista} onChange={e => {setSelPista(parseInt(e.target.value)); setProgressIdx(-1); setBonusIntention(null);}} className="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 font-bold text-sm">
                     {[1, 2, 3, 4, 5].map(p => <option key={p} value={p}>Pista {p}</option>)}
                   </select>
                 </div>
@@ -750,13 +793,43 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
                 </div>
               )}
 
-              <div className="pt-6 border-t border-slate-100">
+              {/* MÓDULO INTENCIÓN DE BONUS */}
+              {!existingEvaluation && selTeam && (
+                <div className="pt-4 border-t border-slate-100 animate-fadeIn">
+                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-3">¿El equipo realizará el intento de Bonus?</label>
+                    <div className="flex gap-2 mb-4">
+                        <button onClick={() => setBonusIntention(true)} className={`flex-1 py-3 rounded-xl font-black text-xs uppercase transition-all ${bonusIntention === true ? 'bg-yellow-400 text-white shadow-lg shadow-yellow-400/30 border-2 border-yellow-400' : 'bg-white text-slate-400 border-2 border-slate-100 hover:bg-slate-50'}`}>SÍ, VA POR BONUS</button>
+                        <button onClick={() => { setBonusIntention(false); setBonus(false); }} className={`flex-1 py-3 rounded-xl font-black text-xs uppercase transition-all ${bonusIntention === false ? 'bg-slate-800 text-white shadow-lg shadow-slate-800/30 border-2 border-slate-800' : 'bg-white text-slate-400 border-2 border-slate-100 hover:bg-slate-50'}`}>NO</button>
+                    </div>
+
+                    {bonusIntention === true && (
+                        <div className="bg-yellow-50/50 border border-yellow-200 p-4 rounded-xl mb-4 text-left relative overflow-hidden animate-fadeIn">
+                            <h4 className="text-[10px] font-black text-yellow-600 uppercase tracking-widest flex items-center gap-1 mb-2">
+                                <Icon name="star" className="w-3 h-3" /> Reglas del Bonus
+                            </h4>
+                            {track.bonusStart && (
+                                <p className="text-xs font-bold text-yellow-800 mb-2 flex items-center gap-2">
+                                    <span className="bg-yellow-200 px-2 py-0.5 rounded text-yellow-900 shadow-sm flex items-center gap-1">⭐ {track.bonusStart}</span>
+                                    {track.bonusDir && (
+                                        <span className="bg-yellow-200 px-2 py-0.5 rounded text-yellow-900 shadow-sm flex items-center gap-1">
+                                            {track.bonusDir === 'N' ? 'N ⬆' : track.bonusDir === 'S' ? 'S ⬇' : track.bonusDir === 'E' ? 'E ➡' : track.bonusDir === 'O' ? 'O ⬅' : ''}
+                                        </span>
+                                    )}
+                                </p>
+                            )}
+                            <p className="text-xs font-medium text-yellow-700 italic border-t border-yellow-200/50 pt-2">{track.bonusRules || 'No hay notas adicionales'}</p>
+                        </div>
+                    )}
+                </div>
+              )}
+
+              <div className={`pt-2 transition-opacity duration-300 ${(!bonusIntention || existingEvaluation) ? 'opacity-30 pointer-events-none grayscale' : ''}`}>
                 <button 
                   onClick={() => setBonus(!bonus)}
-                  disabled={existingEvaluation}
-                  className={`w-full py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all border-2 ${bonus ? 'bg-yellow-400 border-yellow-300 text-white shadow-lg' : 'bg-slate-50 border-slate-100 text-slate-400 hover:bg-slate-100'} ${existingEvaluation ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  disabled={existingEvaluation || !bonusIntention}
+                  className={`w-full py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all border-2 ${bonus ? 'bg-yellow-400 border-yellow-300 text-white shadow-lg shadow-yellow-400/30' : 'bg-white border-yellow-200 text-yellow-600 hover:bg-yellow-50'} ${existingEvaluation ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  <Icon name="star" className={bonus ? 'fill-white' : ''} /> BONUS (+3 PTS)
+                  <Icon name="star" className={bonus ? 'fill-white' : ''} /> LO LOGRARON (+3 PTS)
                 </button>
               </div>
               <div className="bg-blue-600 rounded-3xl p-6 text-center shadow-2xl shadow-blue-600/30">
@@ -803,13 +876,19 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
                     const isObs = track.obstacles.includes(id);
                     const evalIdx = existingEvaluation ? existingEvaluation.points - (existingEvaluation.points > track.sequence.length ? 3 : 0) - 1 : -1;
                     const isReached = seqIdx !== -1 && (existingEvaluation ? seqIdx <= evalIdx : seqIdx <= progressIdx);
+                    const isBonusStart = bonusIntention && track.bonusStart === id;
                     
                     return (
                       <button 
                         key={id} disabled={seqIdx === -1 || !selTeam || existingEvaluation}
                         onClick={() => setProgressIdx(seqIdx === progressIdx ? seqIdx - 1 : seqIdx)}
-                        className={`aspect-square border-r border-blue-50 last:border-0 flex items-center justify-center transition-all ${isReached ? 'bg-green-50' : ''}`}
+                        className={`aspect-square border-r border-blue-50 last:border-0 flex items-center justify-center relative transition-all ${isReached ? 'bg-green-50' : ''}`}
                       >
+                        {isBonusStart && (
+                            <div className="absolute -top-2 -right-2 w-6 h-6 md:w-8 md:h-8 bg-yellow-400 flex items-center justify-center shadow-xl rounded-full transform border-2 border-yellow-200 z-20 text-xs md:text-sm animate-pulse">
+                              ⭐
+                            </div>
+                        )}
                         {seqIdx > -1 && (
                           <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full font-black flex items-center justify-center text-xs transition-all border-4 ${isReached ? 'bg-green-500 border-green-200 text-white md:scale-110 shadow-xl' : 'bg-white border-blue-500 text-blue-600 shadow-sm'}`}>
                             {seqIdx + 1}
@@ -1146,6 +1225,7 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
     const [isAutoScrolling, setIsAutoScrolling] = useState(false);
     const listRef = useRef(null);
     const scrollDirection = useRef(1);
+    const exactScroll = useRef(0);
 
     useEffect(() => {
         let animationFrameId;
@@ -1153,11 +1233,16 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
             if (!listRef.current || !isAutoScrolling) return;
             const el = listRef.current;
             
-            // Factor de 0.5 para un movimiento súper fluido y relajante
-            el.scrollTop += scrollDirection.current * 0.5; 
+            // Sincronizar posición por si el usuario hizo scroll manual
+            if (Math.abs(exactScroll.current - el.scrollTop) > 5) {
+                exactScroll.current = el.scrollTop;
+            }
+
+            exactScroll.current += scrollDirection.current * 0.5;
+            el.scrollTop = exactScroll.current;
             
-            // Rebote en el fondo de la lista
-            if (scrollDirection.current === 1 && Math.ceil(el.scrollTop + el.clientHeight) >= el.scrollHeight) {
+            // Rebote en el fondo de la lista con margen de seguridad (evita bugs de pixeles fraccionales en Chromium)
+            if (scrollDirection.current === 1 && (el.scrollTop + el.clientHeight) >= el.scrollHeight - 2) {
                 scrollDirection.current = -1;
             } 
             // Rebote en el tope de la lista

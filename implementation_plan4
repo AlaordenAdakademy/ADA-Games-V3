@@ -1,0 +1,19 @@
+# Plan para Sistema Estricto de Bonus en Robotics Quest
+
+¡Es una idea fantástica digitalizar tu hoja de ruta en papel! Así el juez no tendrá que memorizar variables y todo estará centralizado.
+
+## 1. Modificación en `ConfigTab` (Configurar Pista)
+- Añadiré un **Área de Texto (Textarea)** justo debajo del resumen de Puntos y Obstáculos de la grilla.
+- Este campo se titulará "Condiciones del Bonus (Opcional)".
+- Aquí podrás escribir el libreto exacto que el juez debe revisar (ej: *"El robot inicia en A2, con sensor apuntando al este, y no debe chocar E4"*).
+- Esta metadata de texto se guardará automáticamente junto con las coordenadas de la pista.
+
+## 2. Modificación en `EvaluacionTab` (Mesa de Juez)
+- **Consulta Obligatoria**: Antes de evaluar, se añadirá una sección con la pregunta destacada: **"¿El equipo intentará el Bonus?"**.
+- **Flujo NO**: Si el juez marca "NO", todo fluye normal, contabilizando sólo la ruta principal y el botón de "+3 PTS" permanecerá invisible/bloqueado.
+- **Flujo SÍ**: Si el juez marca "SÍ", se desplegará *mágicamente* una tarjeta informativa (estilo alerta) que mostrará textualmente las "Condiciones del Bonus" que tú escribiste en la configuración, sirviendo de recordatorio instantáneo para el juez. Simultáneamente, el botón de dar el "BONUS (+3 PTS)" cobrará vida para poder presionarse.
+
+> [!TIP]
+> Esto eliminará la confusión entre jueces, obligará al equipo participante a declarar su estrategia de Bonus ANTES de que corra el tiempo, y digitalizará la experiencia 1:1 con tu hoja de papel.
+
+Dime si este comportamiento es exactamente lo que buscas para proceder.
