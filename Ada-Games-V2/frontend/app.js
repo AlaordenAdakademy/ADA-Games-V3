@@ -1,4 +1,4 @@
-const { useState, useEffect, useMemo } = React;
+const { useState, useEffect, useMemo, useRef } = React;
 
 // --- CONFIGURACIÓN DE ICONOS ---
 // Componente para manejar iconos de Lucide vía CDN
@@ -377,8 +377,16 @@ function App() {
       <main className="flex-1 p-4 md:p-8 w-full max-w-7xl mx-auto overflow-x-hidden">
         {activeTab === 'registro' && currentUser.role === 'admin' && <RegistroTab addTeam={addTeam} />}
         {activeTab === 'inspeccion' && currentUser.role === 'admin' && <InspeccionTab teams={teams} updateTeamStatus={updateTeamStatus} disqualifyTeam={disqualifyTeam} />}
-        {activeTab === 'config' && currentUser.role === 'admin' && <EvaluadorDePistas initialMode="edit" tracks={tracks} updateTrackData={updateTrackData} />}
-        {activeTab === 'evaluacion' && <EvaluadorDePistas initialMode="evaluate" tracks={tracks} updateTrackData={updateTrackData} teams={teams} activeTeams={teams.filter(t => t.status === 'inspected')} addScore={addScore} />}
+        {activeTab === 'config' && currentUser.role === 'admin' && (
+            currentUser.category === 'quest' ? 
+            <ConfigTab tracks={tracks} updateTrackData={updateTrackData} /> : 
+            <EvaluadorDePistas initialMode="edit" tracks={tracks} updateTrackData={updateTrackData} />
+        )}
+        {activeTab === 'evaluacion' && (
+            currentUser.category === 'quest' ? 
+            <EvaluacionTab teams={teams} tracks={tracks} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} /> : 
+            <EvaluadorDePistas initialMode="evaluate" tracks={tracks} updateTrackData={updateTrackData} teams={teams} activeTeams={teams.filter(t => t.status === 'inspected')} addScore={addScore} />
+        )}
         {activeTab === 'resultados' && <ResultadosTab teams={teams} currentUser={currentUser} onShowHistory={setSelectedTeamHistory} />}
       </main>
 
