@@ -26,7 +26,7 @@ echo.
 echo [2/3] CONFIGURACION DE RED LOCAL:
 echo      ======================================================
 echo      PARA EVALUADORES (WiFi/LAN):
-echo      URL: http://%LOCAL_IP%:8000
+echo      URL: http://%LOCAL_IP%:8001
 echo      ======================================================
 echo.
 echo [3/3] INICIANDO MOTOR ADAGAMES...

@@ -40,12 +40,6 @@ function App() {
     return saved === 'true';
   });
   
-    // Estados compartidos EvaluadorDePistas
-  const [bgImage, setBgImage] = useState(null);
-  const [points, setPoints] = useState([]);
-  const [guideX, setGuideX] = useState(50);
-  const [guideY, setGuideY] = useState(50);
-
   // Estados para UI
   const [confirmDialog, setConfirmDialog] = useState(null);
   const [toastMessage, setToastMessage] = useState('');
@@ -344,9 +338,7 @@ function App() {
             <>
               <NavButton active={activeTab === 'registro'} onClick={() => setActiveTab('registro')} icon={<Icon name="users" />} label="Registro" />
               <NavButton active={activeTab === 'inspeccion'} onClick={() => setActiveTab('inspeccion')} icon={<Icon name="clipboard-check" />} label="Inspección" />
-              {currentUser.category === 'quest' && (
-                <NavButton active={activeTab === 'config'} onClick={() => setActiveTab('config')} icon={<Icon name="map" />} label="Configurar Pista" />
-              )}
+              <NavButton active={activeTab === 'config'} onClick={() => setActiveTab('config')} icon={<Icon name="map" />} label="Configurar Pista" />
             </>
           )}
           <NavButton active={activeTab === 'evaluacion'} onClick={() => setActiveTab('evaluacion')} icon={<Icon name="play-circle" />} label="Evaluación" />
@@ -383,12 +375,8 @@ function App() {
       <main className="flex-1 p-4 md:p-8 w-full max-w-7xl mx-auto overflow-x-hidden">
         {activeTab === 'registro' && currentUser.role === 'admin' && <RegistroTab addTeam={addTeam} />}
         {activeTab === 'inspeccion' && currentUser.role === 'admin' && <InspeccionTab teams={teams} updateTeamStatus={updateTeamStatus} disqualifyTeam={disqualifyTeam} />}
-        {activeTab === 'config' && currentUser.role === 'admin' && <EvaluadorDePistas initialMode="edit" bgImage={bgImage} setBgImage={setBgImage} points={points} setPoints={setPoints} guideX={guideX} setGuideX={setGuideX} guideY={guideY} setGuideY={setGuideY} />}
-        {activeTab === 'evaluacion' && (
-          currentUser.category === 'line_follower' ? 
-            <LineFollowerEvaluacion teams={teams} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} /> 
-          : <EvaluadorDePistas initialMode="evaluate" bgImage={bgImage} setBgImage={setBgImage} points={points} setPoints={setPoints} guideX={guideX} setGuideX={setGuideX} guideY={guideY} setGuideY={setGuideY} teams={teams} activeTeams={teams.filter(t => t.status === 'inspected')} addScore={addScore} />
-        )}
+        {activeTab === 'config' && currentUser.role === 'admin' && <EvaluadorDePistas initialMode="edit" tracks={tracks} updateTrackData={updateTrackData} />}
+        {activeTab === 'evaluacion' && <EvaluadorDePistas initialMode="evaluate" tracks={tracks} updateTrackData={updateTrackData} teams={teams} activeTeams={teams.filter(t => t.status === 'inspected')} addScore={addScore} />}
         {activeTab === 'resultados' && <ResultadosTab teams={teams} currentUser={currentUser} onShowHistory={setSelectedTeamHistory} />}
       </main>
 
@@ -1223,7 +1211,7 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
 }
 
 
-function EvaluadorDePistas({ initialMode, bgImage, setBgImage, points, setPoints, guideX, setGuideX, guideY, setGuideY, teams, activeTeams, addScore, currentUser, disqualifyTeam, postTeams, showToast, isRunningInMainApp }) {
+function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, activeTeams, addScore, currentUser, disqualifyTeam, postTeams, showToast, isRunningInMainApp }) {
   const [mode, setMode] = useState(initialMode || 'edit');
   const [penalties, setPenalties] = useState(0);
   const [attempts, setAttempts] = useState(['pending', 'pending', 'pending']);
@@ -1235,14 +1223,52 @@ function EvaluadorDePistas({ initialMode, bgImage, setBgImage, points, setPoints
   const [dragTarget, setDragTarget] = useState(null);
   const canvasRef = React.useRef(null);
   
-  // Custom states added for real app functionality
+  // Custom states added for multi-track real app functionality
   const [selTeam, setSelTeam] = useState('');
   const [selRonda, setSelRonda] = useState(1);
   const [selPista, setSelPista] = useState(1);
 
+  const [bgImage, setBgImage] = useState(null);
+  const [points, setPoints] = useState([]);
+  const [guideX, setGuideX] = useState(50);
+  const [guideY, setGuideY] = useState(50);
+
   useEffect(() => {
     setMode(initialMode);
   }, [initialMode]);
+
+  // Sincronizar el mapa al elegir otra ronda o pista
+  useEffect(() => {
+    if (tracks && tracks[selRonda] && tracks[selRonda][selPista]) {
+      const data = tracks[selRonda][selPista];
+      setBgImage(data.bgImage || null);
+      setPoints(data.points || []);
+      setGuideX(data.guideX || 50);
+      setGuideY(data.guideY || 50);
+    } else {
+      setBgImage(null);
+      setPoints([]);
+      setGuideX(50);
+      setGuideY(50);
+    }
+    // NOTA: 'tracks' forzosamente omitido de las dependencias aquí para evitar 
+    // que el sondeo cada 5segundos borre cualquier cambio local no guardado.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selRonda, selPista]);
+
+  const saveCurrentTrack = () => {
+    if (updateTrackData) {
+        updateTrackData(selRonda, selPista, { bgImage, points, guideX, guideY });
+        alert(`¡Pista ${selPista} de Ronda ${selRonda} guardada centralizadamente!`);
+    }
+  };
+
+  const clearCurrentTrack = () => {
+      setBgImage(null);
+      setPoints([]);
+      setGuideX(50);
+      setGuideY(50);
+  };
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -1272,12 +1298,30 @@ function EvaluadorDePistas({ initialMode, bgImage, setBgImage, points, setPoints
     return `${m}:${s}`;
   };
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => setBgImage(event.target.result);
-      reader.readAsDataURL(file);
+      const formData = new FormData();
+      formData.append("ronda", selRonda);
+      formData.append("pista", selPista);
+      formData.append("file", file);
+
+      try {
+        const response = await fetch(`${API_BASE}/upload_map`, {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+        if (data.url) {
+            setBgImage(data.url);
+        }
+      } catch (err) {
+        console.error("Error subiendo mapa:", err);
+        // Fallback local en caso de error
+        const reader = new FileReader();
+        reader.onload = (event) => setBgImage(event.target.result);
+        reader.readAsDataURL(file);
+      }
     }
   };
 
@@ -1539,6 +1583,28 @@ function EvaluadorDePistas({ initialMode, bgImage, setBgImage, points, setPoints
                 <Icon name={mode === 'edit' ? 'map' : 'play-circle'} className="w-5 h-5 text-blue-500" />
                 {mode === 'edit' ? 'CONFIGURAR NUEVO MAPA' : 'TABLERO DE EVALUACIÓN'}
             </h2>
+            {mode === 'edit' && (
+              <div className="flex gap-4 items-center">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-400 font-bold uppercase">Ronda</span>
+                    <select value={selRonda} onChange={e => setSelRonda(parseInt(e.target.value))} className="bg-[#0a0c12] border border-[#2a2e3f] rounded-lg px-2 py-1 text-sm text-white font-bold cursor-pointer">
+                        {[1,2,3,4,5].map(r => <option key={r} value={r}>{r}</option>)}
+                    </select>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-400 font-bold uppercase">Pista</span>
+                    <select value={selPista} onChange={e => setSelPista(parseInt(e.target.value))} className="bg-[#0a0c12] border border-[#2a2e3f] rounded-lg px-2 py-1 text-sm text-white font-bold cursor-pointer">
+                        {[1,2,3,4,5].map(p => <option key={p} value={p}>{p}</option>)}
+                    </select>
+                  </div>
+                  <button onClick={saveCurrentTrack} className="ml-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all shadow-lg hover:scale-105 active:scale-95">
+                      <Icon name="save" className="w-4 h-4"/> Guardar Pista
+                  </button>
+                  <button onClick={clearCurrentTrack} title="Limpiar Pista" className="bg-red-500/20 hover:bg-red-500 hover:text-white text-red-400 border border-red-500/30 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all">
+                      <Icon name="trash-2" className="w-4 h-4"/>
+                  </button>
+              </div>
+            )}
           <div className="flex gap-6 text-sm font-medium bg-[#0f111a] py-2 px-4 rounded-xl border border-[#2a2e3f]">
             {['Q1', 'Q2', 'Q3', 'Q4'].map(q => (
               <div key={q} className="flex flex-col items-center">

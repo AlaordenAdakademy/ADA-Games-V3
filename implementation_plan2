@@ -1,0 +1,22 @@
+# Plan: Almacenamiento Físico de Mapas y Corrección del Parpadeo
+
+He identificado exactamente qué causaba que la imagen se "desvaneciera". Tu archivo `App.js` tiene configurado un sistema de "actualización en tiempo real" (`setInterval`) que descarga toda la base de datos cada 5 segundos. Cuando tú cargabas tu imagen en memoria local, a los 5 segundos la aplicación bajaba los datos del servidor (donde aún no habías guardado) y sobreescribía tu pantalla borrando lo que habías hecho.
+
+Para solucionar eso y, además, conceder tu petición de almacenar las imágenes físicamente, propongo el siguiente plan:
+
+## 1. Almacenamiento Físico de Imágenes
+Evitaremos guardar las fotos en Base64 dentro del `data.json` para no inflar la memoria de la base de datos hasta que el sistema explote por límite de memoria lenta.
+En lugar de eso:
+- Crearemos una carpeta en `frontend/maps`.
+- Inyectaremos una nueva ruta de red en tu backend (`backend/main.py`) llamada `/api/upload_map` que permita la subida de archivos físicos (apoyándose en `python-multipart` que ya tienes instalado).
+- Al subir una imagen, esta viajará al backend, se procesará y se guardará físicamente bajo el nombre `mapa_rondaX_pistaY.png` (o su formato) en tu disco duro (carpeta frontend/maps).
+
+## 2. Optimización del Motor Visual (`app.js`)
+- **Evitar borrados indeseados**: Se desenlazará el gancho (`useEffect`) del mapa de modo que alterar la configuración temporal (subir foto, añadir puntos) y no darle a guardar de inmediato, sea inmune al escaneo de seguridad de la red cada 5 segundos. El mapa solo cambiará si el administrador *le da clic* explicitamente al menú de otra Ronda u otra Pista.
+- **Asignación a rutas relativas**: El visualizador (el lienzo central) ahora en lugar de cargar Base64 kilométrico, utilizará directamente el path local (ej: `url_imagen = /maps/mapa_ronda1_pista1.jpg`), reduciendo el uso de RAM de tu plataforma a un nivel minúsculo.
+
+## Riesgos y Consideraciones
+> [!TIP]
+> Esto requerirá que detengamos tu `.bat` negro y lo iniciemos de nuevo una vez termine el desarrollo, pues `main.py` será editado en caliente.
+
+Si todo este proceso te parece sensato, ¡confírmame para echar a andar las herramientas y programarlo en las tripas del backend!

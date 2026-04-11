@@ -1,4 +1,5 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, File, UploadFile, Form
+import shutil
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
@@ -106,6 +107,23 @@ def update_tracks(tracks: Dict[str, Any]):
     save_data(data)
     return {"status": "ok"}
 
+@app.post("/api/upload_map")
+async def upload_map(ronda: int = Form(...), pista: int = Form(...), file: UploadFile = File(...)):
+    frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend"))
+    maps_dir = os.path.join(frontend_path, "maps")
+    os.makedirs(maps_dir, exist_ok=True)
+    
+    extension = file.filename.split(".")[-1] if "." in file.filename else "png"
+    filename = f"mapa_ronda{ronda}_pista{pista}.{extension}"
+    file_path = os.path.join(maps_dir, filename)
+    
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+        
+    # Return cache-busted URL so browser updates it instantly
+    import time
+    return {"url": f"/maps/{filename}?t={int(time.time())}"}
+
 # Serve frontend files at root
 frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend"))
 app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
@@ -115,7 +133,7 @@ if __name__ == "__main__":
     local_ip = get_local_ip()
     print(f"\n{'#'*50}")
     print(f"ADAGAMES v4.5 INICIADO")
-    print(f"ACCESO LOCAL: http://localhost:8000")
-    print(f"ACCESO WIFI:  http://{local_ip}:8000")
+    print(f"ACCESO LOCAL: http://localhost:8001")
+    print(f"ACCESO WIFI:  http://{local_ip}:8001")
     print(f"{'#'*50}\n")
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)
