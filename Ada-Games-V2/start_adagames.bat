@@ -1,5 +1,7 @@
 @echo off
 setlocal enabledelayedexpansion
+cd /d "%~dp0"
+
 title ADAGAMES V4.5 SERVER
 color 0b
 
