@@ -1,0 +1,28 @@
+# Plan de Reestructuración del Ranking (Actualizado)
+
+## 1. Unificación Universal (Adiós a los porcentajes)
+Debido a que ambas categorías ahora usan tu flamante `EvaluadorDePistas` interactivo (donde todo se maneja en "puntos" por chocar o superar piezas), ya no tiene sentido que Seguidor de Línea siga mostrándose como `%`.
+- **Acción**: Removeré toda la iconografía de porcentaje (`%`) en la solapa de Resultados y en el TV Ranking.
+- **Formato Único**: Ambos (Quest y Seguidor de Línea) mostrarán un número entero grande representando el **Puntaje Total** y, justo debajo, el **Tiempo Total**.
+
+## 2. Sistema de Ranking por Rondas (Eliminación)
+Actualmente, el sistema toma todo el historial de un equipo y lo suma para un puntaje global.
+- **Acción**: Añadiré un selector visual en la pestaña **Resultados** y en la esquina del **TV Ranking en Vivo**.
+- Este selector tendrá las opciones: `Acumulado Global | Ronda 1 | Ronda 2 | Ronda 3 | Ronda 4 | Ronda 5`.
+- **Cálculo Dinámico**: Al seleccionar una Ronda en específico (ej. Ronda 2), el algoritmo rastreará el historial individual del equipo y calculará **únicamente** los puntos y el tiempo obtenidos por ese robot en la Ronda 2.
+- Esto te permitirá observar claramente quiénes fueron los peores de esa ronda específica para eliminarlos de la competencia, sin que el gran puntaje obtenido en rondas anteriores distorsione las métricas de esa manga.
+
+## 3. Dinamismo Visual en Posiciones (Colores Especiales)
+Atendiendo a tu solicitud para resaltar la rivalidad:
+- Acoplaremos un sistema de colorimetría para la posición (ej. #1, #2...).
+- En el TV Ranking y el Dashboard:
+    - **1er Lugar**: Dorado/Oro brillante.
+    - **2do Lugar**: Gris Platinado/Plata.
+    - **3er Lugar**: Cobre/Bronce.
+    - **Resto (4to en adelante)**: Azul metálico estándar.
+
+## Impacto
+> [!NOTE]
+> El historial interno (`t.history`) de cada equipo ya guarda minuciosamente en qué ronda hicieron qué cosas. Este cambio matemático solo afectará cómo se visualiza sin tocar los guardados que ya realizaste con tus 5 pistas probadas. ¡Tus datos están a salvo!
+
+Con la adición del toque multicolor de los Tops... ¿Estás listo para darle luz verde y aplicar el código?

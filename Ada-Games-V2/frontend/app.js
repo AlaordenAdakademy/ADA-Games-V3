@@ -218,16 +218,18 @@ function App() {
     });
   };
 
-  const addScore = (teamId, ronda, pista, points) => {
+  const addScore = (teamId, ronda, pista, points, finalTimeMs = null) => {
     const updated = teams.map(t => {
       if (t.id === teamId) {
         return {
           ...t,
           score: t.score + points,
+          lastTime: finalTimeMs !== null ? ((t.lastTime || 0) + finalTimeMs) : t.lastTime,
           history: [...t.history, { 
             ronda, 
             pista, 
             points, 
+            finalTimeMs,
             date: new Date().toLocaleTimeString(),
             judgeId: currentUser.id,
             judgeName: currentUser.name
@@ -892,22 +894,28 @@ function InspeccionTab({ teams, updateTeamStatus, disqualifyTeam }) {
 }
 
 function ResultadosTab({ teams, currentUser, onShowHistory }) {
+  const [selRondaView, setSelRondaView] = useState('global');
+
+  const getRoundStats = (team, roundFilter) => {
+    if (roundFilter === 'global') return { score: team.score || 0, time: team.lastTime || 9999999 };
+    const rd = parseInt(roundFilter);
+    const rh = team.history.filter(h => h.ronda === rd);
+    if (rh.length === 0) return { score: 0, time: 9999999 };
+    return {
+      score: rh.reduce((sum, h) => sum + (h.points || h.percentage || 0), 0),
+      time: rh.reduce((sum, h) => sum + (h.finalTimeMs || h.finalTime || 0), 0)
+    };
+  };
+
   const sorted = useMemo(() => {
     const list = Array.isArray(teams) ? teams : [];
-    if (currentUser.category === 'line_follower') {
-      return [...list].sort((a, b) => {
-        // Factor 1: Porcentaje (Mayor a Menor)
-        const pA = a.score || 0; 
-        const pB = b.score || 0;
-        if (pB !== pA) return pB - pA;
-        // Factor 2: Tiempo (Menor a Mayor) - Usamos el último tiempo registrado
-        const tA = a.lastTime || 999999;
-        const tB = b.lastTime || 999999;
-        return tA - tB;
-      });
-    }
-    return [...teams].sort((a,b) => b.score - a.score);
-  }, [teams, currentUser.category]);
+    return [...list].sort((a, b) => {
+        const statsA = getRoundStats(a, selRondaView);
+        const statsB = getRoundStats(b, selRondaView);
+        if (statsB.score !== statsA.score) return statsB.score - statsA.score;
+        return statsA.time - statsB.time;
+    });
+  }, [teams, selRondaView]);
 
   const formatResultTime = (ms) => {
     if (!ms || ms === 999999) return "--:--.--";
@@ -918,8 +926,14 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
   };
 
   return (
-    <div className="space-y-8 animate-fadeIn max-w-5xl mx-auto">
-      <h2 className="text-4xl font-black text-blue-900 tracking-tighter uppercase italic">Ranking {currentUser.category === 'line_follower' ? 'Seguidor de Línea' : 'Global'}</h2>
+    <div className="space-y-4 animate-fadeIn max-w-5xl mx-auto">
+      <div className="flex justify-between items-center bg-white p-6 rounded-[2.5rem] shadow-xl border border-slate-200">
+          <h2 className="text-3xl font-black text-blue-900 tracking-tighter uppercase italic">Ranking Oficial</h2>
+          <select value={selRondaView} onChange={e => setSelRondaView(e.target.value)} className="bg-blue-50 border-2 border-blue-100 text-blue-900 font-bold px-4 py-2 rounded-xl focus:outline-none focus:border-blue-400">
+              <option value="global">Ranking Global Acumulado</option>
+              {[1,2,3,4,5].map(r => <option key={r} value={r}>Desempeño Ronda {r}</option>)}
+          </select>
+      </div>
       <div className="bg-white rounded-[2.5rem] shadow-2xl border border-slate-200 overflow-hidden">
         <table className="w-full text-left">
           <thead className="bg-blue-600 text-white">
@@ -927,24 +941,31 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
               <th className="p-6 text-[10px] uppercase w-24 text-center">Puesto</th>
               <th className="p-6 text-[10px] uppercase">Institución</th>
               <th className="p-6 text-[10px] uppercase text-center">Estado</th>
-              <th className="p-6 text-[10px] uppercase text-right">
-                {currentUser.category === 'line_follower' ? 'Porcentaje / Tiempo' : 'Score'}
-              </th>
+              <th className="p-6 text-[10px] uppercase text-right">Puntaje / Tiempo</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {sorted.map((t, i) => (
+            {sorted.map((t, i) => {
+              const stats = getRoundStats(t, selRondaView);
+              // Lógica de colores por posición
+              let posColor = "text-blue-900";
+              let posBg = "bg-transparent";
+              if (i === 0 && stats.score > 0) { posColor = "text-yellow-600"; posBg = "bg-yellow-100/50"; }
+              else if (i === 1 && stats.score > 0) { posColor = "text-slate-500"; posBg = "bg-slate-100"; }
+              else if (i === 2 && stats.score > 0) { posColor = "text-orange-700"; posBg = "bg-orange-50/50"; }
+
+              return (
               <tr 
                 key={t.id} 
                 onClick={() => currentUser.role === 'admin' && onShowHistory(t.id)}
-                className={`${t.status === 'disqualified' ? 'bg-red-50 opacity-50' : 'hover:bg-blue-50'} ${currentUser.role === 'admin' ? 'cursor-pointer hover:bg-slate-50 transition-colors' : ''}`}
+                className={`${t.status === 'disqualified' ? 'bg-red-50 opacity-50' : 'hover:bg-blue-50'} ${currentUser.role === 'admin' ? 'cursor-pointer hover:bg-slate-50 transition-colors' : ''} ${posBg}`}
               >
-                <td className="p-6 text-center font-black text-xl">
-                  {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}
+                <td className={`p-6 text-center font-black text-2xl ${posColor}`}>
+                  {i === 0 ? '🏆 1' : i === 1 ? '🥈 2' : i === 2 ? '🥉 3' : i + 1}
                 </td>
                 <td className="p-6">
                     <div>
-                        <p className="text-blue-900 font-black text-lg">{t.school}</p>
+                        <p className={`font-black text-lg ${posColor}`}>{t.school}</p>
                         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{t.captainName}</p>
                     </div>
                 </td>
@@ -955,21 +976,12 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
                 </td>
                 <td className="p-6 text-right">
                     <div className="flex flex-col items-end">
-                        {currentUser.category === 'line_follower' ? (
-                          <>
-                            <span className="text-3xl font-black text-blue-600 tracking-tighter">{t.score || 0}%</span>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase leading-none">{formatResultTime(t.lastTime)}</p>
-                          </>
-                        ) : (
-                          <>
-                            <span className="text-4xl font-black text-blue-600 tracking-tighter">{t.score}</span>
-                            <p className="text-[8px] font-bold text-slate-300 uppercase leading-none">puntos totales</p>
-                          </>
-                        )}
+                        <span className={`text-4xl font-black tracking-tighter ${posColor}`}>{stats.score}</span>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase leading-none">{formatResultTime(stats.time)}</p>
                     </div>
                 </td>
               </tr>
-            ))}
+            )})}
           </tbody>
         </table>
       </div>
@@ -1122,21 +1134,61 @@ function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam, 
 }
 
 function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer, formatTime, onExit, category }) {
+    const [selRondaView, setSelRondaView] = useState('global');
+    const [isAutoScrolling, setIsAutoScrolling] = useState(false);
+    const listRef = useRef(null);
+    const scrollDirection = useRef(1);
+
+    useEffect(() => {
+        let animationFrameId;
+        const scrollStep = () => {
+            if (!listRef.current || !isAutoScrolling) return;
+            const el = listRef.current;
+            
+            // Factor de 0.5 para un movimiento súper fluido y relajante
+            el.scrollTop += scrollDirection.current * 0.5; 
+            
+            // Rebote en el fondo de la lista
+            if (scrollDirection.current === 1 && Math.ceil(el.scrollTop + el.clientHeight) >= el.scrollHeight) {
+                scrollDirection.current = -1;
+            } 
+            // Rebote en el tope de la lista
+            else if (scrollDirection.current === -1 && el.scrollTop <= 0) {
+                scrollDirection.current = 1;
+            }
+            
+            animationFrameId = requestAnimationFrame(scrollStep);
+        };
+        
+        if (isAutoScrolling) {
+            animationFrameId = requestAnimationFrame(scrollStep);
+        }
+        
+        return () => {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        };
+    }, [isAutoScrolling]);
+
+    const getRoundStats = (team, roundFilter) => {
+        if (roundFilter === 'global') return { score: team.score || 0, time: team.lastTime || 9999999 };
+        const rd = parseInt(roundFilter);
+        const rh = team.history.filter(h => h.ronda === rd);
+        if (rh.length === 0) return { score: 0, time: 9999999 };
+        return {
+            score: rh.reduce((sum, h) => sum + (h.points || h.percentage || 0), 0),
+            time: rh.reduce((sum, h) => sum + (h.finalTimeMs || h.finalTime || 0), 0)
+        };
+    };
+
     const sorted = useMemo(() => {
         const list = Array.isArray(teams) ? teams : [];
-        if (category === 'line_follower') {
-          return [...list].sort((a, b) => {
-            const pA = a.score || 0; 
-            const pB = b.score || 0;
-            if (pB !== pA) return pB - pA;
-            // Desempate: Menor tiempo es mejor
-            const tA = a.lastTime || 9999999;
-            const tB = b.lastTime || 9999999;
-            return tA - tB;
-          });
-        }
-        return [...teams].sort((a,b) => b.score - a.score);
-    }, [teams, category]);
+        return [...list].sort((a, b) => {
+            const statsA = getRoundStats(a, selRondaView);
+            const statsB = getRoundStats(b, selRondaView);
+            if (statsB.score !== statsA.score) return statsB.score - statsA.score;
+            return statsA.time - statsB.time;
+        });
+    }, [teams, selRondaView]);
 
     const formatResultTime = (ms) => {
         if (!ms || ms === 999999) return "--:--.--";
@@ -1158,6 +1210,12 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
                         <p className="text-blue-400 font-bold uppercase tracking-[0.3em] text-sm mt-2">
                             {category === 'line_follower' ? 'Seguidor de Línea' : 'Robotics Quest'}
                         </p>
+                        <div className="mt-4 flex gap-2">
+                            <button onClick={() => setSelRondaView('global')} className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase transition-all shadow-lg ${selRondaView === 'global' ? 'bg-blue-600 text-white shadow-blue-600/50' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>Global</button>
+                            {[1,2,3,4,5].map(r => (
+                                <button key={r} onClick={() => setSelRondaView(r.toString())} className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase transition-all shadow-lg ${selRondaView === r.toString() ? 'bg-blue-600 text-white shadow-blue-600/50' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>R{r}</button>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
@@ -1171,33 +1229,57 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
                             {timerActive ? 'Pausar' : 'Iniciar'}
                         </button>
                         <button onClick={resetTimer} className="px-6 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-black text-[10px] uppercase">Reiniciar</button>
+                        <button onClick={() => setIsAutoScrolling(!isAutoScrolling)} className={`px-6 py-3 rounded-xl font-black text-[10px] uppercase transition-all flex items-center gap-2 ${isAutoScrolling ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>
+                            <Icon name="chevron-down" className={`w-3 h-3 ${isAutoScrolling ? 'animate-bounce' : ''}`} /> {isAutoScrolling ? 'Detener Scroll' : 'Auto Scroll'}
+                        </button>
                         <button onClick={onExit} className="px-6 py-3 bg-slate-100/10 hover:bg-white hover:text-slate-900 rounded-xl font-black text-[10px] uppercase transition-all">Salir TV</button>
                     </div>
                 </div>
             </div>
 
-            <div className="flex-1 grid grid-cols-1 gap-4 overflow-y-auto pr-4 custom-scrollbar">
-                {sorted.map((t, i) => (
-                    <div key={t.id} className={`flex items-center gap-6 p-6 rounded-3xl border-2 transition-all ${i === 0 ? 'bg-blue-600/20 border-blue-500 transform scale-[1.02] shadow-2xl' : 'bg-slate-900/50 border-slate-800'} ${t.status === 'disqualified' ? 'opacity-30' : ''}`}>
-                        <div className="w-20 text-center flex flex-col items-center">
-                            <span className="text-4xl font-black italic text-blue-400">#{i + 1}</span>
-                            <span className="text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-widest">{i === 0 ? 'Líder' : ''}</span>
+            <div ref={listRef} className="flex-1 grid grid-cols-1 gap-4 overflow-y-auto pr-4 custom-scrollbar">
+                {sorted.map((t, i) => {
+                    const stats = getRoundStats(t, selRondaView);
+                    
+                    // Sistema Dinámico de Colores de Posición
+                    let posColorText = "text-blue-400";
+                    let posBg = "bg-slate-900/50 border-slate-800";
+                    let posBadge = "";
+                    if (i === 0 && stats.score > 0) { 
+                        posColorText = "text-yellow-400"; 
+                        posBg = "bg-yellow-600/20 border-yellow-500/50 shadow-[0_0_30px_rgba(202,138,4,0.15)] transform scale-[1.02] z-10"; 
+                        posBadge = "🏆 LÍDER ORO"; 
+                    }
+                    else if (i === 1 && stats.score > 0) { 
+                        posColorText = "text-slate-300"; 
+                        posBg = "bg-slate-400/10 border-slate-400/30 transform scale-[1.01]"; 
+                        posBadge = "🥈 PLATA"; 
+                    }
+                    else if (i === 2 && stats.score > 0) { 
+                        posColorText = "text-orange-400"; 
+                        posBg = "bg-orange-600/10 border-orange-500/30 transform scale-[1.01]"; 
+                        posBadge = "🥉 BRONCE"; 
+                    }
+
+                    return (
+                    <div key={t.id} className={`flex items-center gap-6 p-6 rounded-3xl border-2 transition-all ${posBg} ${t.status === 'disqualified' ? 'opacity-30' : ''}`}>
+                        <div className="w-24 text-center flex flex-col items-center">
+                            <span className={`text-5xl font-black italic ${posColorText}`}>#{i + 1}</span>
+                            <span className={`text-[10px] font-bold mt-2 uppercase tracking-widest ${posColorText}`}>{posBadge}</span>
                         </div>
                         <div className="flex-1 min-w-0">
                             <h3 className="text-3xl font-black truncate tracking-tight">{t.school}</h3>
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mt-1">
-                                <Icon name="users" className="w-3 h-3"/> {t.captainName}
+                            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mt-1">
+                                <Icon name="users" className="w-4 h-4"/> {t.captainName}
                             </p>
                         </div>
-                        <div className="bg-slate-800 px-8 py-4 rounded-2xl border border-slate-700 flex flex-col items-end justify-center min-w-[150px]">
-                             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{category === 'line_follower' ? 'Porcentaje' : 'Puntaje Total'}</p>
-                             <p className="text-4xl font-black text-white">{t.score || 0}{category === 'line_follower' ? '%' : ''}</p>
-                             {category === 'line_follower' && (
-                                <p className="text-xs font-bold text-blue-400 mt-1">{formatResultTime(t.lastTime)}</p>
-                             )}
+                        <div className="bg-slate-950/50 px-8 py-4 rounded-2xl border border-slate-800/50 flex flex-col items-end justify-center min-w-[200px] shadow-inner">
+                             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Puntaje Total</p>
+                             <p className={`text-5xl font-black tracking-tighter ${posColorText}`}>{stats.score}</p>
+                             <p className="text-sm font-bold text-slate-400 mt-2 tracking-widest leading-none drop-shadow-md">{formatResultTime(stats.time)}</p>
                         </div>
                     </div>
-                ))}
+                )})}
             </div>
             
             <div className="mt-8 pt-8 border-t border-slate-800 flex justify-between items-center text-slate-500">
@@ -1237,24 +1319,42 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
     setMode(initialMode);
   }, [initialMode]);
 
-  // Sincronizar el mapa al elegir otra ronda o pista
+  // Usar JSON stringify para que solo cambie si el valor interno guardado realmente cambia,
+  // ignorando los clones de objetos creados por el polling de 5 segundos.
+  const trackDataStr = React.useMemo(() => JSON.stringify(tracks?.[selRonda]?.[selPista] || {}), [tracks, selRonda, selPista]);
+
+  // Sincronizar el mapa al elegir otra ronda o pista, o cuando la base de datos realmente tenga un nuevo archivo
   useEffect(() => {
+    let newPoints = [];
     if (tracks && tracks[selRonda] && tracks[selRonda][selPista]) {
       const data = tracks[selRonda][selPista];
       setBgImage(data.bgImage || null);
-      setPoints(data.points || []);
+      newPoints = data.points || [];
       setGuideX(data.guideX || 50);
       setGuideY(data.guideY || 50);
     } else {
       setBgImage(null);
-      setPoints([]);
       setGuideX(50);
       setGuideY(50);
     }
-    // NOTA: 'tracks' forzosamente omitido de las dependencias aquí para evitar 
-    // que el sondeo cada 5segundos borre cualquier cambio local no guardado.
+    
+    // Si estamos en modo evaluación, limpiamos el encuentro y cargamos los puntos limpios.
+    if (mode === 'evaluate') {
+        const cleanedPoints = newPoints.map(p => ({ ...p, isCompleted: false }));
+        setPoints(cleanedPoints);
+        
+        setAttempts(['pending', 'pending', 'pending']);
+        setCurrentAttempt(0);
+        setSavedResults(null);
+        setPenalties(0);
+        setIsTimerRunning(false);
+        setTimeLeft(120);
+        setSelTeam('');
+    } else {
+        setPoints(newPoints);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selRonda, selPista]);
+  }, [selRonda, selPista, trackDataStr]);
 
   const saveCurrentTrack = () => {
     if (updateTrackData) {
@@ -1459,7 +1559,8 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
 
   const safeSaveRealApp = () => {
     if (!selTeam || !addScore || existingEvaluation || !savedResults) return;
-    addScore(selTeam, selRonda, selPista, savedResults.score);
+    // Pasar tiempo en milisegundos para estandarizar con el sistema de ranking global
+    addScore(selTeam, selRonda, selPista, savedResults.score, (savedResults.finalTime * 1000));
     handleResetMatch();
     setSelTeam('');
   };
