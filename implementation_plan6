@@ -1,0 +1,28 @@
+# Plan: Sincronización de Tiempo Global y Lógica de Evaluación
+
+Este plan ajustará cómo se mide el tiempo en ambas categorías para que coincida con la realidad de la competencia.
+
+## 1. Reloj Global Sincronizado (Backend)
+Para que el TV y todos los Jueces vean exactamente el mismo tiempo:
+- **Backend:** Añadiré `timer` y `timerActive` al archivo `data.json`.
+- **API:** Crearé un endpoint `POST /api/timer` para actualizar el reloj desde cualquier dispositivo (Admin).
+- **Frontend:** La aplicación consultará el estado del reloj cada vez que sincronice datos (pooling) para asegurar que todos estén en el mismo segundo.
+
+## 2. Ajuste en Categoría: Robotics Quest
+En Quest, el tiempo es acumulativo dentro de los 30 minutos de la ronda.
+- **Lógica de Registro:** 
+    - Para las **Pistas 1, 2, 3 y 4**, se registrará el puntaje con **tiempo = 0**.
+    - Para la **Pista 5** (o cuando el equipo termine su participación), el Juez presionará Guardar y el sistema capturará automáticamente el tiempo transcurrido del Reloj Global: `Tiempo = (30:00 - Tiempo Restante)`.
+    - Si el equipo no termina las 5 pistas antes de que el reloj llegue a 0, se les registrará el tiempo máximo de **30:00 (1800s)**.
+
+## 3. Ajuste en Categoría: Line Follower
+- Se mantendrá el cronómetro independiente de **2:00 minutos** por intento. 
+- El Reloj Global de 30:00 solo servirá de referencia visual en la pantalla para saber cuánto queda de la jornada.
+
+## Preguntas para el Usuario
+1. **¿El tiempo de Quest solo se registra al terminar la Pista 5?** ¿O quieres que se registre el tiempo parcial en cada pista (1, 2, 3, 4, 5)?
+2. **¿Quién controla el Reloj Global?** Actualmente cualquier Admin puede. ¿Está bien que sea así?
+3. **Puntaje Acumulado:** Si un equipo hace la Pista 1 en una hora y la Pista 2 en otra (diferentes bloques de 30 min), ¿el tiempo se debe reiniciar para cada pista o es un solo bloque de 30 min para todo el circuito de 5 pistas?
+
+> [!IMPORTANT]
+> Si el tiempo es un bloque de 30 min para las 5 pistas, el Juez solo debería "Cerrar" el tiempo en la última participación del equipo. 

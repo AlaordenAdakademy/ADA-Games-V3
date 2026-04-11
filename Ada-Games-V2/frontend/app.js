@@ -55,6 +55,15 @@ function App() {
         setTeams(data.teams || []);
         setTracks(data.tracks || {});
         
+        // Sincronizar temporizador desde el servidor
+        if (data.timer) {
+            // Solo sincronizar si el cambio es significativo o el estado de pausa/play cambió
+            if (data.timer.timerActive !== timerActive || Math.abs(data.timer.timer - timer) > 5) {
+                setTimer(data.timer.timer);
+                setTimerActive(data.timer.timerActive);
+            }
+        }
+        
         // Sincronizar localmente para otras pestañas
         localStorage.setItem('ada_teams', JSON.stringify(data.teams));
         localStorage.setItem('ada_tracks', JSON.stringify(data.tracks));
@@ -147,17 +156,35 @@ function App() {
     return () => clearInterval(interval);
   }, [timerActive, timer]);
 
-  const toggleTimer = () => {
+  const toggleTimer = async () => {
     const nextState = !timerActive;
     setTimerActive(nextState);
     localStorage.setItem('ada_timer_active', nextState.toString());
+    
+    // Sincronizar con el servidor
+    try {
+        await fetch(`${API_BASE}/timer`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ timer, timerActive: nextState })
+        });
+    } catch(e) {}
   };
 
-  const resetTimer = () => {
+  const resetTimer = async () => {
     setTimer(1800);
     setTimerActive(false);
     localStorage.setItem('ada_timer', '1800');
     localStorage.setItem('ada_timer_active', 'false');
+    
+    // Sincronizar con el servidor
+    try {
+        await fetch(`${API_BASE}/timer`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ timer: 1800, timerActive: false })
+        });
+    } catch(e) {}
   };
 
   const formatTime = (seconds) => {
@@ -429,12 +456,36 @@ function App() {
         {activeTab === 'config' && currentUser.role === 'admin' && (
             currentUser.category === 'quest' ? 
             <ConfigTab tracks={tracks} updateTrackData={updateTrackData} /> : 
-            <EvaluadorDePistas initialMode="edit" tracks={tracks} updateTrackData={updateTrackData} />
+            <EvaluadorDePistas 
+              initialMode="edit" 
+              tracks={tracks} 
+              updateTrackData={updateTrackData} 
+              teams={teams} 
+              activeTeams={teams.filter(t => t.status === 'inspected' && t.category === 'line_follower')} 
+              addScore={addScore} 
+              currentUser={currentUser} 
+              disqualifyTeam={disqualifyTeam} 
+              postTeams={postTeams} 
+              showToast={showToast} 
+              isRunningInMainApp={true}
+            />
         )}
         {activeTab === 'evaluacion' && (
             currentUser.category === 'quest' ? 
-            <EvaluacionTab teams={teams} tracks={tracks} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} /> : 
-            <EvaluadorDePistas initialMode="evaluate" tracks={tracks} updateTrackData={updateTrackData} teams={teams} activeTeams={teams.filter(t => t.status === 'inspected')} addScore={addScore} />
+            <EvaluacionTab teams={teams} tracks={tracks} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} timer={timer} /> : 
+            <EvaluadorDePistas 
+              initialMode="evaluate" 
+              tracks={tracks} 
+              updateTrackData={updateTrackData} 
+              teams={teams} 
+              activeTeams={teams.filter(t => t.status === 'inspected' && t.category === 'line_follower')} 
+              addScore={addScore} 
+              currentUser={currentUser} 
+              disqualifyTeam={disqualifyTeam} 
+              postTeams={postTeams} 
+              showToast={showToast} 
+              isRunningInMainApp={true}
+            />
         )}
         {activeTab === 'resultados' && <ResultadosTab teams={teams} currentUser={currentUser} onShowHistory={setSelectedTeamHistory} />}
       </main>
@@ -799,7 +850,7 @@ function ConfigTab({ tracks, updateTrackData }) {
   );
 }
 
-function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, postTeams, showToast }) {
+function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, postTeams, showToast, timer }) {
   if (currentUser.category === 'line_follower') {
     return <LineFollowerEvaluacion teams={teams} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} />;
   }
@@ -826,7 +877,15 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
   const handleSave = () => {
     if (!selTeam || existingEvaluation) return;
     const total = (progressIdx + 1) + (bonus ? 3 : 0);
-    addScore(selTeam, selRonda, selPista, total);
+    
+    // Lógica de Tiempo para Quest: Solo se captura el tiempo en la Pista 5
+    // El tiempo registrado es (30min - tiempo_restante)
+    let finalTimeMs = 0;
+    if (selPista === 5) {
+        finalTimeMs = (1800 - timer) * 1000;
+    }
+    
+    addScore(selTeam, selRonda, selPista, total, finalTimeMs);
     setSelTeam('');
     setProgressIdx(-1);
     setBonus(false);
@@ -1069,10 +1128,19 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
     const rd = parseInt(roundFilter);
     const rh = team.history.filter(h => h.ronda === rd);
     if (rh.length === 0) return { score: 0, time: 9999999 };
-    return {
-      score: rh.reduce((sum, h) => sum + (h.points || h.percentage || 0), 0),
-      time: rh.reduce((sum, h) => sum + (h.finalTimeMs || h.finalTime || 0), 0)
-    };
+    
+    let totalScore = rh.reduce((sum, h) => sum + (h.points || h.percentage || 0), 0);
+    let totalTime = 0;
+    
+    if (currentUser.category === 'quest') {
+        const pista5 = rh.find(h => h.pista === 5);
+        // Si terminó pista 5, usamos ese tiempo. Si no terminó pista 5, usamos tiempo máximo de ronda (30 min)
+        totalTime = pista5 ? (pista5.finalTimeMs || 0) : 1800000;
+    } else {
+        totalTime = rh.reduce((sum, h) => sum + (h.finalTimeMs || h.finalTime || 0), 0);
+    }
+
+    return { score: totalScore, time: totalTime };
   };
 
   const sorted = useMemo(() => {
@@ -1346,12 +1414,20 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
     const getRoundStats = (team, roundFilter) => {
         if (roundFilter === 'global') return { score: team.score || 0, time: team.lastTime || 9999999 };
         const rd = parseInt(roundFilter);
-        const rh = team.history.filter(h => h.ronda === rd);
+        const rh = Array.isArray(team.history) ? team.history.filter(h => h.ronda === rd) : [];
         if (rh.length === 0) return { score: 0, time: 9999999 };
-        return {
-            score: rh.reduce((sum, h) => sum + (h.points || h.percentage || 0), 0),
-            time: rh.reduce((sum, h) => sum + (h.finalTimeMs || h.finalTime || 0), 0)
-        };
+        
+        let totalScore = rh.reduce((sum, h) => sum + (h.points || h.percentage || 0), 0);
+        let totalTime = 0;
+        
+        if (category === 'quest') {
+            const pista5 = rh.find(h => h.pista === 5);
+            totalTime = pista5 ? (pista5.finalTimeMs || 0) : 1800000;
+        } else {
+            totalTime = rh.reduce((sum, h) => sum + (h.finalTimeMs || h.finalTime || 0), 0);
+        }
+
+        return { score: totalScore, time: totalTime };
     };
 
     const sorted = useMemo(() => {

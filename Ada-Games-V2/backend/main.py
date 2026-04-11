@@ -43,11 +43,20 @@ def generate_initial_tracks():
             structure[str(r)][str(p)] = {"sequence": [], "obstacles": []}
     return structure
 
+def generate_initial_timer():
+    return {"timer": 1800, "timerActive": False}
+
 def load_data():
     if not os.path.exists(DATA_FILE):
-        return {"teams": [], "tracks": generate_initial_tracks()}
+        return {"teams": [], "tracks": generate_initial_tracks(), "timer": generate_initial_timer()}
     with open(DATA_FILE, "r") as f:
         data = json.load(f)
+    
+    # Migración: Asegurar campos necesarios
+    changed = False
+    if "timer" not in data:
+        data["timer"] = generate_initial_timer()
+        changed = True
     
     # Migración: Asegurar que todos los equipos tengan categoría
     changed = False
@@ -126,8 +135,24 @@ def reset_competition(auth: ResetAuth):
         backup_path = os.path.join(backups_dir, f"data_backup_{timestamp}.json")
         shutil.copy2(DATA_FILE, backup_path)
         
-    initial_data = {"teams": [], "tracks": generate_initial_tracks()}
+    initial_data = {"teams": [], "tracks": generate_initial_tracks(), "timer": generate_initial_timer()}
     save_data(initial_data)
+    return {"status": "ok"}
+
+@app.get("/api/timer")
+def get_timer():
+    data = load_data()
+    return data.get("timer", generate_initial_timer())
+
+class TimerSync(BaseModel):
+    timer: int
+    timerActive: bool
+
+@app.post("/api/timer")
+def update_timer(sync: TimerSync):
+    data = load_data()
+    data["timer"] = {"timer": sync.timer, "timerActive": sync.timerActive}
+    save_data(data)
     return {"status": "ok"}
 
 @app.post("/api/upload_map")
