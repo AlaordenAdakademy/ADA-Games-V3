@@ -40,6 +40,12 @@ function App() {
     return saved === 'true';
   });
   
+    // Estados compartidos EvaluadorDePistas
+  const [bgImage, setBgImage] = useState(null);
+  const [points, setPoints] = useState([]);
+  const [guideX, setGuideX] = useState(50);
+  const [guideY, setGuideY] = useState(50);
+
   // Estados para UI
   const [confirmDialog, setConfirmDialog] = useState(null);
   const [toastMessage, setToastMessage] = useState('');
@@ -339,7 +345,7 @@ function App() {
               <NavButton active={activeTab === 'registro'} onClick={() => setActiveTab('registro')} icon={<Icon name="users" />} label="Registro" />
               <NavButton active={activeTab === 'inspeccion'} onClick={() => setActiveTab('inspeccion')} icon={<Icon name="clipboard-check" />} label="Inspección" />
               {currentUser.category === 'quest' && (
-                <NavButton active={activeTab === 'config'} onClick={() => setActiveTab('config')} icon={<Icon name="settings" />} label="Config. Pistas" />
+                <NavButton active={activeTab === 'config'} onClick={() => setActiveTab('config')} icon={<Icon name="map" />} label="Configurar Pista" />
               )}
             </>
           )}
@@ -377,8 +383,12 @@ function App() {
       <main className="flex-1 p-4 md:p-8 w-full max-w-7xl mx-auto overflow-x-hidden">
         {activeTab === 'registro' && currentUser.role === 'admin' && <RegistroTab addTeam={addTeam} />}
         {activeTab === 'inspeccion' && currentUser.role === 'admin' && <InspeccionTab teams={teams} updateTeamStatus={updateTeamStatus} disqualifyTeam={disqualifyTeam} />}
-        {activeTab === 'config' && currentUser.role === 'admin' && <ConfigTab tracks={tracks} updateTrackData={updateTrackData} />}
-        {activeTab === 'evaluacion' && <EvaluacionTab teams={teams} tracks={tracks} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} />}
+        {activeTab === 'config' && currentUser.role === 'admin' && <EvaluadorDePistas initialMode="edit" bgImage={bgImage} setBgImage={setBgImage} points={points} setPoints={setPoints} guideX={guideX} setGuideX={setGuideX} guideY={guideY} setGuideY={setGuideY} />}
+        {activeTab === 'evaluacion' && (
+          currentUser.category === 'line_follower' ? 
+            <LineFollowerEvaluacion teams={teams} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} /> 
+          : <EvaluadorDePistas initialMode="evaluate" bgImage={bgImage} setBgImage={setBgImage} points={points} setPoints={setPoints} guideX={guideX} setGuideX={setGuideX} guideY={guideY} setGuideY={setGuideY} teams={teams} activeTeams={teams.filter(t => t.status === 'inspected')} addScore={addScore} />
+        )}
         {activeTab === 'resultados' && <ResultadosTab teams={teams} currentUser={currentUser} onShowHistory={setSelectedTeamHistory} />}
       </main>
 
@@ -1211,6 +1221,400 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
         </div>
     );
 }
+
+
+function EvaluadorDePistas({ initialMode, bgImage, setBgImage, points, setPoints, guideX, setGuideX, guideY, setGuideY, teams, activeTeams, addScore, currentUser, disqualifyTeam, postTeams, showToast, isRunningInMainApp }) {
+  const [mode, setMode] = useState(initialMode || 'edit');
+  const [penalties, setPenalties] = useState(0);
+  const [attempts, setAttempts] = useState(['pending', 'pending', 'pending']);
+  const [currentAttempt, setCurrentAttempt] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(120);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [savedResults, setSavedResults] = useState(null);
+  const [selectedPointId, setSelectedPointId] = useState(null);
+  const [dragTarget, setDragTarget] = useState(null);
+  const canvasRef = React.useRef(null);
+  
+  // Custom states added for real app functionality
+  const [selTeam, setSelTeam] = useState('');
+  const [selRonda, setSelRonda] = useState(1);
+  const [selPista, setSelPista] = useState(1);
+
+  useEffect(() => {
+    setMode(initialMode);
+  }, [initialMode]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.target.tagName.toLowerCase() === 'input') return;
+      if (mode === 'edit' && selectedPointId && (e.key === 'Delete' || e.key === 'Backspace')) {
+        setPoints(prevPoints => prevPoints.filter(p => p.id !== selectedPointId));
+        setSelectedPointId(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mode, selectedPointId]);
+
+  useEffect(() => {
+    let interval;
+    if (isTimerRunning && timeLeft > 0) {
+      interval = setInterval(() => { setTimeLeft(prev => prev - 1); }, 1000);
+    } else if (timeLeft === 0 && isTimerRunning) {
+      setIsTimerRunning(false);
+    }
+    return () => clearInterval(interval);
+  }, [isTimerRunning, timeLeft]);
+
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => setBgImage(event.target.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const getQuadrant = (x, y) => {
+    if (x <= guideX && y <= guideY) return 'Q1';
+    if (x > guideX && y <= guideY) return 'Q2';
+    if (x <= guideX && y > guideY) return 'Q3';
+    return 'Q4';
+  };
+
+  const stats = React.useMemo(() => {
+    let totalScore = 0;
+    let maxTotal = 0;
+    const quadrants = {
+      Q1: { score: 0, max: 0 }, Q2: { score: 0, max: 0 },
+      Q3: { score: 0, max: 0 }, Q4: { score: 0, max: 0 }
+    };
+    points.forEach(p => {
+      const q = getQuadrant(p.x, p.y);
+      quadrants[q].max += p.value;
+      maxTotal += p.value;
+      if (p.isCompleted) {
+        quadrants[q].score += p.value;
+        totalScore += p.value;
+      }
+    });
+    const percentage = maxTotal > 0 ? ((totalScore / maxTotal) * 100).toFixed(1) : 0;
+    return { totalScore, maxTotal, quadrants, percentage };
+  }, [points, guideX, guideY]);
+
+  const existingEvaluation = React.useMemo(() => {
+    if (!selTeam || !teams) return null;
+    const team = teams.find(t => t.id === selTeam);
+    return team?.history.find(h => h.ronda === selRonda && h.pista === selPista);
+  }, [teams, selTeam, selRonda, selPista]);
+
+  const handleCanvasClick = (e) => {
+    if (mode !== 'edit') return;
+    if (dragTarget || e.target.closest('.point-marker') || e.target.closest('.guide-handle')) return; 
+    const rect = canvasRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    const newPoint = { id: Date.now(), x, y, value: 10, isCompleted: false };
+    setPoints([...points, newPoint]);
+    setSelectedPointId(newPoint.id);
+  };
+
+  const handleMouseMove = (e) => {
+    if (mode !== 'edit' || !dragTarget) return;
+    const rect = canvasRef.current.getBoundingClientRect();
+    let x = ((e.clientX - rect.left) / rect.width) * 100;
+    let y = ((e.clientY - rect.top) / rect.height) * 100;
+    x = Math.max(0, Math.min(100, x));
+    y = Math.max(0, Math.min(100, y));
+    if (dragTarget.type === 'point') {
+      setPoints(points.map(p => p.id === dragTarget.id ? { ...p, x, y } : p));
+    } else if (dragTarget.type === 'guideX') {
+      setGuideX(x);
+    } else if (dragTarget.type === 'guideY') {
+      setGuideY(y);
+    }
+  };
+
+  const handleMouseUp = () => setDragTarget(null);
+
+  const handlePointInteraction = (e, id) => {
+    e.stopPropagation();
+    if (mode === 'edit') {
+      setSelectedPointId(id);
+    } else {
+      if (attempts[currentAttempt] === 'valid' || existingEvaluation) return;
+      setPoints(points.map(p => p.id === id ? { ...p, isCompleted: !p.isCompleted } : p));
+    }
+  };
+
+  const handlePointMouseDown = (e, id) => {
+    if (mode === 'edit') {
+      e.stopPropagation();
+      setDragTarget({ type: 'point', id });
+      setSelectedPointId(id);
+    }
+  };
+
+  const updatePointValue = (id, newValue) => {
+    setPoints(points.map(p => p.id === id ? { ...p, value: Number(newValue) } : p));
+  };
+
+  const deletePoint = (id) => {
+    setPoints(points.filter(p => p.id !== id));
+    if (selectedPointId === id) setSelectedPointId(null);
+  };
+
+  const resetEvaluation = () => {
+    setPoints(points.map(p => ({ ...p, isCompleted: false })));
+    setPenalties(0);
+    setIsTimerRunning(false);
+    setTimeLeft(120);
+  };
+
+  const handleNulledAttempt = () => {
+    if (currentAttempt > 2 || attempts[currentAttempt] === 'valid') return;
+    const newAttempts = [...attempts];
+    newAttempts[currentAttempt] = 'nulled';
+    setAttempts(newAttempts);
+    resetEvaluation();
+    if (currentAttempt < 2) setCurrentAttempt(currentAttempt + 1);
+  };
+
+  const handleValidAttempt = () => {
+    if (currentAttempt > 2 || attempts[currentAttempt] === 'valid') return;
+    const newAttempts = [...attempts];
+    newAttempts[currentAttempt] = 'valid';
+    setAttempts(newAttempts);
+    setIsTimerRunning(false);
+    const timeElapsed = 120 - timeLeft;
+    const finalTime = timeElapsed + (penalties * 5);
+    setSavedResults({ score: stats.totalScore, percentage: stats.percentage, timeElapsed, penalties, finalTime });
+  };
+
+  const handleResetMatch = () => {
+    setAttempts(['pending', 'pending', 'pending']);
+    setCurrentAttempt(0);
+    setSavedResults(null);
+    resetEvaluation();
+  };
+
+  const toggleMode = (newMode) => {
+    if (newMode === 'evaluate') {
+      setSelectedPointId(null);
+    } else {
+      handleResetMatch();
+    }
+    setMode(newMode);
+  };
+
+  const safeSaveRealApp = () => {
+    if (!selTeam || !addScore || existingEvaluation || !savedResults) return;
+    addScore(selTeam, selRonda, selPista, savedResults.score);
+    handleResetMatch();
+    setSelTeam('');
+  };
+
+  return (
+    <div className="flex h-full w-full bg-[#0f111a] text-slate-200 font-sans overflow-hidden select-none rounded-[2.5rem] shadow-xl">
+      
+      {initialMode === 'evaluate' && (
+      <div className="w-80 bg-[#161925] border-r border-[#2a2e3f] flex flex-col z-10 shadow-2xl relative overflow-y-auto custom-scrollbar">
+        {existingEvaluation && <div className="absolute inset-0 z-20 bg-slate-900/40 backdrop-blur-[2px] flex items-center justify-center">
+            <div className="bg-white/90 px-6 py-3 rounded-full shadow-2xl border border-white font-black text-blue-900 uppercase tracking-widest text-xs flex items-center gap-3">
+              <Icon name="lock" className="w-4 h-4" /> Ya Evaluado
+            </div>
+        </div>}
+        <div className="p-6 border-b border-[#2a2e3f] shrink-0">
+          <h1 className="text-xl font-bold text-white flex items-center gap-2 tracking-wide mb-4">
+            <Icon name="play-circle" className="w-5 h-5 text-blue-500 fill-blue-500" /> MESA DEL JUEZ
+          </h1>
+          <p className="text-xs text-slate-500 mt-1 uppercase tracking-wider font-semibold">Equipo en Pista</p>
+          <select value={selTeam} onChange={e => setSelTeam(e.target.value)} className="mt-2 w-full bg-[#0f111a] border border-[#2a2e3f] text-sm rounded-lg p-2.5 outline-none transition-colors">
+            <option value="">-- Seleccionar Equipo --</option>
+            {activeTeams && activeTeams.map(t => <option key={t.id} value={t.id}>{t.school}</option>)}
+          </select>
+
+          <div className="flex gap-3 mt-4">
+            <div className="flex-1">
+              <p className="text-xs text-slate-500 mb-1 uppercase tracking-wider font-semibold">Ronda</p>
+              <select value={selRonda} onChange={e => setSelRonda(parseInt(e.target.value))} className="w-full bg-[#0f111a] border border-[#2a2e3f] text-sm rounded-lg p-2.5 outline-none">
+                {[1,2,3,4,5].map(r => <option key={r} value={r}>Ronda {r}</option>)}
+              </select>
+            </div>
+            <div className="flex-1">
+              <p className="text-xs text-slate-500 mb-1 uppercase tracking-wider font-semibold">Pista</p>
+              <select value={selPista} onChange={e => setSelPista(parseInt(e.target.value))} className="w-full bg-[#0f111a] border border-[#2a2e3f] text-sm rounded-lg p-2.5 outline-none">
+                {[1,2,3,4,5].map(p => <option key={p} value={p}>Pista {p}</option>)}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 flex-1 flex flex-col pt-4">
+          <div className="flex flex-col items-center mb-6">
+            <span className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Intentos (Máx 3)</span>
+            <div className="flex gap-4">
+              {attempts.map((st, i) => (
+                <div key={i} className={`w-5 h-5 rounded-full border-2 transition-all ${st === 'valid' ? 'bg-green-500 border-green-400 shadow-[0_0_12px_#22c55e]' : st === 'nulled' ? 'bg-red-500 border-red-400 shadow-[0_0_12px_#ef4444]' : i === currentAttempt ? 'bg-yellow-500/50 border-yellow-400 animate-pulse' : 'bg-slate-800 border-slate-600'}`}/>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-[#1c1f2e] border border-[#2a2e3f] rounded-2xl p-4 mb-6 flex flex-col items-center shadow-inner shrink-0">
+            <div className="flex items-center gap-2 mb-1">
+              <Icon name="timer" className="w-4 h-4 text-slate-400" />
+              <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Tiempo Restante</span>
+            </div>
+            <div className={`text-5xl font-mono font-bold tracking-widest mb-4 ${timeLeft <= 30 ? 'text-red-400 animate-pulse' : 'text-white'}`}>
+              {formatTime(timeLeft)}
+            </div>
+            <div className="flex gap-2 w-full">
+              {!isTimerRunning ? (
+                <button onClick={() => setIsTimerRunning(true)} disabled={attempts[currentAttempt] === 'valid' || currentAttempt > 2 || timeLeft === 0 || !selTeam} className="flex-1 bg-green-600 hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed text-white py-2 rounded-lg font-bold flex items-center justify-center gap-2 transition-colors">
+                  <Icon name="play" className="w-4 h-4" /> Iniciar
+                </button>
+              ) : (
+                <button onClick={() => setIsTimerRunning(false)} className="flex-1 bg-yellow-600 hover:bg-yellow-500 text-white py-2 rounded-lg font-bold flex items-center justify-center gap-2 transition-colors">
+                  <Icon name="pause" className="w-4 h-4" /> Pausar
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className={`p-4 rounded-2xl flex flex-col items-center justify-center transition-all duration-300 shadow-lg border mb-6 shrink-0 ${savedResults ? 'bg-green-900/40 border-green-500/50' : 'bg-blue-600 border-blue-500'}`}>
+            <span className="text-sm font-semibold uppercase tracking-wider opacity-80 mb-1">{savedResults ? 'Puntaje Final' : 'Puntos Actuales'}</span>
+            <span className="text-6xl font-bold tracking-tighter mb-1">{savedResults ? savedResults.score : (existingEvaluation ? existingEvaluation.points : stats.totalScore)}</span>
+            <span className="text-xs font-medium opacity-90 bg-black/30 px-3 py-1 rounded-full flex gap-2">
+              <span>{stats.maxTotal} MAX</span>
+              <span className="border-l border-white/20 pl-2">{savedResults ? savedResults.percentage : stats.percentage}%</span>
+            </span>
+          </div>
+
+          <div className="flex gap-3 mb-6 shrink-0">
+            <button onClick={() => setPenalties(p => p + 1)} disabled={attempts[currentAttempt] === 'valid' || currentAttempt > 2 || !selTeam} className="flex-1 bg-[#1c1f2e] border border-orange-500/30 hover:border-orange-500/60 disabled:opacity-50 disabled:cursor-not-allowed transition-colors p-3 rounded-xl flex flex-col items-center justify-center gap-1 group">
+              <Icon name="alert-triangle" className="w-5 h-5 text-orange-500 group-hover:scale-110 transition-transform" />
+              <span className="text-[10px] font-bold text-orange-400 uppercase text-center leading-tight">Penalización<br/>(+5s)</span>
+              <span className="bg-orange-500/20 text-orange-400 font-bold px-2 py-0.5 rounded-full text-xs mt-1">{penalties}</span>
+            </button>
+            <button onClick={handleNulledAttempt} disabled={attempts[currentAttempt] === 'valid' || currentAttempt > 2 || !selTeam} className="flex-1 bg-[#1c1f2e] border border-red-500/30 hover:bg-red-500/10 hover:border-red-500/60 disabled:opacity-50 disabled:cursor-not-allowed transition-all p-3 rounded-xl flex flex-col items-center justify-center gap-1 group">
+              <Icon name="ban" className="w-5 h-5 text-red-400 group-hover:text-red-500 group-hover:scale-110 transition-all" />
+              <span className="text-[10px] font-bold text-red-400 uppercase text-center leading-tight">Intento<br/>Nulo</span>
+            </button>
+          </div>
+
+          <div className="mt-auto flex flex-col gap-3 shrink-0">
+            {savedResults && (
+               <div className="bg-slate-800 border border-slate-600 rounded-xl p-3 text-xs text-slate-300">
+                  <div className="flex justify-between mb-1"><span>Tiempo Neto:</span> <span>{formatTime(savedResults.timeElapsed)}</span></div>
+                  <div className="flex justify-between mb-1 text-orange-400"><span>Penalizaciones:</span> <span>+{savedResults.penalties * 5}s</span></div>
+                  <div className="flex justify-between font-bold text-white border-t border-slate-600 pt-1 mt-1"><span>Tiempo Oficial:</span> <span>{formatTime(savedResults.finalTime)}</span></div>
+               </div>
+            )}
+            {!savedResults && currentAttempt <= 2 ? (
+              <button onClick={handleValidAttempt} disabled={(!isTimerRunning && timeLeft === 120) || !selTeam} className="w-full bg-green-600 hover:bg-green-500 disabled:bg-slate-700 disabled:text-slate-400 text-white font-bold px-2 py-3.5 rounded-xl transition-colors shadow-lg flex items-center justify-center gap-2">
+                <Icon name="check-circle" className="w-4 h-4" /> REGISTRAR INTENTO VÁLIDO
+              </button>
+            ) : (
+               <button onClick={handleResetMatch} className="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2 text-sm">
+                <Icon name="rotate-ccw" className="w-4 h-4" /> Reiniciar Ronda
+              </button>
+            )}
+            <button onClick={safeSaveRealApp} disabled={!savedResults || existingEvaluation} className="w-full bg-blue-600 hover:bg-blue-500 flex-wrap disabled:bg-slate-700 disabled:text-slate-400 text-white font-bold px-2 py-3.5 rounded-xl transition-colors shadow-lg flex items-center justify-center gap-2">
+              <Icon name="save" className="w-4 h-4" /> GUARDAR RESULTADO FINAL
+            </button>
+          </div>
+        </div>
+      </div>
+      )}
+
+      <div className="flex-1 flex flex-col relative overflow-hidden" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp}>
+        <div className="h-16 border-b border-[#2a2e3f] bg-[#161925] px-8 flex items-center justify-between z-10 shrink-0">
+            <h2 className="text-xl font-bold tracking-wide flex items-center gap-2 text-white">
+                <Icon name={mode === 'edit' ? 'map' : 'play-circle'} className="w-5 h-5 text-blue-500" />
+                {mode === 'edit' ? 'CONFIGURAR NUEVO MAPA' : 'TABLERO DE EVALUACIÓN'}
+            </h2>
+          <div className="flex gap-6 text-sm font-medium bg-[#0f111a] py-2 px-4 rounded-xl border border-[#2a2e3f]">
+            {['Q1', 'Q2', 'Q3', 'Q4'].map(q => (
+              <div key={q} className="flex flex-col items-center">
+                <span className="text-[10px] text-slate-500 mb-0.5">{q}</span>
+                <span className={stats.quadrants[q].score === stats.quadrants[q].max && stats.quadrants[q].max > 0 ? 'text-green-400' : 'text-slate-300'}>
+                  {stats.quadrants[q].score}/{stats.quadrants[q].max || 0}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex-1 p-8 relative overflow-hidden flex items-center justify-center bg-[#0a0c12]">
+          <div className="relative w-full max-w-5xl aspect-[16/10]">
+            <div className="absolute -top-6 left-0 text-xs font-bold text-slate-400 pointer-events-none">Q1 Sup Izq</div>
+            <div className="absolute -top-6 right-0 text-xs font-bold text-slate-400 pointer-events-none">Q2 Sup Der</div>
+            <div className="absolute -bottom-6 left-0 text-xs font-bold text-slate-400 pointer-events-none">Q3 Inf Izq</div>
+            <div className="absolute -bottom-6 right-0 text-xs font-bold text-slate-400 pointer-events-none">Q4 Inf Der</div>
+
+            <div ref={canvasRef} onClick={handleCanvasClick} className={`relative w-full h-full bg-white rounded-2xl overflow-hidden shadow-2xl border-2 ${mode === 'edit' ? 'border-dashed border-blue-500/50 cursor-crosshair' : 'border-solid border-[#2a2e3f]'}`}>
+              {bgImage ? (
+                <img src={bgImage} alt="Pista" className="absolute inset-0 w-full h-full object-contain pointer-events-none opacity-80" />
+              ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 pointer-events-none">
+                  <Icon name="image" className="w-16 h-16 mb-4 opacity-50" />
+                  <p className="font-semibold text-lg">Sube una imagen para la pista</p>
+                  {mode === 'edit' && <p className="text-sm mt-2">Haz clic en el panel inferior para cargar</p>}
+                </div>
+              )}
+              <div className={`guide-handle absolute top-0 bottom-0 w-6 -ml-3 flex justify-center z-10 ${mode === 'edit' ? 'cursor-col-resize hover:bg-black/5' : 'pointer-events-none'}`} style={{ left: `${guideX}%` }} onMouseDown={(e) => { if (mode === 'edit') { e.stopPropagation(); setDragTarget({type: 'guideX'}); } }}>
+                <div className="w-0 h-full border-l-4 border-dashed border-red-500/80" />
+              </div>
+              <div className={`guide-handle absolute left-0 right-0 h-6 -mt-3 flex items-center z-10 ${mode === 'edit' ? 'cursor-row-resize hover:bg-black/5' : 'pointer-events-none'}`} style={{ top: `${guideY}%` }} onMouseDown={(e) => { if (mode === 'edit') { e.stopPropagation(); setDragTarget({type: 'guideY'}); } }}>
+                <div className="h-0 w-full border-t-4 border-dashed border-red-500/80" />
+              </div>
+              {points.map(point => (
+                <div key={point.id} className={`point-marker absolute -translate-x-1/2 -translate-y-1/2 rounded shadow-lg flex items-center justify-center font-bold text-xs transition-all ${mode === 'evaluate' ? 'cursor-pointer hover:scale-105 active:scale-95' : 'cursor-grab active:cursor-grabbing'} ${mode === 'edit' && selectedPointId === point.id ? 'ring-2 ring-yellow-400 z-20' : 'z-10'} ${point.isCompleted && mode === 'evaluate' ? 'bg-blue-600 text-white border border-blue-400' : 'bg-[#2a2e3f] text-slate-300 border border-slate-600'}`} style={{ left: `${point.x}%`, top: `${point.y}%`, width: '42px', height: '24px' }} onClick={(e) => handlePointInteraction(e, point.id)} onMouseDown={(e) => handlePointMouseDown(e, point.id)}>
+                  {point.value}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="h-24 bg-[#161925] border-t border-[#2a2e3f] px-6 py-4 flex items-center shrink-0 z-10">
+          {mode === 'edit' ? (
+            <div className="flex w-full items-center justify-between gap-6">
+              <div className="flex items-center gap-4 bg-[#0f111a] px-4 py-2 rounded-xl border border-[#2a2e3f]">
+                <label className="flex items-center gap-2 cursor-pointer text-sm font-semibold hover:text-blue-400 transition-colors">
+                  <Icon name="upload" className="w-5 h-5" /> <span>Cargar Mapa</span>
+                  <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                </label>
+              </div>
+              <div className="flex items-center gap-6 bg-[#0f111a] px-6 py-2 rounded-xl border border-[#2a2e3f] flex-1 max-w-xl">
+                <span className="text-sm font-semibold text-slate-400 whitespace-nowrap">Guías Cuadrantes:</span>
+                <div className="flex items-center gap-2 flex-1"><span className="text-xs font-bold text-red-400">X</span><input type="range" min="0" max="100" value={guideX} onChange={(e) => setGuideX(e.target.value)} className="w-full accent-red-500 h-1" /></div>
+                <div className="flex items-center gap-2 flex-1"><span className="text-xs font-bold text-red-400">Y</span><input type="range" min="0" max="100" value={guideY} onChange={(e) => setGuideY(e.target.value)} className="w-full accent-red-500 h-1" /></div>
+              </div>
+              <div className={`flex items-center gap-3 px-6 py-2 rounded-xl border transition-all ${selectedPointId ? 'bg-blue-900/20 border-blue-500/50' : 'bg-[#0f111a] border-[#2a2e3f] opacity-50'}`}>
+                <span className="text-sm font-semibold text-slate-300">Valor Pieza:</span>
+                <input type="number" value={selectedPointId ? points.find(p => p.id === selectedPointId)?.value || 0 : ''} onChange={(e) => selectedPointId && updatePointValue(selectedPointId, e.target.value)} disabled={!selectedPointId} className="w-20 bg-[#1a1d2d] border border-[#2a2e3f] rounded px-2 py-1 text-center font-bold focus:outline-none focus:border-blue-500 text-slate-200" />
+                <button onClick={() => selectedPointId && deletePoint(selectedPointId)} disabled={!selectedPointId} className="p-1.5 text-red-400 hover:bg-red-500/20 hover:text-red-300 rounded transition-colors disabled:opacity-50"><Icon name="trash-2" className="w-5 h-5" /></button>
+              </div>
+            </div>
+          ) : (
+            <div className="w-full flex items-center justify-center gap-3 bg-blue-900/20 border border-blue-500/30 text-blue-200 py-3 px-6 rounded-xl">
+              <div className="bg-blue-600 rounded-full w-6 h-6 flex items-center justify-center shrink-0"><span className="font-bold text-sm text-white">i</span></div>
+              <p className="text-sm font-medium">Instrucciones: Pulsa sobre cada pieza del mapa para marcarla como completada en la rutina del robot.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 // Renderizado final
 const root = ReactDOM.createRoot(document.getElementById('root'));
