@@ -1,0 +1,1170 @@
+{
+    "teams": [
+        {
+            "id": "1774663000001",
+            "school": "Robotica Team Delta",
+            "captainName": "Carlos Ramirez",
+            "studentsCount": 2,
+            "status": "inspected",
+            "score": 121,
+            "lastTime": 30063,
+            "category": "line_follower",
+            "history": [
+                {
+                    "percentage": 90,
+                    "timeBase": 85000,
+                    "penalties": 0,
+                    "finalTime": 85000,
+                    "date": "9:30:15 p.m.",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "percentage": 36,
+                    "timeBase": 14063,
+                    "penalties": 0,
+                    "finalTime": 14063,
+                    "date": "10:10:52 p. m.",
+                    "judgeId": "juez1",
+                    "judgeName": "Juez Principal - Pista A"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 85,
+                    "finalTimeMs": 16000,
+                    "date": "12:25:33 a. m.",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                }
+            ]
+        },
+        {
+            "id": "1775881563212",
+            "school": "Minca",
+            "captainName": "Luis reyes",
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 120,
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 120,
+                    "finalTimeMs": 14000,
+                    "date": "12:27:12 a. m.",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                }
+            ],
+            "category": "line_follower",
+            "lastTime": 14000
+        },
+        {
+            "id": "1775881577172",
+            "school": "Abajo cadenas",
+            "captainName": "Luz Maria",
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower"
+        },
+        {
+            "id": "1775881589996",
+            "school": "Don Bosco",
+            "captainName": "Javier rojas",
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower"
+        },
+        {
+            "id": "1775881602820",
+            "school": "Juan Vicente",
+            "captainName": "Carlos farias",
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower"
+        },
+        {
+            "id": "1774656120326",
+            "school": "Nueva Barcelona",
+            "captainName": "Lopez Juan",
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 12,
+            "category": "quest",
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 4,
+                    "points": 7,
+                    "date": "8:04:49 p.m.",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 5,
+                    "date": "22:19:13",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                }
+            ]
+        },
+        {
+            "id": "1774656127598",
+            "school": "Ideal",
+            "captainName": "Juan",
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 8,
+            "category": "quest",
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 8,
+                    "finalTimeMs": null,
+                    "date": "1:27:29 a. m.",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                }
+            ],
+            "lastTime": 0
+        },
+        {
+            "id": "1774656138006",
+            "school": "Menca",
+            "captainName": "Alberto",
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 8,
+            "category": "quest",
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 8,
+                    "finalTimeMs": null,
+                    "date": "1:27:49 a. m.",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                }
+            ],
+            "lastTime": 0
+        },
+        {
+            "id": "1774656147390",
+            "school": "Raul Leoni",
+            "captainName": "Sofia",
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "category": "quest",
+            "history": []
+        },
+        {
+            "id": "1775887189422",
+            "school": "Team Beta",
+            "captainName": "Carlos Ruiz",
+            "coachName": "Prof. Gómez",
+            "members": [
+                "Ana Torres",
+                "Diego Silva"
+            ],
+            "studentsCount": 2,
+            "_valid": true,
+            "status": "pending",
+            "score": 0,
+            "history": [],
+            "category": "quest"
+        },
+        {
+            "id": "1775887563854",
+            "school": "Voltaje X",
+            "captainName": "SofÃ­a GarcÃ­a",
+            "coachName": "Prof. RamÃ³n DÃ­az",
+            "members": [
+                "Pedro Castillo",
+                "Elena Vargas",
+                "Diego Morales"
+            ],
+            "studentsCount": 3,
+            "_valid": true,
+            "status": "pending",
+            "score": 0,
+            "history": [],
+            "category": "quest"
+        },
+        {
+            "school": "Circuito Alfa",
+            "captainName": "Carlos Mendoza",
+            "coachName": "Prof. Ana RÃ­os",
+            "members": [
+                "Luis PÃ©rez",
+                "MarÃ­a Torres",
+                "JosÃ© RamÃ­rez"
+            ],
+            "studentsCount": 3,
+            "id": "17758878621248789",
+            "status": "pending",
+            "score": 0,
+            "history": [],
+            "category": "quest"
+        },
+        {
+            "school": "Voltaje X",
+            "captainName": "SofÃ­a GarcÃ­a",
+            "coachName": "Prof. RamÃ³n DÃ­az",
+            "members": [
+                "Pedro Castillo",
+                "Elena Vargas",
+                "Diego Morales"
+            ],
+            "studentsCount": 3,
+            "id": "17758878621249257",
+            "status": "pending",
+            "score": 0,
+            "history": [],
+            "category": "quest"
+        },
+        {
+            "school": "RoboStorm",
+            "captainName": "Miguel Ãngel Ruiz",
+            "coachName": "Prof. Carmen LÃ³pez",
+            "members": [
+                "Valentina Cruz",
+                "AndrÃ©s Herrera",
+                "FÃ¡tima JimÃ©nez"
+            ],
+            "studentsCount": 3,
+            "id": "1775887862124533",
+            "status": "pending",
+            "score": 0,
+            "history": [],
+            "category": "quest"
+        },
+        {
+            "school": "Byte Hunters",
+            "captainName": "Laura FernÃ¡ndez",
+            "coachName": "Prof. Luis Salazar",
+            "members": [
+                "Roberto Silva",
+                "Ana MartÃ­nez",
+                "Carlos Reyes"
+            ],
+            "studentsCount": 3,
+            "id": "17758878621241520",
+            "status": "pending",
+            "score": 0,
+            "history": [],
+            "category": "quest"
+        },
+        {
+            "school": "CÃ³digo Libre",
+            "captainName": "Daniela Ortiz",
+            "coachName": "Prof. Patricia Mora",
+            "members": [
+                "Fernando Rivas",
+                "Camila SuÃ¡rez",
+                "HÃ©ctor Blanco"
+            ],
+            "studentsCount": 3,
+            "id": "17758878621242235",
+            "status": "pending",
+            "score": 0,
+            "history": [],
+            "category": "quest"
+        },
+        {
+            "school": "Titan Bot",
+            "captainName": "Alejandro Romero",
+            "coachName": "Prof. Eduardo GuzmÃ¡n",
+            "members": [
+                "Natalia Flores",
+                "Oscar Medina",
+                "VerÃ³nica Soto"
+            ],
+            "studentsCount": 3,
+            "id": "17758878621248455",
+            "status": "pending",
+            "score": 0,
+            "history": [],
+            "category": "quest"
+        },
+        {
+            "school": "Servo Force",
+            "captainName": "Gabriela Parra",
+            "coachName": "Prof. Ingrid NÃºÃ±ez",
+            "members": [
+                "Ricardo GÃ³mez",
+                "Lorena Castro",
+                "TomÃ¡s Espinoza"
+            ],
+            "studentsCount": 3,
+            "id": "17758878621247761",
+            "status": "pending",
+            "score": 0,
+            "history": [],
+            "category": "quest"
+        },
+        {
+            "school": "NanoTech",
+            "captainName": "Juan Pablo Vega",
+            "coachName": "Prof. Roberto Alvarado",
+            "members": [
+                "Paola Delgado",
+                "Sergio Rojas",
+                "Adriana Fuentes"
+            ],
+            "studentsCount": 3,
+            "id": "17758878621242105",
+            "status": "pending",
+            "score": 0,
+            "history": [],
+            "category": "quest"
+        },
+        {
+            "school": "Pixel Warriors",
+            "captainName": "Isabella Ramos",
+            "coachName": "Prof. MÃ³nica Varela",
+            "members": [
+                "Emmanuel Torres",
+                "Luisa PeÃ±a",
+                "NicolÃ¡s Guerrero"
+            ],
+            "studentsCount": 3,
+            "id": "17758878621248102",
+            "status": "pending",
+            "score": 0,
+            "history": [],
+            "category": "quest"
+        },
+        {
+            "school": "Circuit Breakers",
+            "captainName": "Fernando Ãlvarez",
+            "coachName": "Prof. Silvia Campos",
+            "members": [
+                "Camilo Mendez",
+                "Valeria Rios",
+                "Bruno CastaÃ±eda"
+            ],
+            "studentsCount": 3,
+            "id": "17758878621243900",
+            "status": "pending",
+            "score": 0,
+            "history": [],
+            "category": "quest"
+        }
+    ],
+    "tracks": {
+        "1": {
+            "1": {
+                "sequence": [
+                    "A1",
+                    "C1",
+                    "C3",
+                    "E3",
+                    "D5"
+                ],
+                "obstacles": [
+                    "D4"
+                ],
+                "bgImage": "/maps/mapa_ronda1_pista1.png?t=1775879164",
+                "points": [
+                    {
+                        "id": 1775879168663,
+                        "x": 8.67117117117117,
+                        "y": 15.045045045045043,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879172023,
+                        "x": 64.63963963963964,
+                        "y": 15.045045045045043,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879173711,
+                        "x": 32.88288288288289,
+                        "y": 44.77477477477477,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879184263,
+                        "x": 51.126126126126124,
+                        "y": 48.73873873873874,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879187207,
+                        "x": 65.990990990991,
+                        "y": 88.01801801801801,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879189015,
+                        "x": 46.95945945945946,
+                        "y": 83.51351351351352,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879190279,
+                        "x": 29.054054054054053,
+                        "y": 84.41441441441442,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879191559,
+                        "x": 12.612612612612612,
+                        "y": 84.23423423423422,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879192831,
+                        "x": 12.162162162162163,
+                        "y": 52.702702702702695,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879197223,
+                        "x": 87.95045045045045,
+                        "y": 16.486486486486488,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879205480,
+                        "x": 34.234234234234236,
+                        "y": 8.378378378378379,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879212879,
+                        "x": 87.72522522522522,
+                        "y": 43.513513513513516,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879216383,
+                        "x": 92.68018018018019,
+                        "y": 90.90090090090091,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879222159,
+                        "x": 45.94594594594595,
+                        "y": 21.71171171171171,
+                        "value": 5,
+                        "isCompleted": false
+                    }
+                ],
+                "guideX": 39.07657657657658,
+                "guideY": 67.47747747747748,
+                "bonusDir": "E",
+                "bonusRules": "El robot inicia\nen A2, con el\nsensor de\nultrasonido\napuntando\nhacia el este, y\nno debe pasar\npor E4.",
+                "bonusStart": "A2"
+            },
+            "2": {
+                "sequence": [
+                    "A5",
+                    "C5",
+                    "C3",
+                    "F3",
+                    "F5"
+                ],
+                "obstacles": [
+                    "D3",
+                    "E3"
+                ],
+                "bonusRules": "El robot inicia\nen A1, con el\nsensor de\nultrasonido\napuntando\nhacia el norte ,\ny no debe pasar\npor D3 y E3.",
+                "bonusDir": "N",
+                "bonusStart": "A1"
+            },
+            "3": {
+                "sequence": [
+                    "J1",
+                    "B1",
+                    "B5"
+                ],
+                "obstacles": [
+                    "D5"
+                ]
+            },
+            "4": {
+                "sequence": [
+                    "A1",
+                    "G5",
+                    "B5",
+                    "F2",
+                    "J3",
+                    "E6"
+                ],
+                "obstacles": [
+                    "B1",
+                    "F3",
+                    "C5",
+                    "J4"
+                ]
+            },
+            "5": {
+                "sequence": [
+                    "A6",
+                    "B1",
+                    "G1",
+                    "G5",
+                    "A3",
+                    "I3"
+                ],
+                "obstacles": [
+                    "A5",
+                    "B2",
+                    "G4",
+                    "F1",
+                    "G3"
+                ]
+            }
+        },
+        "2": {
+            "1": {
+                "sequence": [],
+                "obstacles": []
+            },
+            "2": {
+                "sequence": [],
+                "obstacles": [],
+                "bgImage": "/maps/mapa_ronda2_pista2.png?t=1775879446",
+                "points": [
+                    {
+                        "id": 1775879463503,
+                        "x": 29.054054054054053,
+                        "y": 86.03603603603604,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879466216,
+                        "x": 72.2972972972973,
+                        "y": 88.91891891891892,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879471959,
+                        "x": 65.87837837837837,
+                        "y": 6.936936936936937,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879479471,
+                        "x": 51.46396396396396,
+                        "y": 6.216216216216217,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879498903,
+                        "x": 48.1981981981982,
+                        "y": 45.4954954954955,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879507535,
+                        "x": 49.0990990990991,
+                        "y": 95.04504504504504,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879511207,
+                        "x": 14.076576576576578,
+                        "y": 83.87387387387388,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879513687,
+                        "x": 7.094594594594595,
+                        "y": 13.783783783783784,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879514615,
+                        "x": 29.504504504504503,
+                        "y": 7.117117117117116,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879520967,
+                        "x": 12.725225225225225,
+                        "y": 37.207207207207205,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879522431,
+                        "x": 7.657657657657657,
+                        "y": 64.41441441441441,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879529831,
+                        "x": 29.27927927927928,
+                        "y": 51.80180180180181,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879534199,
+                        "x": 65.54054054054053,
+                        "y": 47.83783783783784,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879536991,
+                        "x": 88.40090090090091,
+                        "y": 53.6036036036036,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879540335,
+                        "x": 87.5,
+                        "y": 16.306306306306308,
+                        "value": 5,
+                        "isCompleted": false
+                    }
+                ],
+                "guideX": 40.31531531531532,
+                "guideY": 29.099099099099103
+            },
+            "3": {
+                "sequence": [],
+                "obstacles": []
+            },
+            "4": {
+                "sequence": [],
+                "obstacles": []
+            },
+            "5": {
+                "sequence": [],
+                "obstacles": []
+            }
+        },
+        "3": {
+            "1": {
+                "sequence": [],
+                "obstacles": []
+            },
+            "2": {
+                "sequence": [],
+                "obstacles": []
+            },
+            "3": {
+                "sequence": [],
+                "obstacles": [],
+                "bgImage": "/maps/mapa_ronda3_pista3.png?t=1775879577",
+                "points": [
+                    {
+                        "id": 1775879614383,
+                        "x": 25,
+                        "y": 86.57657657657658,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879615591,
+                        "x": 32.0945945945946,
+                        "y": 56.846846846846844,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879616823,
+                        "x": 8.220720720720722,
+                        "y": 60.450450450450454,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879619503,
+                        "x": 29.617117117117115,
+                        "y": 18.46846846846847,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879621575,
+                        "x": 51.91441441441441,
+                        "y": 55.945945945945944,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879623367,
+                        "x": 51.238738738738746,
+                        "y": 92.52252252252252,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879624879,
+                        "x": 73.08558558558559,
+                        "y": 93.78378378378378,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879626295,
+                        "x": 88.06306306306307,
+                        "y": 54.68468468468468,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879627895,
+                        "x": 87.95045045045045,
+                        "y": 84.41441441441442,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879635391,
+                        "x": 8.108108108108109,
+                        "y": 24.774774774774773,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879640847,
+                        "x": 52.92792792792793,
+                        "y": 8.198198198198197,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879644111,
+                        "x": 89.75225225225225,
+                        "y": 24.414414414414416,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879647759,
+                        "x": 67.45495495495496,
+                        "y": 20.63063063063063,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879653575,
+                        "x": 70.15765765765765,
+                        "y": 53.96396396396397,
+                        "value": 5,
+                        "isCompleted": false
+                    }
+                ],
+                "guideX": 59.909909909909906,
+                "guideY": 38.46846846846847
+            },
+            "4": {
+                "sequence": [],
+                "obstacles": []
+            },
+            "5": {
+                "sequence": [],
+                "obstacles": []
+            }
+        },
+        "4": {
+            "1": {
+                "sequence": [],
+                "obstacles": []
+            },
+            "2": {
+                "sequence": [],
+                "obstacles": []
+            },
+            "3": {
+                "sequence": [],
+                "obstacles": []
+            },
+            "4": {
+                "sequence": [],
+                "obstacles": [],
+                "bgImage": "/maps/mapa_ronda4_pista4.png?t=1775879675",
+                "points": [
+                    {
+                        "id": 1775879697151,
+                        "x": 34.346846846846844,
+                        "y": 5.8558558558558556,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879699519,
+                        "x": 73.08558558558559,
+                        "y": 5.315315315315315,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879701079,
+                        "x": 87.95045045045045,
+                        "y": 33.42342342342342,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879702767,
+                        "x": 93.69369369369369,
+                        "y": 60.630630630630634,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879704223,
+                        "x": 71.95945945945947,
+                        "y": 64.41441441441441,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879705639,
+                        "x": 71.84684684684684,
+                        "y": 31.44144144144144,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879710711,
+                        "x": 9.797297297297296,
+                        "y": 88.55855855855856,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879712239,
+                        "x": 13.513513513513514,
+                        "y": 59.909909909909906,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879714808,
+                        "x": 54.84234234234234,
+                        "y": 54.68468468468468,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879717887,
+                        "x": 14.527027027027026,
+                        "y": 36.126126126126124,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879720599,
+                        "x": 14.527027027027026,
+                        "y": 13.243243243243244,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879725807,
+                        "x": 52.47747747747747,
+                        "y": 5.8558558558558556,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879729550,
+                        "x": 55.29279279279279,
+                        "y": 32.88288288288289,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879732791,
+                        "x": 36.5990990990991,
+                        "y": 33.24324324324324,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879735767,
+                        "x": 71.84684684684684,
+                        "y": 85.4954954954955,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879738023,
+                        "x": 91.77927927927928,
+                        "y": 83.51351351351352,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879740894,
+                        "x": 51.01351351351351,
+                        "y": 85.13513513513513,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879743655,
+                        "x": 31.644144144144143,
+                        "y": 55.945945945945944,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879746607,
+                        "x": 31.869369369369373,
+                        "y": 81.89189189189189,
+                        "value": 5,
+                        "isCompleted": false
+                    }
+                ],
+                "guideX": 44.932432432432435,
+                "guideY": 45.31531531531531
+            },
+            "5": {
+                "sequence": [],
+                "obstacles": []
+            }
+        },
+        "5": {
+            "1": {
+                "sequence": [],
+                "obstacles": []
+            },
+            "2": {
+                "sequence": [],
+                "obstacles": []
+            },
+            "3": {
+                "sequence": [],
+                "obstacles": []
+            },
+            "4": {
+                "sequence": [],
+                "obstacles": []
+            },
+            "5": {
+                "sequence": [],
+                "obstacles": [],
+                "bgImage": "/maps/mapa_ronda5_pista5.png?t=1775879780",
+                "points": [
+                    {
+                        "id": 1775879785655,
+                        "x": 23.76126126126126,
+                        "y": 28.91891891891892,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879788646,
+                        "x": 23.76126126126126,
+                        "y": 51.98198198198198,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879791319,
+                        "x": 24.0990990990991,
+                        "y": 70,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879799206,
+                        "x": 40.090090090090094,
+                        "y": 93.42342342342343,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879801646,
+                        "x": 24.21171171171171,
+                        "y": 91.08108108108108,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879806063,
+                        "x": 65.42792792792793,
+                        "y": 95.76576576576576,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879807191,
+                        "x": 77.81531531531532,
+                        "y": 93.6036036036036,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879808447,
+                        "x": 80.74324324324324,
+                        "y": 71.26126126126127,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879812967,
+                        "x": 80.2927927927928,
+                        "y": 51.44144144144144,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879816982,
+                        "x": 78.490990990991,
+                        "y": 32.7027027027027,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879818751,
+                        "x": 62.95045045045045,
+                        "y": 30,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879821726,
+                        "x": 53.37837837837838,
+                        "y": 9.27927927927928,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879823103,
+                        "x": 64.75225225225225,
+                        "y": 9.27927927927928,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879834199,
+                        "x": 63.4009009009009,
+                        "y": 53.783783783783775,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879836919,
+                        "x": 67.22972972972973,
+                        "y": 79.72972972972973,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879844878,
+                        "x": 56.86936936936937,
+                        "y": 63.153153153153156,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879854638,
+                        "x": 43.91891891891892,
+                        "y": 56.486486486486484,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879859479,
+                        "x": 43.80630630630631,
+                        "y": 74.50450450450451,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879865182,
+                        "x": 25.788288288288285,
+                        "y": 3.153153153153153,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879871238,
+                        "x": 41.55405405405405,
+                        "y": 4.234234234234234,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879874087,
+                        "x": 43.13063063063063,
+                        "y": 29.099099099099103,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879879190,
+                        "x": 51.80180180180181,
+                        "y": 31.62162162162162,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775880006766,
+                        "x": 53.94144144144144,
+                        "y": 93.42342342342343,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775880023543,
+                        "x": 58.67117117117117,
+                        "y": 44.054054054054056,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775880062982,
+                        "x": 76.35135135135135,
+                        "y": 10.9009009009009,
+                        "value": 10,
+                        "isCompleted": false
+                    }
+                ],
+                "guideX": 46.95945945945946,
+                "guideY": 42.972972972972975
+            }
+        }
+    },
+    "timer": {
+        "timer": 1800,
+        "timerActive": false
+    }
+}

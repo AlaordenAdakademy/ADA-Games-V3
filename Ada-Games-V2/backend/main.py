@@ -6,7 +6,12 @@ from typing import List, Dict, Any, Optional
 import json
 import os
 import socket
+import tempfile
+import threading
 from datetime import datetime
+
+# Lock global para evitar escrituras concurrentes en data.json
+_data_lock = threading.Lock()
 
 def get_local_ip():
     try:
@@ -47,10 +52,11 @@ def generate_initial_timer():
     return {"timer": 1800, "timerActive": False}
 
 def load_data():
-    if not os.path.exists(DATA_FILE):
-        return {"teams": [], "tracks": generate_initial_tracks(), "timer": generate_initial_timer()}
-    with open(DATA_FILE, "r") as f:
-        data = json.load(f)
+    with _data_lock:
+        if not os.path.exists(DATA_FILE):
+            return {"teams": [], "tracks": generate_initial_tracks(), "timer": generate_initial_timer()}
+        with open(DATA_FILE, "r", encoding='utf-8') as f:
+            data = json.load(f)
     
     # Migración: Asegurar campos necesarios
     changed = False
@@ -59,7 +65,6 @@ def load_data():
         changed = True
     
     # Migración: Asegurar que todos los equipos tengan categoría
-    changed = False
     for team in data.get("teams", []):
         if "category" not in team:
             team["category"] = "quest"
@@ -81,8 +86,20 @@ def load_users():
         return json.load(f)
 
 def save_data(data):
-    with open(DATA_FILE, "w") as f:
-        json.dump(data, f, indent=4)
+    """Escritura atómica + lock: imposible de corromper por peticiones concurrentes."""
+    with _data_lock:
+        data_dir = os.path.dirname(os.path.abspath(DATA_FILE)) or '.'
+        tmp_fd, tmp_path = tempfile.mkstemp(dir=data_dir, suffix='.tmp')
+        try:
+            with os.fdopen(tmp_fd, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=4, ensure_ascii=False)
+            shutil.move(tmp_path, DATA_FILE)
+        except Exception:
+            try:
+                os.unlink(tmp_path)
+            except Exception:
+                pass
+            raise
 
 # API Routes
 @app.get("/api/data")
@@ -109,6 +126,23 @@ def update_teams(teams: List[Dict[str, Any]], category: Optional[str] = None):
         data["teams"] = teams
     save_data(data)
     return {"status": "ok"}
+
+@app.post("/api/teams/bulk")
+def bulk_add_teams(new_teams: List[Dict[str, Any]], category: Optional[str] = None):
+    """Agrega múltiples equipos nuevos en una sola operación atómica.
+    Mucho más seguro que llamar /api/teams múltiples veces seguidas."""
+    data = load_data()
+    import time
+    for team in new_teams:
+        team['id'] = str(int(time.time() * 1000)) + str(hash(team.get('school','')) % 10000)
+        team['status'] = 'pending'
+        team['score'] = 0
+        team['history'] = []
+        if category and 'category' not in team:
+            team['category'] = category
+    data['teams'].extend(new_teams)
+    save_data(data)
+    return {"status": "ok", "imported": len(new_teams)}
 
 @app.post("/api/tracks")
 def update_tracks(tracks: Dict[str, Any]):

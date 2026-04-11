@@ -228,6 +228,31 @@ function App() {
     showToast('Equipo registrado con éxito');
   };
 
+  const bulkAddTeams = async (newTeams) => {
+    try {
+      const category = currentUser.category;
+      const res = await fetch(`${API_BASE}/teams/bulk?category=${category}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newTeams)
+      });
+      const result = await res.json();
+      if (result.status === 'ok') {
+        // Refrescar equipos desde el servidor para obtener el estado real
+        const dataRes = await fetch(`${API_BASE}/data?category=${category}`);
+        const data = await dataRes.json();
+        setTeams(data.teams || []);
+        localStorage.setItem('ada_teams', JSON.stringify(data.teams || []));
+        showToast(`✅ ${result.imported} equipos importados correctamente`);
+      } else {
+        showToast('Error al importar equipos');
+      }
+    } catch (err) {
+      console.error('Error en importación masiva:', err);
+      showToast('Error de conexión al importar');
+    }
+  };
+
   const handleResetCompetition = async (password) => {
       try {
           const res = await fetch(`${API_BASE}/reset`, {
@@ -451,7 +476,7 @@ function App() {
       </nav>
 
       <main className="flex-1 p-4 md:p-8 w-full max-w-7xl mx-auto overflow-x-hidden">
-        {activeTab === 'registro' && currentUser.role === 'admin' && <RegistroTab addTeam={addTeam} />}
+        {activeTab === 'registro' && currentUser.role === 'admin' && <RegistroTab addTeam={addTeam} bulkAddTeams={bulkAddTeams} />}
         {activeTab === 'inspeccion' && currentUser.role === 'admin' && <InspeccionTab teams={teams} updateTeamStatus={updateTeamStatus} disqualifyTeam={disqualifyTeam} />}
         {activeTab === 'config' && currentUser.role === 'admin' && (
             currentUser.category === 'quest' ? 
@@ -1052,44 +1077,286 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
   );
 }
 
-function RegistroTab({ addTeam }) {
+function RegistroTab({ addTeam, bulkAddTeams }) {
   const [name, setName] = useState('');
   const [cap, setCap] = useState('');
-  const [count, setCount] = useState(3);
-  
+  const [coach, setCoach] = useState('');
+  const [member1, setMember1] = useState('');
+  const [member2, setMember2] = useState('');
+  const [member3, setMember3] = useState('');
+  const [importPreview, setImportPreview] = useState(null); // null | array de equipos
+  const [importError, setImportError] = useState('');
+  const fileInputRef = React.useRef(null);
+
+  const getMembers = () => [member1, member2, member3].filter(m => m.trim() !== '');
+
   const handleAdd = () => {
-    if(!name || !cap) return;
-    addTeam({ school: name, captainName: cap, studentsCount: count });
-    setName(''); setCap(''); setCount(3);
+    if (!name || !cap) return;
+    const members = getMembers();
+    addTeam({
+      school: name,
+      captainName: cap,
+      coachName: coach,
+      members,
+      studentsCount: members.length || 1,
+    });
+    setName(''); setCap(''); setCoach('');
+    setMember1(''); setMember2(''); setMember3('');
+  };
+
+  // ---------- DESCARGA DE PLANTILLA ----------
+  const downloadTemplate = () => {
+    const csvContent = [
+      ['Nombre Equipo', 'Colegio', 'Capitan', 'Coach', 'Integrante 1', 'Integrante 2', 'Integrante 3'],
+      ['Team Alpha', 'U.E. Simón Bolívar', 'María López', 'Prof. Pérez', 'Juan García', 'Pedro Mora', 'Luis Rivas'],
+      ['Team Beta', 'U.E. Andrés Bello', 'Carlos Ruiz', 'Prof. Gómez', 'Ana Torres', 'Diego Silva', ''],
+    ].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+
+    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'plantilla_equipos_adagames.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // ---------- PARSEO DE EXCEL / CSV ----------
+  const handleFileChange = (e) => {
+    setImportError('');
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        if (!window.XLSX) {
+          setImportError('La librería de Excel no está disponible. Revisa tu conexión a internet.');
+          return;
+        }
+        const data = new Uint8Array(evt.target.result);
+        const workbook = window.XLSX.read(data, { type: 'array' });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = window.XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+
+        if (rows.length < 2) {
+          setImportError('El archivo no tiene datos. Usa la plantilla descargable.');
+          return;
+        }
+
+        // Buscar encabezados (fila 0)
+        const headers = rows[0].map(h => String(h).toLowerCase().trim());
+        const COL = {
+          school: headers.findIndex(h => h.includes('colegio') || h.includes('nombre equipo') || h.includes('equipo')),
+          captain: headers.findIndex(h => h.includes('capit')),
+          coach: headers.findIndex(h => h.includes('coach') || h.includes('entrenad')),
+          m1: headers.findIndex(h => h.includes('integrante 1') || h === 'integrante1'),
+          m2: headers.findIndex(h => h.includes('integrante 2') || h === 'integrante2'),
+          m3: headers.findIndex(h => h.includes('integrante 3') || h === 'integrante3'),
+        };
+
+        const parsed = rows.slice(1).filter(row => row.some(cell => String(cell).trim() !== '')).map(row => {
+          const school = COL.school >= 0 ? String(row[COL.school] || '').trim() : '';
+          const captain = COL.captain >= 0 ? String(row[COL.captain] || '').trim() : '';
+          const coach = COL.coach >= 0 ? String(row[COL.coach] || '').trim() : '';
+          const members = [
+            COL.m1 >= 0 ? String(row[COL.m1] || '').trim() : '',
+            COL.m2 >= 0 ? String(row[COL.m2] || '').trim() : '',
+            COL.m3 >= 0 ? String(row[COL.m3] || '').trim() : '',
+          ].filter(m => m !== '');
+          return { school, captainName: captain, coachName: coach, members, studentsCount: members.length || 1, _valid: !!school && !!captain };
+        });
+
+        if (parsed.length === 0) {
+          setImportError('No se encontraron filas válidas. Verifica el formato del archivo.');
+          return;
+        }
+        setImportPreview(parsed);
+      } catch (err) {
+        setImportError('Error al leer el archivo: ' + err.message);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+    // Reset input so same file can be re-imported if needed
+    e.target.value = '';
+  };
+
+  const confirmImport = () => {
+    if (!importPreview) return;
+    const valid = importPreview.filter(t => t._valid).map(({ _valid, ...team }) => team);
+    if (valid.length === 0) return;
+    // Una sola llamada de API para todos los equipos — evita la condición de carrera
+    bulkAddTeams(valid);
+    setImportPreview(null);
   };
 
   return (
     <div className="max-w-2xl mx-auto space-y-8 animate-fadeIn">
-      <div className="bg-white p-6 md:p-10 rounded-[3rem] shadow-2xl border border-slate-200">
-        <h2 className="text-3xl md:text-4xl font-black text-blue-900 mb-8 tracking-tighter uppercase italic text-center">Registro de Equipos</h2>
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="md:col-span-2">
-              <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2 block">Institución Educativa</label>
-              <input value={name} onChange={e=>setName(e.target.value)} className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 text-lg" placeholder="Nombre del Colegio o Equipo" />
+
+      {/* MODAL DE VISTA PREVIA DE IMPORTACIÓN */}
+      {importPreview && (
+        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <div>
+                <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest">Vista Previa de Importación</p>
+                <h3 className="text-2xl font-black text-slate-900 tracking-tight">
+                  {importPreview.filter(t => t._valid).length} equipos válidos
+                  {importPreview.filter(t => !t._valid).length > 0 && (
+                    <span className="text-sm font-bold text-red-400 ml-2">
+                      ({importPreview.filter(t => !t._valid).length} con errores serán omitidos)
+                    </span>
+                  )}
+                </h3>
+              </div>
+              <button onClick={() => setImportPreview(null)} className="bg-slate-100 hover:bg-slate-200 p-3 rounded-xl transition-all">
+                <Icon name="x" className="w-5 h-5 text-slate-600" />
+              </button>
             </div>
-            <div>
-              <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2 block">Capitán / Líder</label>
-              <input value={cap} onChange={e=>setCap(e.target.value)} className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500" placeholder="Nombre completo" />
+            <div className="overflow-y-auto flex-1 p-6 space-y-3 custom-scrollbar">
+              {importPreview.map((team, i) => (
+                <div key={i} className={`p-4 rounded-2xl border-2 ${team._valid ? 'border-blue-100 bg-blue-50/50' : 'border-red-100 bg-red-50/50'}`}>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <p className={`font-black text-sm uppercase tracking-tight ${team._valid ? 'text-blue-900' : 'text-red-400'}`}>
+                        {team.school || <span className="italic">Sin nombre</span>}
+                        {!team._valid && <span className="ml-2 text-[10px] bg-red-100 text-red-500 px-2 py-0.5 rounded-full font-black uppercase">INCOMPLETO</span>}
+                      </p>
+                      <p className="text-xs text-slate-500 font-bold mt-1">
+                        👤 Capitán: <span className="text-slate-700">{team.captainName || '—'}</span>
+                        {team.coachName && <> · 🏅 Coach: <span className="text-slate-700">{team.coachName}</span></>}
+                      </p>
+                      {team.members.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {team.members.map((m, mi) => (
+                            <span key={mi} className="bg-white border border-blue-200 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-lg">
+                              {m}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${team._valid ? 'bg-green-100' : 'bg-red-100'}`}>
+                      <Icon name={team._valid ? 'check' : 'x'} className={`w-4 h-4 ${team._valid ? 'text-green-600' : 'text-red-500'}`} />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div>
-              <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2 block">Nº Integrantes</label>
-              <input type="number" min="1" max="10" value={count} onChange={e=>setCount(e.target.value)} className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500" />
+            <div className="p-6 border-t border-slate-100 flex gap-3 bg-slate-50">
+              <button onClick={() => setImportPreview(null)} className="flex-1 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-black rounded-xl text-sm uppercase tracking-widest transition-all">
+                Cancelar
+              </button>
+              <button
+                onClick={confirmImport}
+                disabled={!importPreview.some(t => t._valid)}
+                className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 disabled:text-slate-400 text-white font-black rounded-xl text-sm uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30"
+              >
+                <Icon name="upload" className="w-4 h-4" />
+                Confirmar Importación ({importPreview.filter(t => t._valid).length})
+              </button>
             </div>
           </div>
-          <button onClick={handleAdd} disabled={!name || !cap} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl shadow-2xl shadow-blue-600/30 transition-all flex items-center justify-center gap-3 text-lg uppercase tracking-widest mt-4">
-            <Icon name="plus" className="w-6 h-6" /> Unirse a la Competencia
+        </div>
+      )}
+
+      {/* SECCIÓN DE IMPORTACIÓN */}
+      <div className="bg-white p-6 rounded-[2.5rem] shadow-xl border border-slate-200">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="bg-green-100 p-2 rounded-xl">
+            <Icon name="file-spreadsheet" className="w-5 h-5 text-green-600" />
+          </div>
+          <div>
+            <h3 className="font-black text-slate-800 uppercase text-sm tracking-tight">Registro Masivo por Excel</h3>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Importa múltiples equipos de una sola vez</p>
+          </div>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <button
+            onClick={downloadTemplate}
+            className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-slate-50 hover:bg-slate-100 border-2 border-slate-200 text-slate-600 font-black text-xs rounded-xl transition-all uppercase tracking-widest"
+          >
+            <Icon name="download" className="w-4 h-4 text-slate-500" />
+            Descargar Plantilla (.csv)
+          </button>
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="flex-1 flex items-center justify-center gap-2 py-3 px-4 bg-green-600 hover:bg-green-700 text-white font-black text-xs rounded-xl transition-all uppercase tracking-widest shadow-lg shadow-green-600/20"
+          >
+            <Icon name="upload" className="w-4 h-4" />
+            Importar Archivo (.xlsx / .csv)
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".xlsx,.xls,.csv"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+        </div>
+        {importError && (
+          <div className="mt-3 flex items-center gap-2 bg-red-50 border border-red-100 text-red-600 text-xs font-bold p-3 rounded-xl">
+            <Icon name="alert-triangle" className="w-4 h-4 flex-shrink-0" />
+            {importError}
+          </div>
+        )}
+      </div>
+
+      {/* FORMULARIO MANUAL */}
+      <div className="bg-white p-6 md:p-10 rounded-[3rem] shadow-2xl border border-slate-200">
+        <h2 className="text-3xl md:text-4xl font-black text-blue-900 mb-8 tracking-tighter uppercase italic text-center">Registro Manual</h2>
+        <div className="space-y-5">
+          {/* Nombre del equipo / colegio */}
+          <div>
+            <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2 block">Nombre del Equipo / Institución</label>
+            <input value={name} onChange={e => setName(e.target.value)} className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 text-lg transition-all" placeholder="Ej: Team Alpha — U.E. Simón Bolívar" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* Capitán */}
+            <div>
+              <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2 block">Capitán / Líder</label>
+              <input value={cap} onChange={e => setCap(e.target.value)} className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 transition-all" placeholder="Nombre completo" />
+            </div>
+            {/* Coach */}
+            <div>
+              <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2 block">Coach / Entrenador</label>
+              <input value={coach} onChange={e => setCoach(e.target.value)} className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 transition-all" placeholder="Nombre completo" />
+            </div>
+          </div>
+
+          {/* Integrantes */}
+          <div>
+            <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2 block flex items-center gap-2">
+              Integrantes del Equipo <span className="bg-blue-100 text-blue-500 px-2 py-0.5 rounded-lg text-[9px] font-black">MÁX. 3</span>
+            </label>
+            <div className="space-y-3">
+              {[
+                { val: member1, set: setMember1, label: 'Integrante 1' },
+                { val: member2, set: setMember2, label: 'Integrante 2' },
+                { val: member3, set: setMember3, label: 'Integrante 3' },
+              ].map((m, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-7 h-7 flex-shrink-0 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-xs">{i + 1}</div>
+                  <input value={m.val} onChange={e => m.set(e.target.value)} className="flex-1 p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 transition-all" placeholder={`${m.label} (opcional)`} />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button
+            onClick={handleAdd}
+            disabled={!name || !cap}
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-slate-300 text-white font-black py-5 rounded-2xl shadow-2xl shadow-blue-600/30 transition-all flex items-center justify-center gap-3 text-lg uppercase tracking-widest mt-2"
+          >
+            <Icon name="plus" className="w-6 h-6" /> Registrar Equipo
           </button>
         </div>
       </div>
     </div>
   );
 }
+
 
 function InspeccionTab({ teams, updateTeamStatus, disqualifyTeam }) {
   const pending = teams.filter(t => t.status === 'pending');
