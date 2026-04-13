@@ -45,9 +45,13 @@ function App() {
   
   // Estados para Competencia (v3.2)
   const [competitionMode, setCompetitionMode] = useState(false);
+  const [competitionDuration, setCompetitionDuration] = useState(() => {
+    const saved = localStorage.getItem('ada_competition_duration');
+    return saved ? parseInt(saved) : 30; // 30 min por defecto
+  });
   const [timer, setTimer] = useState(() => {
     const saved = localStorage.getItem('ada_timer');
-    return saved ? parseInt(saved) : 1800; // 30 min por defecto
+    return saved ? parseInt(saved) : 1800;
   });
   const [timerActive, setTimerActive] = useState(() => {
     const saved = localStorage.getItem('ada_timer_active');
@@ -187,9 +191,10 @@ function App() {
   };
 
   const resetTimer = async () => {
-    setTimer(1800);
+    const durationSeconds = competitionDuration * 60;
+    setTimer(durationSeconds);
     setTimerActive(false);
-    localStorage.setItem('ada_timer', '1800');
+    localStorage.setItem('ada_timer', durationSeconds.toString());
     localStorage.setItem('ada_timer_active', 'false');
     
     // Sincronizar con el servidor
@@ -197,7 +202,7 @@ function App() {
         await fetch(`${API_BASE}/timer`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ timer: 1800, timerActive: false })
+            body: JSON.stringify({ timer: durationSeconds, timerActive: false })
         });
     } catch(e) {}
   };
@@ -241,6 +246,25 @@ function App() {
     const updated = [...teams, { id: newId, ...teamData, status: 'pending', score: 0, history: [], category: currentUser.category }];
     postTeams(updated);
     showToast('Equipo registrado con éxito');
+  };
+
+  const updateEvaluation = (teamId, historyIndex, newData) => {
+    const updatedTeams = teams.map(t => {
+      if (t.id === teamId) {
+        const newHistory = [...t.history];
+        newHistory[historyIndex] = { ...newHistory[historyIndex], ...newData };
+        
+        // Recalcular puntaje global y último tiempo para este equipo si es necesario
+        // En este sistema, el score global suele ser el acumulado de puntos.
+        let totalScore = newHistory.reduce((sum, h) => sum + (h.points || h.percentage || 0), 0);
+        let lastTime = newHistory.length > 0 ? newHistory[newHistory.length - 1].finalTimeMs || newHistory[newHistory.length - 1].finalTime || 0 : 0;
+
+        return { ...t, history: newHistory, score: totalScore, lastTime };
+      }
+      return t;
+    });
+    postTeams(updatedTeams);
+    showToast('Evaluación actualizada');
   };
 
   const bulkAddTeams = async (newTeams) => {
@@ -376,7 +400,14 @@ function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row font-sans text-slate-800 relative">
-      <HistorialModal teams={teams} selectedId={selectedTeamHistory} onClose={() => setSelectedTeamHistory(null)} onDeleteEvaluation={(idx) => deleteEvaluation(selectedTeamHistory, idx)} currentUser={currentUser} />
+      <HistorialModal 
+        teams={teams} 
+        selectedId={selectedTeamHistory} 
+        onClose={() => setSelectedTeamHistory(null)} 
+        onDeleteEvaluation={(idx) => deleteEvaluation(selectedTeamHistory, idx)} 
+        onUpdateEvaluation={(idx, newData) => updateEvaluation(selectedTeamHistory, idx, newData)}
+        currentUser={currentUser} 
+      />
       {competitionMode && <CompetitionOverlay teams={teams} timer={timer} timerActive={timerActive} toggleTimer={toggleTimer} resetTimer={resetTimer} formatTime={formatTime} onExit={() => setCompetitionMode(false)} category={currentUser.category} />}
       {/* Toast Notification */}
       {toastMessage && (
@@ -449,6 +480,28 @@ function App() {
               <NavButton active={activeTab === 'registro'} onClick={() => setActiveTab('registro')} icon={<Icon name="users" />} label="Registro" />
               <NavButton active={activeTab === 'inspeccion'} onClick={() => setActiveTab('inspeccion')} icon={<Icon name="clipboard-check" />} label="Inspección" />
               <NavButton active={activeTab === 'usuarios'} onClick={() => setActiveTab('usuarios')} icon={<Icon name="user-cog" />} label="Jueces" />
+              <div className="flex flex-col px-4 py-2 bg-blue-900/30 border-y border-blue-800/50">
+                <label className="text-[8px] font-black text-blue-400 uppercase tracking-widest mb-1 flex items-center gap-1">
+                  <Icon name="timer" className="w-2 h-2" /> Tiempo (min)
+                </label>
+                <input 
+                  type="number" 
+                  value={competitionDuration} 
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value) || 1;
+                    setCompetitionDuration(val);
+                    localStorage.setItem('ada_competition_duration', val);
+                    // Si el cronómetro no está corriendo, actualizamos el tiempo restante al cambiar la duración total
+                    if (!timerActive) {
+                       setTimer(val * 60);
+                       localStorage.setItem('ada_timer', val * 60);
+                    }
+                  }} 
+                  className="bg-blue-950/50 border border-blue-800 text-white font-black text-xs px-2 py-1 rounded outline-none focus:border-blue-500 transition-all"
+                  min="1"
+                  max="120"
+                />
+              </div>
               <NavButton active={activeTab === 'config'} onClick={() => setActiveTab('config')} icon={<Icon name="map" />} label="Configurar Pista" />
             </>
           )}
@@ -667,10 +720,30 @@ function Login({ onLogin, users }) {
   );
 }
 
-function HistorialModal({ teams, selectedId, onClose, onDeleteEvaluation, currentUser }) {
+function HistorialModal({ teams, selectedId, onClose, onDeleteEvaluation, onUpdateEvaluation, currentUser }) {
+    const [editingIndex, setEditingIndex] = useState(null);
+    const [editPoints, setEditPoints] = useState(0);
+    const [editTime, setEditTime] = useState(0);
+
     if (!selectedId) return null;
     const team = teams.find(t => t.id === selectedId);
     if (!team) return null;
+
+    const handleStartEdit = (index, currentPoints, currentTime) => {
+        setEditingIndex(index);
+        setEditPoints(currentPoints);
+        setEditTime(currentTime / 1000); // Convertir ms a s para el input
+    };
+
+    const handleSaveEdit = (index) => {
+        onUpdateEvaluation(index, { 
+            points: Number(editPoints), 
+            percentage: Number(editPoints), // Sincronizar ambos campos por si acaso
+            finalTimeMs: Number(editTime) * 1000,
+            finalTime: Number(editTime) * 1000
+        });
+        setEditingIndex(null);
+    };
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 animate-fadeIn">
@@ -694,32 +767,83 @@ function HistorialModal({ teams, selectedId, onClose, onDeleteEvaluation, curren
                              <p className="text-slate-400 font-bold uppercase tracking-widest text-sm">Sin evaluaciones registradas</p>
                         </div>
                     ) : (
-                        team.history.map((h, i) => (
-                            <div key={i} className="flex items-center gap-4 bg-white border border-slate-100 p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-                                <div className="bg-blue-600 text-white w-12 h-12 rounded-xl flex items-center justify-center font-black text-xl flex-shrink-0">
-                                    {h.points}
-                                </div>
-                                <div className="flex-1">
-                                    <p className="font-black text-slate-800 uppercase tracking-tighter">Pista {h.pista} - {h.ronda === 5 ? 'Gran Final' : `Ronda ${h.ronda}`}</p>
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mt-1">
-                                        <Icon name="users" className="w-3 h-3" /> {h.judgeName || 'Juez Desconocido'}
-                                    </p>
-                                </div>
-                                <div className="text-right flex items-center gap-4">
-                                    <div>
-                                        <p className="text-xs font-black text-blue-600 uppercase tracking-widest">{h.date}</p>
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase mt-1">{`${Math.floor((h.finalTimeMs || h.finalTime || 0) / 60000)}:${Math.floor(((h.finalTimeMs || h.finalTime || 0) % 60000) / 1000).toString().padStart(2, '0')}`}</p>
+                        team.history.map((h, i) => {
+                            const isEditing = editingIndex === i;
+                            const timeMs = h.finalTimeMs || h.finalTime || 0;
+                            
+                            return (
+                                <div key={i} className="flex items-center gap-4 bg-white border border-slate-100 p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                                    <div className="flex-shrink-0">
+                                        {isEditing ? (
+                                            <input 
+                                                type="number" 
+                                                value={editPoints} 
+                                                onChange={e => setEditPoints(e.target.value)}
+                                                className="w-16 h-12 border-2 border-blue-500 rounded-xl text-center font-black text-xl text-blue-600 outline-none"
+                                            />
+                                        ) : (
+                                            <div className="bg-blue-600 text-white w-12 h-12 rounded-xl flex items-center justify-center font-black text-xl">
+                                                {h.points || h.percentage || 0}
+                                            </div>
+                                        )}
                                     </div>
-                                    {currentUser?.role === 'admin' && (
-                                        <button onClick={() => {
-                                            if(window.confirm("¿Estás seguro de eliminar este registro del equipo en tiempo real? Esta acción re-calculará todo el puntaje global.")) onDeleteEvaluation(i);
-                                        }} className="w-10 h-10 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white rounded-xl flex items-center justify-center transition-all border border-red-200">
-                                            <Icon name="trash-2" className="w-4 h-4" />
-                                        </button>
-                                    )}
+                                    <div className="flex-1">
+                                        <p className="font-black text-slate-800 uppercase tracking-tighter">Pista {h.pista} - {h.ronda === 5 ? 'Gran Final' : `Ronda ${h.ronda}`}</p>
+                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mt-1">
+                                            <Icon name="users" className="w-3 h-3" /> {h.judgeName || 'Juez Desconocido'}
+                                        </p>
+                                    </div>
+                                    <div className="text-right flex items-center gap-4">
+                                        <div>
+                                            {isEditing ? (
+                                                <div className="flex flex-col items-end">
+                                                    <p className="text-[10px] font-black text-blue-600 uppercase mb-1">Tiempo (s)</p>
+                                                    <input 
+                                                        type="number" 
+                                                        step="0.1"
+                                                        value={editTime} 
+                                                        onChange={e => setEditTime(e.target.value)}
+                                                        className="w-20 p-1 border-2 border-blue-500 rounded text-right font-bold text-xs outline-none"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <p className="text-xs font-black text-blue-600 uppercase tracking-widest">{h.date}</p>
+                                                    <p className="text-[10px] font-bold text-slate-400 uppercase mt-1">
+                                                        {`${Math.floor(timeMs / 60000)}:${Math.floor((timeMs % 60000) / 1000).toString().padStart(2, '0')}.${Math.floor((timeMs % 1000) / 10).toString().padStart(2, '0')}`}
+                                                    </p>
+                                                </>
+                                            )}
+                                        </div>
+                                        {currentUser?.role === 'admin' && (
+                                            <div className="flex gap-2">
+                                                {isEditing ? (
+                                                    <>
+                                                        <button onClick={() => handleSaveEdit(i)} className="w-10 h-10 bg-green-500 text-white rounded-xl flex items-center justify-center transition-all shadow-lg shadow-green-500/30">
+                                                            <Icon name="check" className="w-4 h-4" />
+                                                        </button>
+                                                        <button onClick={() => setEditingIndex(null)} className="w-10 h-10 bg-slate-200 text-slate-600 rounded-xl flex items-center justify-center transition-all">
+                                                            <Icon name="x" className="w-4 h-4" />
+                                                        </button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <button onClick={() => handleStartEdit(i, h.points || h.percentage || 0, timeMs)} className="w-10 h-10 bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white rounded-xl flex items-center justify-center transition-all border border-blue-200">
+                                                            <Icon name="edit-3" className="w-4 h-4" />
+                                                        </button>
+                                                        <button onClick={() => {
+                                                            if(window.confirm("¿Estás seguro de eliminar este registro?")) onDeleteEvaluation(i);
+                                                        }} className="w-10 h-10 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white rounded-xl flex items-center justify-center transition-all border border-red-200">
+                                                            <Icon name="trash-2" className="w-4 h-4" />
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        ))
+                            );
+                        })
                     )}
                 </div>
             </div>
@@ -2270,6 +2394,25 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
                   </div>
                   <button onClick={saveCurrentTrack} className="ml-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all shadow-lg hover:scale-105 active:scale-95">
                       <Icon name="save" className="w-4 h-4"/> Guardar Pista
+                  </button>
+                  <button 
+                    onClick={async () => {
+                      if (!canvasRef.current) return;
+                      showToast("Generando imagen...");
+                      const canvas = await html2canvas(canvasRef.current, {
+                        useCORS: true,
+                        scale: 2,
+                        backgroundColor: '#ffffff'
+                      });
+                      const link = document.createElement('a');
+                      link.download = `pista_${selRonda}_${selPista}.png`;
+                      link.href = canvas.toDataURL('image/png');
+                      link.click();
+                      showToast("Imagen descargada");
+                    }} 
+                    className="bg-green-600 hover:bg-green-500 text-white px-4 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all shadow-lg hover:scale-105 active:scale-95"
+                  >
+                      <Icon name="image" className="w-4 h-4"/> Exportar PNG
                   </button>
                   <button onClick={clearCurrentTrack} title="Limpiar Pista" className="bg-red-500/20 hover:bg-red-500 hover:text-white text-red-400 border border-red-500/30 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all">
                       <Icon name="trash-2" className="w-4 h-4"/>
