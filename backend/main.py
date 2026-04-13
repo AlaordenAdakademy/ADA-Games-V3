@@ -85,6 +85,10 @@ def load_users():
     with open(USERS_FILE, "r") as f:
         return json.load(f)
 
+def save_users(users):
+    with open(USERS_FILE, "w", encoding='utf-8') as f:
+        json.dump(users, f, indent=4, ensure_ascii=False)
+
 def save_data(data):
     """Escritura atómica + lock: imposible de corromper por peticiones concurrentes."""
     with _data_lock:
@@ -113,6 +117,31 @@ def get_all_data(category: Optional[str] = None):
 @app.get("/api/users")
 def get_users():
     return load_users()
+
+@app.post("/api/users")
+def save_user(user: Dict[str, Any]):
+    users = load_users()
+    # Check if user exists (by ID)
+    for i, u in enumerate(users):
+        if u["id"] == user["id"]:
+            users[i] = user
+            save_users(users)
+            return {"status": "ok"}
+    
+    # New user
+    users.append(user)
+    save_users(users)
+    return {"status": "ok"}
+
+@app.delete("/api/users/{user_id}")
+def delete_user(user_id: str):
+    if user_id == "admin":
+        raise HTTPException(status_code=400, detail="Cannot delete admin user")
+    
+    users = load_users()
+    users = [u for u in users if u["id"] != user_id]
+    save_users(users)
+    return {"status": "ok"}
 
 @app.post("/api/teams")
 def update_teams(teams: List[Dict[str, Any]], category: Optional[str] = None):

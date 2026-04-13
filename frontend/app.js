@@ -92,17 +92,18 @@ function App() {
     return () => clearInterval(interval);
   }, [currentUser]);
 
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/users`);
+      const data = await res.json();
+      setUsers(data || []);
+    } catch (err) {
+      console.error("Error cargando usuarios:", err);
+    }
+  };
+
   // Cargar usuarios
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await fetch(`${API_BASE}/users`);
-        const data = await res.json();
-        setUsers(data || []);
-      } catch (err) {
-        console.error("Error cargando usuarios:", err);
-      }
-    };
     fetchUsers();
   }, []);
 
@@ -447,6 +448,7 @@ function App() {
             <>
               <NavButton active={activeTab === 'registro'} onClick={() => setActiveTab('registro')} icon={<Icon name="users" />} label="Registro" />
               <NavButton active={activeTab === 'inspeccion'} onClick={() => setActiveTab('inspeccion')} icon={<Icon name="clipboard-check" />} label="Inspección" />
+              <NavButton active={activeTab === 'usuarios'} onClick={() => setActiveTab('usuarios')} icon={<Icon name="user-cog" />} label="Jueces" />
               <NavButton active={activeTab === 'config'} onClick={() => setActiveTab('config')} icon={<Icon name="map" />} label="Configurar Pista" />
             </>
           )}
@@ -507,6 +509,14 @@ function App() {
               postTeams={postTeams} 
               showToast={showToast} 
               isRunningInMainApp={true}
+            />
+        )}
+        {activeTab === 'usuarios' && currentUser.role === 'admin' && (
+            <UsuariosTab 
+                users={users} 
+                fetchUsers={fetchUsers} 
+                showToast={showToast} 
+                setConfirmDialog={setConfirmDialog} 
             />
         )}
         {activeTab === 'evaluacion' && (
@@ -2337,6 +2347,102 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
             </div>
           )}
         </div>
+      </div>
+    </div>
+  );
+}
+
+
+function UsuariosTab({ users, fetchUsers, showToast, setConfirmDialog }) {
+  const [newUserId, setNewUserId] = useState('');
+  const [newName, setNewName] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+
+  const handleAddUser = async () => {
+    if (!newUserId || !newName || !newPassword) return;
+    try {
+      const res = await fetch(`${API_BASE}/users`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: newUserId, name: newName, password: newPassword, role: 'judge' })
+      });
+      if (res.ok) {
+        showToast('Usuario guardado');
+        setNewUserId(''); setNewName(''); setNewPassword('');
+        fetchUsers();
+      }
+    } catch (err) {
+      showToast('Error al guardar usuario');
+    }
+  };
+
+  const handleDeleteUser = (userId) => {
+    if (userId === 'admin') return;
+    setConfirmDialog({
+      message: `¿Estás seguro de eliminar al usuario ${userId}?`,
+      onConfirm: async () => {
+        try {
+          const res = await fetch(`${API_BASE}/users/${userId}`, { method: 'DELETE' });
+          if (res.ok) {
+            showToast('Usuario eliminado');
+            fetchUsers();
+          }
+        } catch (err) {
+          showToast('Error al eliminar usuario');
+        }
+        setConfirmDialog(null);
+      },
+      onCancel: () => setConfirmDialog(null)
+    });
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto animate-fadeIn space-y-8">
+      <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-200">
+        <h2 className="text-2xl font-black text-blue-900 mb-6 uppercase italic flex items-center gap-3">
+          <Icon name="user-plus" className="text-blue-600" /> Añadir Nuevo Juez
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <input value={newUserId} onChange={e => setNewUserId(e.target.value)} placeholder="ID de Usuario (ej: juez2)" className="p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500" />
+          <input value={newName} onChange={e => setNewName(e.target.value)} placeholder="Nombre Completo" className="p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500" />
+          <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Contraseña" className="p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500" />
+        </div>
+        <button onClick={handleAddUser} className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl shadow-lg transition-all uppercase tracking-widest">
+          Registrar Juez
+        </button>
+      </div>
+
+      <div className="bg-white rounded-[2.5rem] shadow-xl border border-slate-200 overflow-hidden">
+        <table className="w-full text-left">
+          <thead className="bg-slate-100 text-slate-500">
+            <tr>
+              <th className="p-6 text-[10px] uppercase font-black">Usuario</th>
+              <th className="p-6 text-[10px] uppercase font-black">Nombre</th>
+              <th className="p-6 text-[10px] uppercase font-black">Rol</th>
+              <th className="p-6 text-[10px] uppercase font-black text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-50">
+            {users.map(u => (
+              <tr key={u.id} className="hover:bg-slate-50 transition-colors">
+                <td className="p-6 font-bold text-blue-900">{u.id}</td>
+                <td className="p-6 font-medium text-slate-600">{u.name}</td>
+                <td className="p-6">
+                  <span className={`text-[10px] font-black px-3 py-1 rounded-full ${u.role === 'admin' ? 'bg-purple-100 text-purple-600' : 'bg-blue-100 text-blue-600'}`}>
+                    {u.role.toUpperCase()}
+                  </span>
+                </td>
+                <td className="p-6 text-right">
+                  {u.id !== 'admin' && (
+                    <button onClick={() => handleDeleteUser(u.id)} className="p-2 text-red-400 hover:text-red-600 transition-colors">
+                      <Icon name="trash-2" className="w-5 h-5" />
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
