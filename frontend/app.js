@@ -480,29 +480,8 @@ function App() {
               <NavButton active={activeTab === 'registro'} onClick={() => setActiveTab('registro')} icon={<Icon name="users" />} label="Registro" />
               <NavButton active={activeTab === 'inspeccion'} onClick={() => setActiveTab('inspeccion')} icon={<Icon name="clipboard-check" />} label="Inspección" />
               <NavButton active={activeTab === 'usuarios'} onClick={() => setActiveTab('usuarios')} icon={<Icon name="user-cog" />} label="Jueces" />
-              <div className="flex flex-col px-4 py-2 bg-blue-900/30 border-y border-blue-800/50">
-                <label className="text-[8px] font-black text-blue-400 uppercase tracking-widest mb-1 flex items-center gap-1">
-                  <Icon name="timer" className="w-2 h-2" /> Tiempo (min)
-                </label>
-                <input 
-                  type="number" 
-                  value={competitionDuration} 
-                  onChange={(e) => {
-                    const val = parseInt(e.target.value) || 1;
-                    setCompetitionDuration(val);
-                    localStorage.setItem('ada_competition_duration', val);
-                    // Si el cronómetro no está corriendo, actualizamos el tiempo restante al cambiar la duración total
-                    if (!timerActive) {
-                       setTimer(val * 60);
-                       localStorage.setItem('ada_timer', val * 60);
-                    }
-                  }} 
-                  className="bg-blue-950/50 border border-blue-800 text-white font-black text-xs px-2 py-1 rounded outline-none focus:border-blue-500 transition-all"
-                  min="1"
-                  max="120"
-                />
-              </div>
               <NavButton active={activeTab === 'config'} onClick={() => setActiveTab('config')} icon={<Icon name="map" />} label="Configurar Pista" />
+              <NavButton active={activeTab === 'sistema'} onClick={() => setActiveTab('sistema')} icon={<Icon name="settings" />} label="Sistema" />
             </>
           )}
           <NavButton active={activeTab === 'evaluacion'} onClick={() => setActiveTab('evaluacion')} icon={<Icon name="play-circle" />} label="Evaluación" />
@@ -518,12 +497,6 @@ function App() {
                     className="w-full flex items-center gap-3 p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all font-black text-[10px] uppercase tracking-widest shadow-lg shadow-blue-500/20"
                 >
                     <Icon name="monitor" className="w-4 h-4" /> Lanzar TV Ranking
-                </button>
-                <button 
-                    onClick={() => setShowReset(true)}
-                    className="w-full flex items-center gap-3 p-3 bg-red-900/30 hover:bg-red-600 text-red-500 hover:text-white rounded-xl transition-all font-black text-[10px] uppercase tracking-widest border border-red-500/30"
-                >
-                    <Icon name="alert-triangle" className="w-4 h-4" /> Reset Competencia
                 </button>
                 </>
             )}
@@ -590,6 +563,17 @@ function App() {
             />
         )}
         {activeTab === 'resultados' && <ResultadosTab teams={teams} currentUser={currentUser} onShowHistory={setSelectedTeamHistory} />}
+        {activeTab === 'sistema' && currentUser.role === 'admin' && (
+            <SistemasTab 
+                competitionDuration={competitionDuration}
+                setCompetitionDuration={setCompetitionDuration}
+                timerActive={timerActive}
+                setTimer={setTimer}
+                setShowReset={setShowReset}
+                teams={teams}
+                currentUser={currentUser}
+            />
+        )}
       </main>
 
       {/* MODAL RESET GLOBAL */}
@@ -846,6 +830,96 @@ function HistorialModal({ teams, selectedId, onClose, onDeleteEvaluation, onUpda
                         })
                     )}
                 </div>
+            </div>
+        </div>
+    );
+}
+
+function SistemasTab({ competitionDuration, setCompetitionDuration, timerActive, setTimer, setShowReset, teams, currentUser }) {
+    const totalTeams = teams.length;
+    const inspectedTeams = teams.filter(t => t.status === 'inspected').length;
+    
+    return (
+        <div className="max-w-4xl mx-auto space-y-8 animate-fadeIn">
+            <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-200">
+                <h2 className="text-2xl font-black text-slate-900 mb-8 uppercase italic flex items-center gap-3">
+                    <Icon name="settings" className="text-blue-600 w-8 h-8" /> Ajustes del Sistema
+                </h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {/* Configuración de Tiempo */}
+                    <div className="space-y-6 bg-slate-50 p-6 rounded-3xl border border-slate-100">
+                        <div>
+                            <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-1">Cronómetro Global</p>
+                            <h4 className="text-lg font-black text-slate-800 uppercase italic">Duración de Competencia</h4>
+                            <p className="text-xs text-slate-400 font-bold mt-1">Define el tiempo total para el ranking en vivo (TV).</p>
+                        </div>
+                        
+                        <div className="flex items-center gap-6">
+                            <div className="flex-1">
+                                <input 
+                                    type="range" 
+                                    min="1" 
+                                    max="120" 
+                                    value={competitionDuration} 
+                                    onChange={(e) => {
+                                        const val = parseInt(e.target.value);
+                                        setCompetitionDuration(val);
+                                        localStorage.setItem('ada_competition_duration', val);
+                                        if (!timerActive) {
+                                            setTimer(val * 60);
+                                            localStorage.setItem('ada_timer', val * 60);
+                                        }
+                                    }}
+                                    className="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                                />
+                                <div className="flex justify-between mt-2 text-[10px] font-bold text-slate-300">
+                                    <span>1 MIN</span><span>60</span><span>120 MIN</span>
+                                </div>
+                            </div>
+                            <div className="bg-white border-2 border-blue-500 px-4 py-2 rounded-2xl shadow-lg">
+                                <span className="text-2xl font-black text-blue-600 font-mono">{competitionDuration}</span>
+                                <span className="text-[10px] font-black text-blue-400 ml-1 uppercase">min</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Dashboard Rápido */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-blue-600 p-6 rounded-3xl shadow-xl shadow-blue-500/20 text-white">
+                            <Icon name="users" className="mb-2 opacity-50" />
+                            <p className="text-[10px] font-black uppercase tracking-widest opacity-80">Registrados</p>
+                            <p className="text-4xl font-black tracking-tighter">{totalTeams}</p>
+                        </div>
+                        <div className="bg-emerald-500 p-6 rounded-3xl shadow-xl shadow-emerald-500/20 text-white">
+                            <Icon name="check-circle" className="mb-2 opacity-50" />
+                            <p className="text-[10px] font-black uppercase tracking-widest opacity-80">Inspeccionados</p>
+                            <p className="text-4xl font-black tracking-tighter">{inspectedTeams}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mt-12 pt-8 border-t border-slate-100">
+                    <h3 className="text-lg font-black text-red-600 uppercase italic mb-4 flex items-center gap-2">
+                        <Icon name="alert-triangle" className="w-5 h-5" /> Zona de Peligro
+                    </h3>
+                    <div className="bg-red-50 border border-red-100 p-6 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div>
+                            <p className="font-black text-red-900 uppercase text-sm">Reiniciar Competencia por Completo</p>
+                            <p className="text-[10px] font-bold text-red-500/70 uppercase tracking-widest mt-1">Borrara equipos, evaluaciones e historial. Se requiere clave maestra.</p>
+                        </div>
+                        <button 
+                            onClick={() => setShowReset(true)}
+                            className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-red-500/30 flex items-center gap-2 active:scale-95"
+                        >
+                            <Icon name="trash-2" className="w-4 h-4" /> Aniquilar Todo
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div className="text-center">
+                <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Adagames V4.0 Engine &bull; Modo Administrador</p>
             </div>
         </div>
     );
