@@ -1,50 +1,33 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, File, UploadFile, Form
+import shutil
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 import json
 import os
 import socket
-import sys
-from pathlib import Path
-from dotenv import load_dotenv
+import tempfile
+import threading
+from datetime import datetime
 
-# Load environment variables from .env file if it exists
-load_dotenv()
-
-# Configuration
-HOST = os.getenv("HOST", "0.0.0.0")
-PORT = int(os.getenv("PORT", 8000))
-BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = Path(os.getenv("DATA_DIR", BASE_DIR))
-DATA_FILE = DATA_DIR / "data.json"
-USERS_FILE = DATA_DIR / "users.json"
-
-# Ensure DATA_DIR exists
-DATA_DIR.mkdir(parents=True, exist_ok=True)
+# Lock global para evitar escrituras concurrentes en data.json
+_data_lock = threading.Lock()
 
 def get_local_ip():
-    """Detect local IP for development convenience."""
     try:
+        # Crea un socket temporal para detectar la IP local
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.settimeout(0.1)
-        # doesn't even have to be reachable
-        s.connect(("10.254.254.254", 1))
+        s.connect(("8.8.8.8", 80))
         ip = s.getsockname()[0]
         s.close()
         return ip
-    except Exception:
+    except:
         return "127.0.0.1"
 
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
 app = FastAPI(title="Adagames API v2")
-
-# Health check for cloud monitoring
-@app.get("/health")
-def health_check():
-    return {"status": "healthy", "version": "4.5"}
 
 # Allow CORS
 app.add_middleware(
@@ -65,14 +48,23 @@ def generate_initial_tracks():
             structure[str(r)][str(p)] = {"sequence": [], "obstacles": []}
     return structure
 
+def generate_initial_timer():
+    return {"timer": 1800, "timerActive": False}
+
 def load_data():
-    if not os.path.exists(DATA_FILE):
-        return {"teams": [], "tracks": generate_initial_tracks()}
-    with open(DATA_FILE, "r") as f:
-        data = json.load(f)
+    with _data_lock:
+        if not os.path.exists(DATA_FILE):
+            return {"teams": [], "tracks": generate_initial_tracks(), "timer": generate_initial_timer()}
+        with open(DATA_FILE, "r", encoding='utf-8') as f:
+            data = json.load(f)
+    
+    # Migración: Asegurar campos necesarios
+    changed = False
+    if "timer" not in data:
+        data["timer"] = generate_initial_timer()
+        changed = True
     
     # Migración: Asegurar que todos los equipos tengan categoría
-    changed = False
     for team in data.get("teams", []):
         if "category" not in team:
             team["category"] = "quest"
@@ -93,13 +85,21 @@ def load_users():
     with open(USERS_FILE, "r") as f:
         return json.load(f)
 
-def save_users(users):
-    with open(USERS_FILE, "w") as f:
-        json.dump(users, f, indent=4)
-
 def save_data(data):
-    with open(DATA_FILE, "w") as f:
-        json.dump(data, f, indent=4)
+    """Escritura atómica + lock: imposible de corromper por peticiones concurrentes."""
+    with _data_lock:
+        data_dir = os.path.dirname(os.path.abspath(DATA_FILE)) or '.'
+        tmp_fd, tmp_path = tempfile.mkstemp(dir=data_dir, suffix='.tmp')
+        try:
+            with os.fdopen(tmp_fd, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=4, ensure_ascii=False)
+            shutil.move(tmp_path, DATA_FILE)
+        except Exception:
+            try:
+                os.unlink(tmp_path)
+            except Exception:
+                pass
+            raise
 
 # API Routes
 @app.get("/api/data")
@@ -114,31 +114,6 @@ def get_all_data(category: Optional[str] = None):
 def get_users():
     return load_users()
 
-@app.post("/api/users")
-def save_user(user: Dict[str, Any]):
-    users = load_users()
-    # Check if user exists (by ID)
-    for i, u in enumerate(users):
-        if u["id"] == user["id"]:
-            users[i] = user
-            save_users(users)
-            return {"status": "ok"}
-    
-    # New user
-    users.append(user)
-    save_users(users)
-    return {"status": "ok"}
-
-@app.delete("/api/users/{user_id}")
-def delete_user(user_id: str):
-    if user_id == "admin":
-        raise HTTPException(status_code=400, detail="Cannot delete admin user")
-    
-    users = load_users()
-    users = [u for u in users if u["id"] != user_id]
-    save_users(users)
-    return {"status": "ok"}
-
 @app.post("/api/teams")
 def update_teams(teams: List[Dict[str, Any]], category: Optional[str] = None):
     data = load_data()
@@ -152,6 +127,23 @@ def update_teams(teams: List[Dict[str, Any]], category: Optional[str] = None):
     save_data(data)
     return {"status": "ok"}
 
+@app.post("/api/teams/bulk")
+def bulk_add_teams(new_teams: List[Dict[str, Any]], category: Optional[str] = None):
+    """Agrega múltiples equipos nuevos en una sola operación atómica.
+    Mucho más seguro que llamar /api/teams múltiples veces seguidas."""
+    data = load_data()
+    import time
+    for team in new_teams:
+        team['id'] = str(int(time.time() * 1000)) + str(hash(team.get('school','')) % 10000)
+        team['status'] = 'pending'
+        team['score'] = 0
+        team['history'] = []
+        if category and 'category' not in team:
+            team['category'] = category
+    data['teams'].extend(new_teams)
+    save_data(data)
+    return {"status": "ok", "imported": len(new_teams)}
+
 @app.post("/api/tracks")
 def update_tracks(tracks: Dict[str, Any]):
     data = load_data()
@@ -159,26 +151,71 @@ def update_tracks(tracks: Dict[str, Any]):
     save_data(data)
     return {"status": "ok"}
 
+class ResetAuth(BaseModel):
+    userId: str
+    password: str
+
+@app.post("/api/reset")
+def reset_competition(auth: ResetAuth):
+    users = load_users()
+    admin_user = next((u for u in users if u["id"] == auth.userId and u["password"] == auth.password and u.get("role") == "admin"), None)
+    if not admin_user:
+        raise HTTPException(status_code=401, detail="Credenciales de administrador inválidas o insuficientes")
+        
+    if os.path.exists(DATA_FILE):
+        backups_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "backups"))
+        os.makedirs(backups_dir, exist_ok=True)
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        backup_path = os.path.join(backups_dir, f"data_backup_{timestamp}.json")
+        shutil.copy2(DATA_FILE, backup_path)
+        
+    initial_data = {"teams": [], "tracks": generate_initial_tracks(), "timer": generate_initial_timer()}
+    save_data(initial_data)
+    return {"status": "ok"}
+
+@app.get("/api/timer")
+def get_timer():
+    data = load_data()
+    return data.get("timer", generate_initial_timer())
+
+class TimerSync(BaseModel):
+    timer: int
+    timerActive: bool
+
+@app.post("/api/timer")
+def update_timer(sync: TimerSync):
+    data = load_data()
+    data["timer"] = {"timer": sync.timer, "timerActive": sync.timerActive}
+    save_data(data)
+    return {"status": "ok"}
+
+@app.post("/api/upload_map")
+async def upload_map(ronda: int = Form(...), pista: int = Form(...), file: UploadFile = File(...)):
+    frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend"))
+    maps_dir = os.path.join(frontend_path, "maps")
+    os.makedirs(maps_dir, exist_ok=True)
+    
+    extension = file.filename.split(".")[-1] if "." in file.filename else "png"
+    filename = f"mapa_ronda{ronda}_pista{pista}.{extension}"
+    file_path = os.path.join(maps_dir, filename)
+    
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+        
+    # Return cache-busted URL so browser updates it instantly
+    import time
+    return {"url": f"/maps/{filename}?t={int(time.time())}"}
+
 # Serve frontend files at root
-frontend_path = BASE_DIR / "frontend"
-if frontend_path.exists():
-    app.mount("/", StaticFiles(directory=str(frontend_path), html=True), name="frontend")
-else:
-    print(f"Warning: Frontend path not found at {frontend_path}", file=sys.stderr)
+frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend"))
+app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
 
 if __name__ == "__main__":
     import uvicorn
-    
-    # Only print local access info if we aren't explicitly told we're in "production"
-    # or if we are binding to localhost/0.0.0.0
-    if HOST in ["0.0.0.0", "127.0.0.1", "localhost"]:
-        local_ip = get_local_ip()
-        print(f"\n{'#'*50}")
-        print(f"ADAGAMES v4.5 INICIADO")
-        print(f"MODO: {'Desarrollo' if os.getenv('DEBUG') else 'Producción'}")
-        print(f"ACCESO LOCAL: http://localhost:{PORT}")
-        if HOST == "0.0.0.0":
-            print(f"ACCESO RED:   http://{local_ip}:{PORT}")
-        print(f"{'#'*50}\n")
-    
-    uvicorn.run("main:app", host=HOST, port=PORT, reload=bool(os.getenv("DEBUG")))
+    local_ip = get_local_ip()
+    print(f"\n{'#'*50}")
+    print(f"ADAGAMES v4.5 INICIADO")
+    print(f"ACCESO LOCAL: http://localhost:8001")
+    print(f"ACCESO WIFI:  http://{local_ip}:8001")
+    print(f"{'#'*50}\n")
+    uvicorn.run(app, host="0.0.0.0", port=8001)
