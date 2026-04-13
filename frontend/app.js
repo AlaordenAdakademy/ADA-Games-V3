@@ -17,6 +17,20 @@ const COLS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
 const API_BASE = "/api";
 
+// --- HELPERS ---
+const getTeamDisplayNames = (team) => {
+    const teamName = team.teamName || "";
+    const schoolName = team.schoolName || team.school || "";
+    
+    // Si solo tenemos 'school' (legacy), intentamos dividirlo
+    if (!team.teamName && team.school && team.school.includes(' — ')) {
+        const parts = team.school.split(' — ');
+        return { team: parts[0], school: parts[1] };
+    }
+    
+    return { team: teamName, school: schoolName };
+};
+
 // --- COMPONENTE PRINCIPAL ---
 function App() {
   const [activeTab, setActiveTab] = useState('registro');
@@ -654,7 +668,10 @@ function HistorialModal({ teams, selectedId, onClose, onDeleteEvaluation, curren
                 <div className="bg-slate-50 p-8 border-b border-slate-100 flex justify-between items-center">
                     <div>
                         <p className="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em] mb-1">Auditoría de Desempeño</p>
-                        <h3 className="text-3xl font-black text-slate-900 tracking-tighter">{team.school}</h3>
+                        <h3 className="text-3xl font-black text-slate-900 tracking-tighter">
+                            {getTeamDisplayNames(team).team}
+                            <span className="text-slate-400 text-lg ml-2 font-bold">— {getTeamDisplayNames(team).school}</span>
+                        </h3>
                     </div>
                     <button onClick={onClose} className="bg-slate-200 hover:bg-slate-300 p-4 rounded-2xl transition-all">
                         <Icon name="x-circle" className="text-slate-600" />
@@ -1078,7 +1095,8 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
 }
 
 function RegistroTab({ addTeam, bulkAddTeams }) {
-  const [name, setName] = useState('');
+  const [teamName, setTeamName] = useState('');
+  const [schoolName, setSchoolName] = useState('');
   const [cap, setCap] = useState('');
   const [coach, setCoach] = useState('');
   const [member1, setMember1] = useState('');
@@ -1091,16 +1109,18 @@ function RegistroTab({ addTeam, bulkAddTeams }) {
   const getMembers = () => [member1, member2, member3].filter(m => m.trim() !== '');
 
   const handleAdd = () => {
-    if (!name || !cap) return;
+    if (!teamName || !schoolName || !cap) return;
     const members = getMembers();
     addTeam({
-      school: name,
+      teamName: teamName,
+      schoolName: schoolName,
+      school: `${teamName} — ${schoolName}`, // Legacy support
       captainName: cap,
       coachName: coach,
       members,
       studentsCount: members.length || 1,
     });
-    setName(''); setCap(''); setCoach('');
+    setTeamName(''); setSchoolName(''); setCap(''); setCoach('');
     setMember1(''); setMember2(''); setMember3('');
   };
 
@@ -1147,7 +1167,8 @@ function RegistroTab({ addTeam, bulkAddTeams }) {
         // Buscar encabezados (fila 0)
         const headers = rows[0].map(h => String(h).toLowerCase().trim());
         const COL = {
-          school: headers.findIndex(h => h.includes('colegio') || h.includes('nombre equipo') || h.includes('equipo')),
+          teamName: headers.findIndex(h => h.includes('nombre equipo') || h === 'equipo'),
+          schoolName: headers.findIndex(h => h.includes('colegio') || h.includes('instituci') || h.includes('escuela')),
           captain: headers.findIndex(h => h.includes('capit')),
           coach: headers.findIndex(h => h.includes('coach') || h.includes('entrenad')),
           m1: headers.findIndex(h => h.includes('integrante 1') || h === 'integrante1'),
@@ -1156,7 +1177,8 @@ function RegistroTab({ addTeam, bulkAddTeams }) {
         };
 
         const parsed = rows.slice(1).filter(row => row.some(cell => String(cell).trim() !== '')).map(row => {
-          const school = COL.school >= 0 ? String(row[COL.school] || '').trim() : '';
+          const teamName = COL.teamName >= 0 ? String(row[COL.teamName] || '').trim() : '';
+          const schoolName = COL.schoolName >= 0 ? String(row[COL.schoolName] || '').trim() : '';
           const captain = COL.captain >= 0 ? String(row[COL.captain] || '').trim() : '';
           const coach = COL.coach >= 0 ? String(row[COL.coach] || '').trim() : '';
           const members = [
@@ -1164,7 +1186,16 @@ function RegistroTab({ addTeam, bulkAddTeams }) {
             COL.m2 >= 0 ? String(row[COL.m2] || '').trim() : '',
             COL.m3 >= 0 ? String(row[COL.m3] || '').trim() : '',
           ].filter(m => m !== '');
-          return { school, captainName: captain, coachName: coach, members, studentsCount: members.length || 1, _valid: !!school && !!captain };
+          return { 
+            teamName, 
+            schoolName, 
+            school: teamName && schoolName ? `${teamName} — ${schoolName}` : (teamName || schoolName),
+            captainName: captain, 
+            coachName: coach, 
+            members, 
+            studentsCount: members.length || 1, 
+            _valid: !!teamName && !!schoolName && !!captain 
+          };
         });
 
         if (parsed.length === 0) {
@@ -1219,7 +1250,8 @@ function RegistroTab({ addTeam, bulkAddTeams }) {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <p className={`font-black text-sm uppercase tracking-tight ${team._valid ? 'text-blue-900' : 'text-red-400'}`}>
-                        {team.school || <span className="italic">Sin nombre</span>}
+                        {team.teamName || <span className="italic">Sin equipo</span>}
+                        {team.schoolName && <span className="text-slate-400 font-bold ml-2">— {team.schoolName}</span>}
                         {!team._valid && <span className="ml-2 text-[10px] bg-red-100 text-red-500 px-2 py-0.5 rounded-full font-black uppercase">INCOMPLETO</span>}
                       </p>
                       <p className="text-xs text-slate-500 font-bold mt-1">
@@ -1306,10 +1338,16 @@ function RegistroTab({ addTeam, bulkAddTeams }) {
       <div className="bg-white p-6 md:p-10 rounded-[3rem] shadow-2xl border border-slate-200">
         <h2 className="text-3xl md:text-4xl font-black text-blue-900 mb-8 tracking-tighter uppercase italic text-center">Registro Manual</h2>
         <div className="space-y-5">
-          {/* Nombre del equipo / colegio */}
-          <div>
-            <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2 block">Nombre del Equipo / Institución</label>
-            <input value={name} onChange={e => setName(e.target.value)} className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 text-lg transition-all" placeholder="Ej: Team Alpha — U.E. Simón Bolívar" />
+          {/* Nombre del equipo e Institución */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2 block">Nombre del Equipo</label>
+              <input value={teamName} onChange={e => setTeamName(e.target.value)} className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 text-lg transition-all" placeholder="Ej: Team Alpha" />
+            </div>
+            <div>
+              <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2 block">Institución / Colegio</label>
+              <input value={schoolName} onChange={e => setSchoolName(e.target.value)} className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 text-lg transition-all" placeholder="Ej: U.E. Simón Bolívar" />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -1346,7 +1384,7 @@ function RegistroTab({ addTeam, bulkAddTeams }) {
 
           <button
             onClick={handleAdd}
-            disabled={!name || !cap}
+            disabled={!teamName || !schoolName || !cap}
             className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-slate-300 text-white font-black py-5 rounded-2xl shadow-2xl shadow-blue-600/30 transition-all flex items-center justify-center gap-3 text-lg uppercase tracking-widest mt-2"
           >
             <Icon name="plus" className="w-6 h-6" /> Registrar Equipo
@@ -1373,7 +1411,11 @@ function InspeccionTab({ teams, updateTeamStatus, disqualifyTeam }) {
         {pending.map(t => (
           <div key={t.id} className="bg-white p-6 rounded-[2rem] shadow-xl border border-slate-200">
             <div className="flex justify-between items-start mb-6">
-              <div><h3 className="font-black text-blue-900 text-xl">{t.school}</h3><p className="text-sm font-bold text-slate-400 mt-1 uppercase">{t.captainName}</p></div>
+              <div>
+                <h3 className="font-black text-blue-900 text-xl leading-tight">{getTeamDisplayNames(t).team}</h3>
+                <p className="text-[10px] text-slate-400 font-black uppercase mt-1">{getTeamDisplayNames(t).school}</p>
+                <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-widest border-t border-slate-50 pt-2">👤 {t.captainName}</p>
+              </div>
               <div className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-[10px] font-black">ESPERA</div>
             </div>
             <div className="flex gap-3">
@@ -1468,8 +1510,9 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
                 </td>
                 <td className="p-6">
                     <div>
-                        <p className={`font-black text-lg ${posColor}`}>{t.school}</p>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{t.captainName}</p>
+                        <p className={`font-black text-lg ${posColor}`}>{getTeamDisplayNames(t).team}</p>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-tight">{getTeamDisplayNames(t).school}</p>
+                        <p className="text-[9px] text-slate-300 font-bold mt-1 uppercase tracking-tight">👤 {t.captainName}</p>
                     </div>
                 </td>
                 <td className="p-6 text-center">
