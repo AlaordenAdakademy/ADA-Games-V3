@@ -1,0 +1,37 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Data and dynamic files
+data.json
+users.json
+data_backup_*.json
+# (Opcional: podrias querer subirlos si son para demo, pero usualmente se ignoran)
+
+# Scratch / temporary scripts
+scratch/
+
+# Temporary JSON files
+*.tmp
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Gemini/AI related
+.gemini/
+.agents/
+.agent/
+_agents/
+_agent/
+brain/
+implementation_plan.md
+task.md
+walkthrough.md
