@@ -434,15 +434,16 @@ function App() {
         </div>
       )}
 
-      <nav className="bg-blue-950 text-white md:w-64 flex-shrink-0 flex md:flex-col shadow-2xl z-20 sticky top-0 md:h-screen">
-        <div className="p-5 border-b border-blue-900 bg-blue-950">
-          <div className="flex items-center gap-3 mb-4">
+      <nav className="bg-blue-950 text-white md:w-64 flex-shrink-0 flex flex-col shadow-2xl z-20 sticky top-0 md:h-screen w-full md:max-h-screen overflow-hidden">
+        <div className="p-4 md:p-5 border-b border-blue-900 bg-blue-950 flex md:block items-center justify-between">
+          <div className="flex items-center gap-2 md:gap-3 md:mb-4">
             <div className="bg-blue-500 p-1.5 rounded-lg shadow-lg shadow-blue-500/20">
-              <Icon name="trophy" className="text-white w-6 h-6" />
+              <Icon name="trophy" className="text-white w-5 h-5 md:w-6 md:h-6" />
             </div>
-            <h1 className="font-black text-xl tracking-tighter leading-tight">ADAGAMES<br/><span className="text-[10px] text-blue-400 font-bold tracking-widest uppercase">{currentUser.category === 'line_follower' ? 'Line Follower' : 'Robotics Quest'}</span></h1>
+            <h1 className="font-black text-base md:text-xl tracking-tighter leading-tight">ADAGAMES<br/><span className="text-[8px] md:text-[10px] text-blue-400 font-bold tracking-widest uppercase">{currentUser.category === 'line_follower' ? 'Line Follower' : 'Robotics Quest'}</span></h1>
           </div>
-          <div className="bg-blue-900/50 p-3 rounded-xl">
+          
+          <div className="hidden md:block bg-blue-900/50 p-3 rounded-xl">
             <div className="flex items-center gap-2 overflow-hidden mb-2">
                <div className="w-8 h-8 rounded-full bg-blue-400 flex items-center justify-center flex-shrink-0">
                   <Icon name="users" className="w-4 h-4 text-white" />
@@ -472,33 +473,37 @@ function App() {
                 </div>
             )}
           </div>
+
+          {/* Versión móvil del perfil - botón logout rápido */}
+          <button onClick={logout} className="md:hidden p-2 bg-red-500/20 text-red-400 rounded-lg">
+            <Icon name="log-out" className="w-5 h-5" />
+          </button>
         </div>
         
-        <div className="flex flex-1 md:flex-col overflow-x-auto md:overflow-y-auto">
+        {/* Scrolleable horizontal en móvil, vertical en desktop */}
+        <div className="flex flex-row md:flex-col overflow-x-auto md:overflow-y-auto custom-scrollbar bg-blue-900/20 md:bg-transparent border-b border-blue-900 md:border-0 no-scrollbar">
           {currentUser.role === 'admin' && (
             <>
               <NavButton active={activeTab === 'registro'} onClick={() => setActiveTab('registro')} icon={<Icon name="users" />} label="Registro" />
               <NavButton active={activeTab === 'inspeccion'} onClick={() => setActiveTab('inspeccion')} icon={<Icon name="clipboard-check" />} label="Inspección" />
               <NavButton active={activeTab === 'usuarios'} onClick={() => setActiveTab('usuarios')} icon={<Icon name="user-cog" />} label="Jueces" />
-              <NavButton active={activeTab === 'config'} onClick={() => setActiveTab('config')} icon={<Icon name="map" />} label="Configurar Pista" />
+              <NavButton active={activeTab === 'config'} onClick={() => setActiveTab('config')} icon={<Icon name="map" />} label="Pistas" />
               <NavButton active={activeTab === 'sistema'} onClick={() => setActiveTab('sistema')} icon={<Icon name="settings" />} label="Sistema" />
             </>
           )}
           <NavButton active={activeTab === 'evaluacion'} onClick={() => setActiveTab('evaluacion')} icon={<Icon name="play-circle" />} label="Evaluación" />
-          <NavButton active={activeTab === 'resultados'} onClick={() => setActiveTab('resultados')} icon={<Icon name="trophy" />} label="Resultados" />
+          <NavButton active={activeTab === 'resultados'} onClick={() => setActiveTab('resultados')} icon={<Icon name="trophy" />} label="Ranking" />
         </div>
 
-        {/* Sección Inferior de la Sidebar */}
-        <div className="p-4 border-t border-blue-900 space-y-3">
+        {/* Sección Inferior de la Sidebar (Solo Desktop) */}
+        <div className="hidden md:block p-4 border-t border-blue-900 space-y-3 mt-auto">
             {currentUser.role === 'admin' && (
-                <>
                 <button 
                     onClick={() => setCompetitionMode(true)}
                     className="w-full flex items-center gap-3 p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all font-black text-[10px] uppercase tracking-widest shadow-lg shadow-blue-500/20"
                 >
                     <Icon name="monitor" className="w-4 h-4" /> Lanzar TV Ranking
                 </button>
-                </>
             )}
             
             <button 
@@ -510,7 +515,7 @@ function App() {
             </button>
         </div>
 
-        {/* Indicador de conexión */}
+        {/* Indicador de conexión (Solo Desktop) */}
         <div className="p-4 border-t border-blue-900 hidden md:flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_10px_rgba(74,222,128,0.5)]"></div>
           <span className="text-[10px] font-bold text-green-300 uppercase tracking-widest">Sincronizado</span>
@@ -730,25 +735,25 @@ function HistorialModal({ teams, selectedId, onClose, onDeleteEvaluation, onUpda
     };
 
     return (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 animate-fadeIn">
-            <div className="bg-white rounded-[2.5rem] w-full max-w-2xl overflow-hidden shadow-2xl">
-                <div className="bg-slate-50 p-8 border-b border-slate-100 flex justify-between items-center">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-2 md:p-4 animate-fadeIn">
+            <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[95vh]">
+                <div className="bg-slate-50 p-6 md:p-8 border-b border-slate-100 flex justify-between items-center shrink-0">
                     <div>
-                        <p className="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em] mb-1">Auditoría de Desempeño</p>
-                        <h3 className="text-3xl font-black text-slate-900 tracking-tighter">
+                        <p className="text-[9px] md:text-[10px] font-black text-blue-500 uppercase tracking-[0.15em] mb-1">Auditoría de Desempeño</p>
+                        <h3 className="text-xl md:text-3xl font-black text-slate-900 tracking-tighter leading-tight">
                             {getTeamDisplayNames(team).team}
-                            <span className="text-slate-400 text-lg ml-2 font-bold">— {getTeamDisplayNames(team).school}</span>
+                            <span className="text-slate-400 text-sm md:text-lg ml-2 font-bold hidden sm:inline">— {getTeamDisplayNames(team).school}</span>
                         </h3>
                     </div>
-                    <button onClick={onClose} className="bg-slate-200 hover:bg-slate-300 p-4 rounded-2xl transition-all">
-                        <Icon name="x-circle" className="text-slate-600" />
+                    <button onClick={onClose} className="bg-slate-200 hover:bg-slate-300 p-3 md:p-4 rounded-xl md:rounded-2xl transition-all">
+                        <Icon name="x-circle" className="text-slate-600 w-5 h-5 md:w-6 md:h-6" />
                     </button>
                 </div>
-                <div className="p-8 max-h-[60vh] overflow-y-auto space-y-4 custom-scrollbar">
+                <div className="p-4 md:p-8 overflow-y-auto space-y-3 md:space-y-4 custom-scrollbar flex-1 no-scrollbar">
                     {team.history.length === 0 ? (
-                        <div className="text-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
-                             <Icon name="clipboard-check" className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                             <p className="text-slate-400 font-bold uppercase tracking-widest text-sm">Sin evaluaciones registradas</p>
+                        <div className="text-center py-16 md:py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+                             <Icon name="clipboard-check" className="w-10 h-10 md:w-12 md:h-12 text-slate-300 mx-auto mb-4" />
+                             <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px] md:text-sm">Sin evaluaciones</p>
                         </div>
                     ) : (
                         team.history.map((h, i) => {
@@ -756,68 +761,68 @@ function HistorialModal({ teams, selectedId, onClose, onDeleteEvaluation, onUpda
                             const timeMs = h.finalTimeMs || h.finalTime || 0;
                             
                             return (
-                                <div key={i} className="flex items-center gap-4 bg-white border border-slate-100 p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-                                    <div className="flex-shrink-0">
+                                <div key={i} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4 bg-white border border-slate-100 p-4 md:p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                                    <div className="flex-shrink-0 self-center sm:self-auto">
                                         {isEditing ? (
                                             <input 
                                                 type="number" 
                                                 value={editPoints} 
                                                 onChange={e => setEditPoints(e.target.value)}
-                                                className="w-16 h-12 border-2 border-blue-500 rounded-xl text-center font-black text-xl text-blue-600 outline-none"
+                                                className="w-14 md:w-16 h-10 md:h-12 border-2 border-blue-500 rounded-xl text-center font-black text-lg md:text-xl text-blue-600 outline-none"
                                             />
                                         ) : (
-                                            <div className="bg-blue-600 text-white w-12 h-12 rounded-xl flex items-center justify-center font-black text-xl">
+                                            <div className="bg-blue-600 text-white w-10 md:w-12 h-10 md:h-12 rounded-xl flex items-center justify-center font-black text-lg md:text-xl shadow-lg shadow-blue-600/20">
                                                 {h.points || h.percentage || 0}
                                             </div>
                                         )}
                                     </div>
-                                    <div className="flex-1">
-                                        <p className="font-black text-slate-800 uppercase tracking-tighter">Pista {h.pista} - {h.ronda === 5 ? 'Gran Final' : `Ronda ${h.ronda}`}</p>
-                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mt-1">
-                                            <Icon name="users" className="w-3 h-3" /> {h.judgeName || 'Juez Desconocido'}
+                                    <div className="flex-1 w-full text-center sm:text-left">
+                                        <p className="font-black text-slate-800 uppercase tracking-tighter text-sm md:text-base">Pista {h.pista} - {h.ronda === 5 ? 'Gran Final' : `Ronda ${h.ronda}`}</p>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center justify-center sm:justify-start gap-1.5 mt-1">
+                                            <Icon name="users" className="w-3 h-3" /> {h.judgeName || 'Juez'}
                                         </p>
                                     </div>
-                                    <div className="text-right flex items-center gap-4">
+                                    <div className="w-full sm:w-auto text-center sm:text-right flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2">
                                         <div>
                                             {isEditing ? (
                                                 <div className="flex flex-col items-end">
-                                                    <p className="text-[10px] font-black text-blue-600 uppercase mb-1">Tiempo (s)</p>
+                                                    <p className="text-[8px] md:text-[9px] font-black text-blue-600 uppercase mb-0.5">Tiempo (s)</p>
                                                     <input 
                                                         type="number" 
                                                         step="0.1"
                                                         value={editTime} 
                                                         onChange={e => setEditTime(e.target.value)}
-                                                        className="w-20 p-1 border-2 border-blue-500 rounded text-right font-bold text-xs outline-none"
+                                                        className="w-16 md:w-20 p-1 border-2 border-blue-500 rounded text-right font-bold text-[10px] md:text-xs outline-none"
                                                     />
                                                 </div>
                                             ) : (
                                                 <>
-                                                    <p className="text-xs font-black text-blue-600 uppercase tracking-widest">{h.date}</p>
-                                                    <p className="text-[10px] font-bold text-slate-400 uppercase mt-1">
+                                                    <p className="text-[10px] md:text-xs font-black text-blue-600 uppercase tracking-widest leading-none">{h.date}</p>
+                                                    <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase mt-1 leading-none">
                                                         {`${Math.floor(timeMs / 60000)}:${Math.floor((timeMs % 60000) / 1000).toString().padStart(2, '0')}.${Math.floor((timeMs % 1000) / 10).toString().padStart(2, '0')}`}
                                                     </p>
                                                 </>
                                             )}
                                         </div>
                                         {currentUser?.role === 'admin' && (
-                                            <div className="flex gap-2">
+                                            <div className="flex gap-1.5 md:gap-2">
                                                 {isEditing ? (
                                                     <>
-                                                        <button onClick={() => handleSaveEdit(i)} className="w-10 h-10 bg-green-500 text-white rounded-xl flex items-center justify-center transition-all shadow-lg shadow-green-500/30">
+                                                        <button onClick={() => handleSaveEdit(i)} className="w-8 h-8 md:w-10 md:h-10 bg-green-500 text-white rounded-lg md:rounded-xl flex items-center justify-center transition-all shadow-lg shadow-green-500/30">
                                                             <Icon name="check" className="w-4 h-4" />
                                                         </button>
-                                                        <button onClick={() => setEditingIndex(null)} className="w-10 h-10 bg-slate-200 text-slate-600 rounded-xl flex items-center justify-center transition-all">
+                                                        <button onClick={() => setEditingIndex(null)} className="w-8 h-8 md:w-10 md:h-10 bg-slate-200 text-slate-600 rounded-lg md:rounded-xl flex items-center justify-center transition-all">
                                                             <Icon name="x" className="w-4 h-4" />
                                                         </button>
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <button onClick={() => handleStartEdit(i, h.points || h.percentage || 0, timeMs)} className="w-10 h-10 bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white rounded-xl flex items-center justify-center transition-all border border-blue-200">
+                                                        <button onClick={() => handleStartEdit(i, h.points || h.percentage || 0, timeMs)} className="w-8 h-8 md:w-10 md:h-10 bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white rounded-lg md:rounded-xl flex items-center justify-center transition-all border border-blue-100">
                                                             <Icon name="edit-3" className="w-4 h-4" />
                                                         </button>
                                                         <button onClick={() => {
-                                                            if(window.confirm("¿Estás seguro de eliminar este registro?")) onDeleteEvaluation(i);
-                                                        }} className="w-10 h-10 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white rounded-xl flex items-center justify-center transition-all border border-red-200">
+                                                            if(window.confirm("¿Seguro?")) onDeleteEvaluation(i);
+                                                        }} className="w-8 h-8 md:w-10 md:h-10 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white rounded-lg md:rounded-xl flex items-center justify-center transition-all border border-red-100">
                                                             <Icon name="trash-2" className="w-4 h-4" />
                                                         </button>
                                                     </>
@@ -840,98 +845,100 @@ function SistemasTab({ competitionDuration, setCompetitionDuration, timerActive,
     const inspectedTeams = teams.filter(t => t.status === 'inspected').length;
     
     return (
-        <div className="max-w-4xl mx-auto space-y-8 animate-fadeIn">
-            <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-200">
-                <h2 className="text-2xl font-black text-slate-900 mb-8 uppercase italic flex items-center gap-3">
-                    <Icon name="settings" className="text-blue-600 w-8 h-8" /> Ajustes del Sistema
-                </h2>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {/* Configuración de Tiempo */}
-                    <div className="space-y-6 bg-slate-50 p-6 rounded-3xl border border-slate-100">
-                        <div>
-                            <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-1">Cronómetro Global</p>
-                            <h4 className="text-lg font-black text-slate-800 uppercase italic">Duración de Competencia</h4>
-                            <p className="text-xs text-slate-400 font-bold mt-1">Define el tiempo total para el ranking en vivo (TV).</p>
-                        </div>
-                        
-                        <div className="flex items-center gap-6">
-                            <div className="flex-1">
-                                <input 
-                                    type="range" 
-                                    min="1" 
-                                    max="120" 
-                                    value={competitionDuration} 
-                                    onChange={(e) => {
-                                        const val = parseInt(e.target.value);
-                                        setCompetitionDuration(val);
-                                        localStorage.setItem('ada_competition_duration', val);
-                                        if (!timerActive) {
-                                            setTimer(val * 60);
-                                            localStorage.setItem('ada_timer', val * 60);
-                                        }
-                                    }}
-                                    className="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                                />
-                                <div className="flex justify-between mt-2 text-[10px] font-bold text-slate-300">
-                                    <span>1 MIN</span><span>60</span><span>120 MIN</span>
+        <>
+            <div className="max-w-4xl mx-auto space-y-6 md:space-y-8 animate-fadeIn">
+                <div className="bg-white p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-xl border border-slate-200">
+                    <h2 className="text-xl md:text-2xl font-black text-slate-900 mb-6 md:mb-8 uppercase italic flex items-center gap-3">
+                        <Icon name="settings" className="text-blue-600 w-6 h-6 md:w-8 md:h-8" /> Ajustes del Sistema
+                    </h2>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                        {/* Configuración de Tiempo */}
+                        <div className="space-y-4 md:space-y-6 bg-slate-50 p-5 md:p-6 rounded-3xl border border-slate-100">
+                            <div>
+                                <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-1">Cronómetro Global</p>
+                                <h4 className="text-base md:text-lg font-black text-slate-800 uppercase italic leading-tight">Duración de Competencia</h4>
+                                <p className="text-[10px] md:text-xs text-slate-400 font-bold mt-1 uppercase tracking-tight">Tiempo para el ranking en TV.</p>
+                            </div>
+                            
+                            <div className="flex items-center gap-4 md:gap-6">
+                                <div className="flex-1">
+                                    <input 
+                                        type="range" 
+                                        min="1" 
+                                        max="120" 
+                                        value={competitionDuration} 
+                                        onChange={(e) => {
+                                            const val = parseInt(e.target.value);
+                                            setCompetitionDuration(val);
+                                            localStorage.setItem('ada_competition_duration', val);
+                                            if (!timerActive) {
+                                                setTimer(val * 60);
+                                                localStorage.setItem('ada_timer', val * 60);
+                                            }
+                                        }}
+                                        className="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                                    />
+                                    <div className="flex justify-between mt-2 text-[9px] font-bold text-slate-300">
+                                        <span>1 MIN</span><span>120 MIN</span>
+                                    </div>
+                                </div>
+                                <div className="bg-white border-2 border-blue-500 px-3 md:px-4 py-1.5 md:py-2 rounded-2xl shadow-lg">
+                                    <span className="text-xl md:text-2xl font-black text-blue-600 font-mono">{competitionDuration}</span>
+                                    <span className="text-[9px] md:text-[10px] font-black text-blue-400 ml-1 uppercase">min</span>
                                 </div>
                             </div>
-                            <div className="bg-white border-2 border-blue-500 px-4 py-2 rounded-2xl shadow-lg">
-                                <span className="text-2xl font-black text-blue-600 font-mono">{competitionDuration}</span>
-                                <span className="text-[10px] font-black text-blue-400 ml-1 uppercase">min</span>
+                        </div>
+
+                        {/* Dashboard Rápido */}
+                        <div className="grid grid-cols-2 gap-3 md:gap-4">
+                            <div className="bg-blue-600 p-5 md:p-6 rounded-3xl shadow-xl shadow-blue-500/20 text-white flex flex-col justify-center">
+                                <Icon name="users" className="mb-2 opacity-50 w-5 h-5 md:w-6 md:h-6" />
+                                <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest opacity-80">Registrados</p>
+                                <p className="text-3xl md:text-4xl font-black tracking-tighter leading-none">{totalTeams}</p>
+                            </div>
+                            <div className="bg-emerald-500 p-5 md:p-6 rounded-3xl shadow-xl shadow-emerald-500/20 text-white flex flex-col justify-center">
+                                <Icon name="check-circle" className="mb-2 opacity-50 w-5 h-5 md:w-6 md:h-6" />
+                                <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest opacity-80">Revisados</p>
+                                <p className="text-3xl md:text-4xl font-black tracking-tighter leading-none">{inspectedTeams}</p>
                             </div>
                         </div>
                     </div>
 
-                    {/* Dashboard Rápido */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-blue-600 p-6 rounded-3xl shadow-xl shadow-blue-500/20 text-white">
-                            <Icon name="users" className="mb-2 opacity-50" />
-                            <p className="text-[10px] font-black uppercase tracking-widest opacity-80">Registrados</p>
-                            <p className="text-4xl font-black tracking-tighter">{totalTeams}</p>
-                        </div>
-                        <div className="bg-emerald-500 p-6 rounded-3xl shadow-xl shadow-emerald-500/20 text-white">
-                            <Icon name="check-circle" className="mb-2 opacity-50" />
-                            <p className="text-[10px] font-black uppercase tracking-widest opacity-80">Inspeccionados</p>
-                            <p className="text-4xl font-black tracking-tighter">{inspectedTeams}</p>
+                    <div className="mt-8 md:mt-12 pt-6 md:pt-8 border-t border-slate-100">
+                        <h3 className="text-base md:text-lg font-black text-red-600 uppercase italic mb-4 flex items-center gap-2">
+                            <Icon name="alert-triangle" className="w-5 h-5" /> Zona de Peligro
+                        </h3>
+                        <div className="bg-red-50 border border-red-100 p-5 md:p-6 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-5 md:gap-6">
+                            <div className="text-center sm:text-left">
+                                <p className="font-black text-red-900 uppercase text-xs md:text-sm">Reiniciar Competencia</p>
+                                <p className="text-[9px] md:text-[10px] font-bold text-red-500/70 uppercase tracking-widest mt-1">Se borrará toda la data histórica.</p>
+                            </div>
+                            <button 
+                                onClick={() => setShowReset(true)}
+                                className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white px-6 md:px-8 py-3 md:py-4 rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest transition-all shadow-lg shadow-red-500/30 flex items-center justify-center gap-2 active:scale-95"
+                            >
+                                <Icon name="trash-2" className="w-4 h-4" /> Aniquilar Todo
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <div className="mt-12 pt-8 border-t border-slate-100">
-                    <h3 className="text-lg font-black text-red-600 uppercase italic mb-4 flex items-center gap-2">
-                        <Icon name="alert-triangle" className="w-5 h-5" /> Zona de Peligro
-                    </h3>
-                    <div className="bg-red-50 border border-red-100 p-6 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-6">
-                        <div>
-                            <p className="font-black text-red-900 uppercase text-sm">Reiniciar Competencia por Completo</p>
-                            <p className="text-[10px] font-bold text-red-500/70 uppercase tracking-widest mt-1">Borrara equipos, evaluaciones e historial. Se requiere clave maestra.</p>
-                        </div>
-                        <button 
-                            onClick={() => setShowReset(true)}
-                            className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-red-500/30 flex items-center gap-2 active:scale-95"
-                        >
-                            <Icon name="trash-2" className="w-4 h-4" /> Aniquilar Todo
-                        </button>
-                    </div>
+                <div className="text-center">
+                    <p className="text-[9px] md:text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] md:tracking-[0.3em]">Adagames V4.0 Engine &bull; Admin Mode</p>
                 </div>
             </div>
-
-            <div className="text-center">
-                <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Adagames V4.0 Engine &bull; Modo Administrador</p>
-            </div>
-        </div>
+        </>
     );
 }
 
 function NavButton({ active, onClick, icon, label }) {
   return (
-    <button onClick={onClick} className={`flex-1 md:flex-none flex flex-col md:flex-row items-center gap-3 p-4 transition-all duration-200 ${
-      active ? 'bg-blue-600 text-white shadow-lg' : 'text-blue-300/50 hover:bg-blue-900 hover:text-white'
+    <button onClick={onClick} className={`flex-shrink-0 md:flex-none flex flex-col md:flex-row items-center gap-1 md:gap-3 p-3 md:p-4 transition-all duration-200 border-b-2 md:border-b-0 md:border-l-4 ${
+      active ? 'bg-blue-600/20 md:bg-blue-600 text-white border-blue-500 shadow-lg' : 'text-blue-300/50 border-transparent hover:bg-blue-900 hover:text-white'
     }`}>
-      <span className="w-5 h-5">{icon}</span>
-      <span className="text-[10px] md:text-sm font-bold uppercase tracking-wider whitespace-nowrap">{label}</span>
+      <span className="w-5 h-5 flex items-center justify-center">{icon}</span>
+      <span className="text-[8px] md:text-sm font-black uppercase tracking-wider whitespace-nowrap">{label}</span>
     </button>
   );
 }
@@ -972,51 +979,51 @@ function ConfigTab({ tracks, updateTrackData }) {
   };
 
   return (
-    <div className="space-y-6 animate-fadeIn">
-      <div className="bg-white p-6 rounded-3xl shadow-xl border border-slate-200">
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
-          <div className="space-y-4 w-full lg:w-auto">
-            <h2 className="text-2xl font-black text-blue-900 tracking-tight uppercase">Configurador de Mapas</h2>
-            <div className="flex flex-wrap gap-2">
+    <div className="space-y-4 md:space-y-6 animate-fadeIn">
+      <div className="bg-white p-4 md:p-6 rounded-[2rem] md:rounded-3xl shadow-xl border border-slate-200">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 md:gap-6 mb-6 md:mb-8">
+          <div className="space-y-3 md:space-y-4 w-full lg:w-auto">
+            <h2 className="text-xl md:text-2xl font-black text-blue-900 tracking-tight uppercase leading-tight">Configurador de Mapas</h2>
+            <div className="flex flex-wrap gap-1.5 md:gap-2">
               {[1, 2, 3, 4, 5].map(r => (
-                <button key={r} onClick={() => setSelRonda(r)} className={`px-4 py-2 rounded-xl text-xs font-black transition-all ${selRonda === r ? 'bg-blue-600 text-white shadow-blue-500/40 shadow-lg' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}>
-                  {r === 5 ? 'GRAN FINAL' : `RONDA ${r}`}
+                <button key={r} onClick={() => setSelRonda(r)} className={`px-3 md:px-4 py-1.5 md:py-2 rounded-xl text-[9px] md:text-xs font-black transition-all ${selRonda === r ? 'bg-blue-600 text-white shadow-blue-500/40 shadow-lg' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}>
+                  {r === 5 ? 'FINAL' : `R${r}`}
                 </button>
               ))}
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 md:gap-2">
               {[1, 2, 3, 4, 5].map(p => (
-                <button key={p} onClick={() => setSelPista(p)} className={`px-4 py-2 rounded-xl text-xs font-black transition-all ${selPista === p ? 'bg-blue-400 text-white shadow-lg' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}>
-                  PISTA {p}
+                <button key={p} onClick={() => setSelPista(p)} className={`px-3 md:px-4 py-1.5 md:py-2 rounded-xl text-[9px] md:text-xs font-black transition-all ${selPista === p ? 'bg-blue-400 text-white shadow-lg' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}>
+                  P{p}
                 </button>
               ))}
             </div>
           </div>
           
-          <div className="flex gap-2 p-1 bg-slate-100 rounded-2xl w-full lg:w-auto mt-4 lg:mt-0">
-            <button onClick={() => setMode('sequence')} className={`flex-1 lg:flex-none px-4 py-3 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all ${mode === 'sequence' ? 'bg-white text-blue-600 shadow-md' : 'text-slate-500 hover:bg-slate-200'}`}>
-              <div className="w-3 h-3 rounded-full bg-blue-600" /> RUTA
+          <div className="flex gap-1.5 p-1 bg-slate-100 rounded-2xl w-full lg:w-auto mt-2 lg:mt-0 overflow-x-auto no-scrollbar">
+            <button onClick={() => setMode('sequence')} className={`flex-1 lg:flex-none px-3 md:px-4 py-2.5 md:py-3 rounded-xl text-[9px] md:text-xs font-black flex items-center justify-center gap-1.5 md:gap-2 transition-all whitespace-nowrap ${mode === 'sequence' ? 'bg-white text-blue-600 shadow-md' : 'text-slate-500 hover:bg-slate-200'}`}>
+              <div className="w-2.5 h-2.5 rounded-full bg-blue-600" /> RUTA
             </button>
-            <button onClick={() => setMode('obstacle')} className={`flex-1 lg:flex-none px-4 py-3 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all ${mode === 'obstacle' ? 'bg-white text-red-600 shadow-md' : 'text-slate-500 hover:bg-slate-200'}`}>
+            <button onClick={() => setMode('obstacle')} className={`flex-1 lg:flex-none px-3 md:px-4 py-2.5 md:py-3 rounded-xl text-[9px] md:text-xs font-black flex items-center justify-center gap-1.5 md:gap-2 transition-all whitespace-nowrap ${mode === 'obstacle' ? 'bg-white text-red-600 shadow-md' : 'text-slate-500 hover:bg-slate-200'}`}>
               <Icon name="x-circle" className="w-3 h-3 text-red-600" /> OBSTÁCULO
             </button>
-            <button onClick={() => setMode('bonus_start')} className={`flex-1 lg:flex-none px-4 py-3 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all ${mode === 'bonus_start' ? 'bg-white text-yellow-600 shadow-md' : 'text-slate-500 hover:bg-slate-200'}`}>
-              ⭐ INICIO BONUS
+            <button onClick={() => setMode('bonus_start')} className={`flex-1 lg:flex-none px-3 md:px-4 py-2.5 md:py-3 rounded-xl text-[9px] md:text-xs font-black flex items-center justify-center gap-1.5 md:gap-2 transition-all whitespace-nowrap ${mode === 'bonus_start' ? 'bg-white text-yellow-600 shadow-md' : 'text-slate-500 hover:bg-slate-200'}`}>
+              ⭐ BONUS
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 md:gap-8">
           <div className="xl:col-span-3 flex flex-col items-center">
-            <div className="w-full overflow-x-auto pb-4 custom-scrollbar">
-              <div className="inline-block min-w-[700px] border-[8px] border-blue-600 rounded-2xl bg-white shadow-2xl overflow-hidden mx-auto">
-                <div className="grid grid-cols-11 bg-blue-600 text-white font-black text-[12px]">
-                  <div className="p-3 border-r border-blue-500/50 flex items-center justify-center bg-blue-700">#</div>
-                  {COLS.map(c => <div key={c} className="p-3 text-center flex items-center justify-center">{c}</div>)}
+            <div className="w-full overflow-x-auto pb-4 custom-scrollbar no-scrollbar relative">
+              <div className="inline-block min-w-[650px] border-[6px] md:border-[8px] border-blue-600 rounded-[1.5rem] md:rounded-2xl bg-white shadow-2xl overflow-hidden mx-auto">
+                <div className="grid grid-cols-11 bg-blue-600 text-white font-black text-[10px] md:text-[12px]">
+                  <div className="p-2 md:p-3 border-r border-blue-500/50 flex items-center justify-center bg-blue-700">#</div>
+                  {COLS.map(c => <div key={c} className="p-2 md:p-3 text-center flex items-center justify-center">{c}</div>)}
                 </div>
                 {ROWS.map(r => (
                   <div key={r} className="grid grid-cols-11 border-b border-blue-50 last:border-0">
-                    <div className="bg-blue-600 text-white font-black text-[12px] flex items-center justify-center border-r border-blue-500/50 p-4">{r}</div>
+                    <div className="bg-blue-600 text-white font-black text-[10px] md:text-[12px] flex items-center justify-center border-r border-blue-500/50 p-3 md:p-4">{r}</div>
                     {COLS.map(c => {
                       const id = `${c}${r}`;
                       const seqIdx = currentTrack.sequence.indexOf(id);
@@ -1025,18 +1032,18 @@ function ConfigTab({ tracks, updateTrackData }) {
                       return (
                         <button key={id} onClick={() => toggleCell(id)} className={`aspect-square border-r border-blue-50 last:border-0 flex items-center justify-center relative hover:bg-blue-50 transition-colors ${isObs ? 'bg-red-50' : ''}`}>
                           {isBonusStart && (
-                              <div className="absolute -top-2 -right-2 w-6 h-6 md:w-8 md:h-8 bg-yellow-400 flex items-center justify-center shadow-xl rounded-full transform border-2 border-yellow-200 z-20 text-xs md:text-sm">
+                              <div className="absolute -top-1.5 md:-top-2 -right-1.5 md:-right-2 w-5 h-5 md:w-8 md:h-8 bg-yellow-400 flex items-center justify-center shadow-xl rounded-full transform border border-yellow-200 z-20 text-[10px] md:text-sm">
                                 ⭐
                               </div>
                           )}
                           {seqIdx > -1 && (
-                            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-600 text-white font-black flex items-center justify-center shadow-lg border-2 border-blue-300 text-xs md:text-sm">
+                            <div className="w-7 h-7 md:w-10 md:h-10 rounded-full bg-blue-600 text-white font-black flex items-center justify-center shadow-lg border md:border-2 border-blue-300 text-[10px] md:text-sm">
                               {seqIdx + 1}
                             </div>
                           )}
                           {isObs && (
-                            <div className="w-8 h-8 md:w-10 md:h-10 bg-red-600 flex items-center justify-center shadow-xl rounded-md transform border-2 border-red-400">
-                              <Icon name="x-circle" className="text-white w-5 h-5 md:w-7 md:h-7" />
+                            <div className="w-7 h-7 md:w-10 md:h-10 bg-red-600 flex items-center justify-center shadow-xl rounded-md transform border md:border-2 border-red-400">
+                              <Icon name="x-circle" className="text-white w-4 h-4 md:w-7 md:h-7" />
                             </div>
                           )}
                         </button>
@@ -1048,49 +1055,51 @@ function ConfigTab({ tracks, updateTrackData }) {
             </div>
           </div>
           
-          <div className="bg-blue-50/50 p-6 rounded-3xl border border-blue-100 h-fit">
-            <h3 className="font-black text-blue-900 text-sm mb-4 flex items-center gap-2 uppercase">
+          <div className="bg-blue-50/50 p-5 md:p-6 rounded-[2rem] md:rounded-3xl border border-blue-100 h-fit">
+            <h3 className="font-black text-blue-900 text-[11px] md:text-sm mb-4 flex items-center gap-2 uppercase">
               <Icon name="star" className="text-blue-600 w-4 h-4"/> Resumen Pista {selPista}
             </h3>
             <div className="space-y-4">
-              <div className="bg-white p-4 rounded-2xl shadow-sm border border-blue-100">
-                <p className="text-[10px] font-bold text-blue-400 mb-1 uppercase">Puntos Ruta</p>
-                <p className="text-3xl font-black text-blue-600">{currentTrack.sequence.length}</p>
-              </div>
-              <div className="bg-white p-4 rounded-2xl shadow-sm border border-red-100">
-                <p className="text-[10px] font-bold text-red-400 mb-1 uppercase">Obstáculos</p>
-                <p className="text-3xl font-black text-red-500">{currentTrack.obstacles.length}</p>
+              <div className="grid grid-cols-2 xl:grid-cols-1 gap-3 md:gap-4">
+                <div className="bg-white p-3 md:p-4 rounded-2xl shadow-sm border border-blue-100">
+                  <p className="text-[9px] md:text-[10px] font-bold text-blue-400 mb-0.5 md:mb-1 uppercase">Puntos Ruta</p>
+                  <p className="text-2xl md:text-3xl font-black text-blue-600 leading-none">{currentTrack.sequence.length}</p>
+                </div>
+                <div className="bg-white p-3 md:p-4 rounded-2xl shadow-sm border border-red-100">
+                  <p className="text-[9px] md:text-[10px] font-bold text-red-400 mb-0.5 md:mb-1 uppercase">Obstáculos</p>
+                  <p className="text-2xl md:text-3xl font-black text-red-50">{currentTrack.obstacles.length}</p>
+                </div>
               </div>
 
               {/* BONUS SETTINGS */}
-              <div className="bg-yellow-50/50 p-4 rounded-2xl shadow-sm border border-yellow-200 mt-4 space-y-4">
-                  <h4 className="text-[10px] font-black text-yellow-600 uppercase tracking-widest flex items-center gap-1">
+              <div className="bg-yellow-50/50 p-4 rounded-2xl shadow-sm border border-yellow-200 mt-4 space-y-3">
+                  <h4 className="text-[9px] md:text-[10px] font-black text-yellow-600 uppercase tracking-widest flex items-center gap-1 mb-1">
                       <Icon name="star" className="w-3 h-3"/> Ajustes de Bonus
                   </h4>
                   <div>
-                      <p className="text-[10px] font-bold text-yellow-600 mb-1 uppercase">Orientación (Apunta hacia)</p>
+                      <p className="text-[8px] md:text-[9px] font-bold text-yellow-600 mb-1 uppercase">Orientación</p>
                       <div className="flex gap-1">
                           {['N', 'S', 'E', 'O'].map(dir => (
-                              <button key={dir} onClick={() => updateTrackData(selRonda, selPista, { bonusDir: dir === currentTrack.bonusDir ? '' : dir })} className={`flex-1 py-1.5 rounded-lg text-xs font-black transition-all ${currentTrack.bonusDir === dir ? 'bg-yellow-500 text-white shadow-md' : 'bg-white text-yellow-600 border border-yellow-200 hover:bg-yellow-100'}`}>
-                                  {dir === 'N' ? 'N ⬆' : dir === 'S' ? 'S ⬇' : dir === 'E' ? 'E ➡' : 'O ⬅'}
+                              <button key={dir} onClick={() => updateTrackData(selRonda, selPista, { bonusDir: dir === currentTrack.bonusDir ? '' : dir })} className={`flex-1 py-1.5 rounded-lg text-[10px] font-black transition-all ${currentTrack.bonusDir === dir ? 'bg-yellow-500 text-white shadow-md' : 'bg-white text-yellow-600 border border-yellow-200 hover:bg-yellow-100'}`}>
+                                  {dir}
                               </button>
                           ))}
                       </div>
                   </div>
                   <div>
-                      <p className="text-[10px] font-bold text-yellow-600 mb-1 uppercase">Reglas / Condiciones</p>
+                      <p className="text-[8px] md:text-[9px] font-bold text-yellow-600 mb-1 uppercase">Reglas</p>
                       <textarea 
                           value={currentTrack.bonusRules || ''} 
                           onChange={(e) => updateTrackData(selRonda, selPista, { bonusRules: e.target.value })}
-                          className="w-full text-xs p-3 rounded-xl border border-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-yellow-800 placeholder-yellow-300 font-bold"
-                          placeholder="Ej: No debe cruzar la celda D4..."
+                          className="w-full text-[10px] p-2 md:p-3 rounded-xl border border-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-yellow-800 placeholder-yellow-300 font-bold leading-tight"
+                          placeholder="Nota del bonus..."
                           rows={2}
                       />
                   </div>
               </div>
 
-              <button onClick={() => updateTrackData(selRonda, selPista, { sequence: [], obstacles: [], bonusStart: '', bonusDir: '', bonusRules: '' })} className="w-full py-4 text-red-500 text-[10px] font-black hover:bg-red-50 rounded-2xl transition-all border border-red-200 flex items-center justify-center gap-2 uppercase">
-                <Icon name="trash-2" className="w-4 h-4" /> Limpiar Pista
+              <button onClick={() => updateTrackData(selRonda, selPista, { sequence: [], obstacles: [], bonusStart: '', bonusDir: '', bonusRules: '' })} className="w-full py-3 md:py-4 text-red-500 text-[9px] md:text-[10px] font-black hover:bg-red-50 rounded-2xl transition-all border border-red-200 flex items-center justify-center gap-2 uppercase">
+                <Icon name="trash-2" className="w-3.5 h-3.5 md:w-4 md:h-4" /> Limpiar Pista
               </button>
             </div>
           </div>
@@ -1099,7 +1108,6 @@ function ConfigTab({ tracks, updateTrackData }) {
     </div>
   );
 }
-
 function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, postTeams, showToast, timer }) {
   if (currentUser.category === 'line_follower') {
     return <LineFollowerEvaluacion teams={teams} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} />;
@@ -1245,21 +1253,21 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
                 <Icon name="lock" className="w-4 h-4" /> Vista de Lectura
              </div>
           </div>}
-          <div className="text-center mb-8">
-            <span className="bg-blue-100 text-blue-600 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-blue-200">Panel de Seguimiento</span>
-            <h3 className="text-2xl md:text-3xl font-black text-blue-900 mt-3 uppercase italic">Pista {selPista} - {selRonda === 5 ? 'Gran Final' : `Ronda ${selRonda}`}</h3>
-            {!selTeam && <p className="text-orange-500 font-bold text-sm mt-2 flex items-center justify-center gap-2"><Icon name="info" className="w-4 h-4"/> Selecciona un equipo para evaluar</p>}
+          <div className="text-center mb-6 md:mb-8">
+            <span className="bg-blue-100 text-blue-600 px-4 py-1.5 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest border border-blue-200">Panel de Seguimiento</span>
+            <h3 className="text-xl md:text-3xl font-black text-blue-900 mt-3 uppercase italic leading-tight">Pista {selPista} - {selRonda === 5 ? 'Gran Final' : `Ronda ${selRonda}`}</h3>
+            {!selTeam && <p className="text-orange-500 font-bold text-xs md:text-sm mt-2 flex items-center justify-center gap-2"><Icon name="info" className="w-4 h-4"/> Selecciona un equipo para evaluar</p>}
           </div>
-          <div className="w-full overflow-x-auto pb-4 custom-scrollbar relative">
+          <div className="w-full overflow-x-auto pb-4 custom-scrollbar relative no-scrollbar">
             {!selTeam && <div className="absolute inset-0 z-10 bg-white/60 backdrop-blur-[1px]"></div>}
-            <div className="inline-block min-w-[700px] border-[10px] border-blue-600 rounded-[2rem] bg-white shadow-2xl overflow-hidden mx-auto">
-              <div className="grid grid-cols-11 bg-blue-600 text-white font-black text-[11px]">
-                <div className="p-3 border-r border-blue-500/50 bg-blue-700 text-center flex items-center justify-center">#</div>
-                {COLS.map(c => <div key={c} className="p-3 text-center flex items-center justify-center">{c}</div>)}
+            <div className="inline-block min-w-[650px] border-[6px] md:border-[10px] border-blue-600 rounded-[1.5rem] md:rounded-[2rem] bg-white shadow-2xl overflow-hidden mx-auto">
+              <div className="grid grid-cols-11 bg-blue-600 text-white font-black text-[10px] md:text-[11px]">
+                <div className="p-2 md:p-3 border-r border-blue-500/50 bg-blue-700 text-center flex items-center justify-center">#</div>
+                {COLS.map(c => <div key={c} className="p-2 md:p-3 text-center flex items-center justify-center">{c}</div>)}
               </div>
               {ROWS.map(r => (
                 <div key={r} className="grid grid-cols-11 border-b border-blue-50 last:border-0">
-                  <div className="bg-blue-600 text-white font-black text-[11px] flex items-center justify-center border-r border-blue-500/50 p-3">{r}</div>
+                  <div className="bg-blue-600 text-white font-black text-[10px] md:text-[11px] flex items-center justify-center border-r border-blue-500/50 p-2 md:p-3">{r}</div>
                   {COLS.map(c => {
                     const id = `${c}${r}`;
                     const seqIdx = track.sequence.indexOf(id);
@@ -1275,18 +1283,18 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
                         className={`aspect-square border-r border-blue-50 last:border-0 flex items-center justify-center relative transition-all ${isReached ? 'bg-green-50' : ''}`}
                       >
                         {isBonusStart && (
-                            <div className="absolute -top-2 -right-2 w-6 h-6 md:w-8 md:h-8 bg-yellow-400 flex items-center justify-center shadow-xl rounded-full transform border-2 border-yellow-200 z-20 text-xs md:text-sm animate-pulse">
+                            <div className="absolute -top-1 md:-top-2 -right-1 md:-right-2 w-5 h-5 md:w-8 md:h-8 bg-yellow-400 flex items-center justify-center shadow-xl rounded-full transform border border-yellow-200 z-20 text-[10px] md:text-sm animate-pulse">
                               ⭐
                             </div>
                         )}
                         {seqIdx > -1 && (
-                          <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full font-black flex items-center justify-center text-xs transition-all border-4 ${isReached ? 'bg-green-500 border-green-200 text-white md:scale-110 shadow-xl' : 'bg-white border-blue-500 text-blue-600 shadow-sm'}`}>
+                          <div className={`w-8 h-8 md:w-12 md:h-12 rounded-full font-black flex items-center justify-center text-[10px] md:text-xs transition-all border-2 md:border-4 ${isReached ? 'bg-green-500 border-green-200 text-white md:scale-110 shadow-xl' : 'bg-white border-blue-500 text-blue-600 shadow-sm'}`}>
                             {seqIdx + 1}
                           </div>
                         )}
                         {isObs && (
-                          <div className="w-10 h-10 md:w-12 md:h-12 bg-red-600 flex items-center justify-center shadow-xl rounded-lg transform border-2 border-red-400">
-                            <Icon name="x-circle" className="text-white w-6 h-6" />
+                          <div className="w-8 h-8 md:w-12 md:h-12 bg-red-600 flex items-center justify-center shadow-xl rounded-lg transform border-2 border-red-400">
+                            <Icon name="x-circle" className="text-white w-5 h-5 md:w-6 md:h-6" />
                           </div>
                         )}
                       </button>
@@ -1430,8 +1438,7 @@ function RegistroTab({ addTeam, bulkAddTeams }) {
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8 animate-fadeIn">
-
+    <>
       {/* MODAL DE VISTA PREVIA DE IMPORTACIÓN */}
       {importPreview && (
         <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
@@ -1543,31 +1550,31 @@ function RegistroTab({ addTeam, bulkAddTeams }) {
       </div>
 
       {/* FORMULARIO MANUAL */}
-      <div className="bg-white p-6 md:p-10 rounded-[3rem] shadow-2xl border border-slate-200">
-        <h2 className="text-3xl md:text-4xl font-black text-blue-900 mb-8 tracking-tighter uppercase italic text-center">Registro Manual</h2>
-        <div className="space-y-5">
+      <div className="bg-white p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] shadow-2xl border border-slate-200">
+        <h2 className="text-2xl md:text-4xl font-black text-blue-900 mb-6 md:mb-8 tracking-tighter uppercase italic text-center leading-tight">Registro Manual</h2>
+        <div className="space-y-4 md:space-y-5">
           {/* Nombre del equipo e Institución */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
             <div>
               <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2 block">Nombre del Equipo</label>
-              <input value={teamName} onChange={e => setTeamName(e.target.value)} className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 text-lg transition-all" placeholder="Ej: Team Alpha" />
+              <input value={teamName} onChange={e => setTeamName(e.target.value)} className="w-full p-3 md:p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 text-base md:text-lg transition-all" placeholder="Ej: Team Alpha" />
             </div>
             <div>
               <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2 block">Institución / Colegio</label>
-              <input value={schoolName} onChange={e => setSchoolName(e.target.value)} className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 text-lg transition-all" placeholder="Ej: U.E. Simón Bolívar" />
+              <input value={schoolName} onChange={e => setSchoolName(e.target.value)} className="w-full p-3 md:p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 text-base md:text-lg transition-all" placeholder="Ej: U.E. Simón Bolívar" />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
             {/* Capitán */}
             <div>
               <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2 block">Capitán / Líder</label>
-              <input value={cap} onChange={e => setCap(e.target.value)} className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 transition-all" placeholder="Nombre completo" />
+              <input value={cap} onChange={e => setCap(e.target.value)} className="w-full p-3 md:p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 transition-all text-sm md:text-base" placeholder="Nombre completo" />
             </div>
             {/* Coach */}
             <div>
               <label className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-2 block">Coach / Entrenador</label>
-              <input value={coach} onChange={e => setCoach(e.target.value)} className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 transition-all" placeholder="Nombre completo" />
+              <input value={coach} onChange={e => setCoach(e.target.value)} className="w-full p-3 md:p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 transition-all text-sm md:text-base" placeholder="Nombre completo" />
             </div>
           </div>
 
@@ -1584,7 +1591,7 @@ function RegistroTab({ addTeam, bulkAddTeams }) {
               ].map((m, i) => (
                 <div key={i} className="flex items-center gap-3">
                   <div className="w-7 h-7 flex-shrink-0 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-xs">{i + 1}</div>
-                  <input value={m.val} onChange={e => m.set(e.target.value)} className="flex-1 p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 transition-all" placeholder={`${m.label} (opcional)`} />
+                  <input value={m.val} onChange={e => m.set(e.target.value)} className="flex-1 p-3 md:p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 font-bold outline-none focus:border-blue-500 transition-all text-sm md:text-base" placeholder={`${m.label} (opcional)`} />
                 </div>
               ))}
             </div>
@@ -1593,13 +1600,13 @@ function RegistroTab({ addTeam, bulkAddTeams }) {
           <button
             onClick={handleAdd}
             disabled={!teamName || !schoolName || !cap}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-slate-300 text-white font-black py-5 rounded-2xl shadow-2xl shadow-blue-600/30 transition-all flex items-center justify-center gap-3 text-lg uppercase tracking-widest mt-2"
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-slate-300 text-white font-black py-4 md:py-5 rounded-2xl shadow-2xl shadow-blue-600/30 transition-all flex items-center justify-center gap-3 text-base md:text-lg uppercase tracking-widest mt-2"
           >
-            <Icon name="plus" className="w-6 h-6" /> Registrar Equipo
+            <Icon name="plus" className="w-5 h-5 md:w-6 md:h-6" /> Registrar Equipo
           </button>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -1608,27 +1615,27 @@ function InspeccionTab({ teams, updateTeamStatus, disqualifyTeam }) {
   const pending = teams.filter(t => t.status === 'pending');
   return (
     <div className="max-w-4xl mx-auto animate-fadeIn">
-      <h2 className="text-3xl font-black text-blue-900 mb-8 uppercase italic">Inspección de Hardware</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <h2 className="text-2xl md:text-3xl font-black text-blue-900 mb-6 md:mb-8 uppercase italic leading-tight">Inspección de Hardware</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         {pending.length === 0 && (
-          <div className="bg-white p-12 rounded-[2rem] border-2 border-dashed border-slate-200 flex flex-col items-center justify-center opacity-60 col-span-2">
-            <Icon name="clipboard-check" className="w-16 h-16 text-slate-300 mb-4" />
-            <p className="text-slate-400 font-bold text-xl uppercase tracking-tighter">No hay robots en espera</p>
+          <div className="bg-white p-8 md:p-12 rounded-[2rem] border-2 border-dashed border-slate-200 flex flex-col items-center justify-center opacity-60 col-span-2">
+            <Icon name="clipboard-check" className="w-12 h-12 md:w-16 md:h-16 text-slate-300 mb-4" />
+            <p className="text-slate-400 font-bold text-lg md:text-xl uppercase tracking-tighter text-center">No hay robots en espera</p>
           </div>
         )}
         {pending.map(t => (
-          <div key={t.id} className="bg-white p-6 rounded-[2rem] shadow-xl border border-slate-200">
-            <div className="flex justify-between items-start mb-6">
+          <div key={t.id} className="bg-white p-5 md:p-6 rounded-[2rem] shadow-xl border border-slate-200">
+            <div className="flex justify-between items-start mb-4 md:mb-6">
               <div>
-                <h3 className="font-black text-blue-900 text-xl leading-tight">{getTeamDisplayNames(t).team}</h3>
+                <h3 className="font-black text-blue-900 text-lg md:text-xl leading-tight">{getTeamDisplayNames(t).team}</h3>
                 <p className="text-[10px] text-slate-400 font-black uppercase mt-1">{getTeamDisplayNames(t).school}</p>
                 <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-widest border-t border-slate-50 pt-2">👤 {t.captainName}</p>
               </div>
-              <div className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-[10px] font-black">ESPERA</div>
+              <div className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-[9px] font-black">ESPERA</div>
             </div>
-            <div className="flex gap-3">
-              <button onClick={() => updateTeamStatus(t.id, 'inspected')} className="flex-1 bg-green-500 text-white font-black py-4 rounded-xl text-[10px] uppercase">Aprobar</button>
-              <button onClick={() => disqualifyTeam(t.id, 'No cumple requisitos')} className="flex-1 bg-red-50 text-red-600 font-black py-4 rounded-xl text-[10px] uppercase">Rechazar</button>
+            <div className="flex gap-2 md:gap-3">
+              <button onClick={() => updateTeamStatus(t.id, 'inspected')} className="flex-1 bg-green-500 text-white font-black py-3 md:py-4 rounded-xl text-[10px] uppercase shadow-lg shadow-green-500/20">Aprobar</button>
+              <button onClick={() => disqualifyTeam(t.id, 'No cumple requisitos')} className="flex-1 bg-red-50 text-red-600 font-black py-3 md:py-4 rounded-xl text-[10px] uppercase">Rechazar</button>
             </div>
           </div>
         ))}
@@ -1641,22 +1648,23 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
   const [selRondaView, setSelRondaView] = useState('global');
 
   const getRoundStats = (team, roundFilter) => {
-    if (roundFilter === 'global') return { score: team.score || 0, time: team.lastTime || 9999999 };
-    const rd = parseInt(roundFilter);
-    const rh = team.history.filter(h => h.ronda === rd);
-    if (rh.length === 0) return { score: 0, time: 9999999 };
-    
-    let totalScore = rh.reduce((sum, h) => sum + (h.points || h.percentage || 0), 0);
+    const rh = team.history.filter(h => h.ronda === Number(roundFilter));
+    let totalScore = 0;
     let totalTime = 0;
-    
-    if (currentUser.category === 'quest') {
+
+    if (roundFilter === 'global') {
+        totalScore = team.score || 0;
+        totalTime = team.lastTime || 0;
+    } else if (rh.length === 0) {
+        return { score: 0, time: 999999 };
+    } else if (team.category === 'line_follower') {
         const pista5 = rh.find(h => h.pista === 5);
+        totalScore = rh.reduce((sum, h) => sum + (h.points || h.percentage || 0), 0);
         // Si terminó pista 5, usamos ese tiempo. Si no terminó pista 5, usamos tiempo máximo de ronda (30 min)
         totalTime = pista5 ? (pista5.finalTimeMs || 0) : 1800000;
     } else {
         totalTime = rh.reduce((sum, h) => sum + (h.finalTimeMs || h.finalTime || 0), 0);
     }
-
     return { score: totalScore, time: totalTime };
   };
 
@@ -1679,67 +1687,69 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
   };
 
   return (
-    <div className="space-y-4 animate-fadeIn max-w-5xl mx-auto">
-      <div className="flex justify-between items-center bg-white p-6 rounded-[2.5rem] shadow-xl border border-slate-200">
-          <h2 className="text-3xl font-black text-blue-900 tracking-tighter uppercase italic">Ranking Oficial</h2>
-          <select value={selRondaView} onChange={e => setSelRondaView(e.target.value)} className="bg-blue-50 border-2 border-blue-100 text-blue-900 font-bold px-4 py-2 rounded-xl focus:outline-none focus:border-blue-400">
+    <>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-5 md:p-6 rounded-[2rem] md:rounded-[2.5rem] shadow-xl border border-slate-200 gap-4">
+          <h2 className="text-2xl md:text-3xl font-black text-blue-900 tracking-tighter uppercase italic leading-tight">Ranking Oficial</h2>
+          <select value={selRondaView} onChange={e => setSelRondaView(e.target.value)} className="w-full sm:w-auto bg-blue-50 border-2 border-blue-100 text-blue-900 font-bold px-4 py-2 rounded-xl focus:outline-none focus:border-blue-400 text-sm md:text-base">
               <option value="global">Ranking Global Acumulado</option>
               {[1,2,3,4,5].map(r => <option key={r} value={r}>Desempeño Ronda {r}</option>)}
           </select>
       </div>
-      <div className="bg-white rounded-[2.5rem] shadow-2xl border border-slate-200 overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="bg-blue-600 text-white">
-            <tr>
-              <th className="p-6 text-[10px] uppercase w-24 text-center">Puesto</th>
-              <th className="p-6 text-[10px] uppercase">Institución</th>
-              <th className="p-6 text-[10px] uppercase text-center">Estado</th>
-              <th className="p-6 text-[10px] uppercase text-right">Puntaje / Tiempo</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {sorted.map((t, i) => {
-              const stats = getRoundStats(t, selRondaView);
-              // Lógica de colores por posición
-              let posColor = "text-blue-900";
-              let posBg = "bg-transparent";
-              if (i === 0 && stats.score > 0) { posColor = "text-yellow-600"; posBg = "bg-yellow-100/50"; }
-              else if (i === 1 && stats.score > 0) { posColor = "text-slate-500"; posBg = "bg-slate-100"; }
-              else if (i === 2 && stats.score > 0) { posColor = "text-orange-700"; posBg = "bg-orange-50/50"; }
-
-              return (
-              <tr 
-                key={t.id} 
-                onClick={() => currentUser.role === 'admin' && onShowHistory(t.id)}
-                className={`${t.status === 'disqualified' ? 'bg-red-50 opacity-50' : 'hover:bg-blue-50'} ${currentUser.role === 'admin' ? 'cursor-pointer hover:bg-slate-50 transition-colors' : ''} ${posBg}`}
-              >
-                <td className={`p-6 text-center font-black text-2xl ${posColor}`}>
-                  {i === 0 ? '🏆 1' : i === 1 ? '🥈 2' : i === 2 ? '🥉 3' : i + 1}
-                </td>
-                <td className="p-6">
-                    <div>
-                        <p className={`font-black text-lg ${posColor}`}>{getTeamDisplayNames(t).team}</p>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-tight">{getTeamDisplayNames(t).school}</p>
-                        <p className="text-[9px] text-slate-300 font-bold mt-1 uppercase tracking-tight">👤 {t.captainName}</p>
-                    </div>
-                </td>
-                <td className="p-6 text-center">
-                    <span className={`text-[9px] font-black px-4 py-1.5 rounded-full border ${t.status === 'disqualified' ? 'border-red-200 text-red-600 bg-red-50' : 'border-green-200 text-green-600 bg-green-50'}`}>
-                        {t.status.toUpperCase()}
-                    </span>
-                </td>
-                <td className="p-6 text-right">
-                    <div className="flex flex-col items-end">
-                        <span className={`text-4xl font-black tracking-tighter ${posColor}`}>{stats.score}</span>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase leading-none">{formatResultTime(stats.time)}</p>
-                    </div>
-                </td>
+      <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-slate-200 overflow-hidden">
+        <div className="overflow-x-auto custom-scrollbar">
+          <table className="w-full text-left min-w-[600px] md:min-w-0">
+            <thead className="bg-blue-600 text-white">
+              <tr>
+                <th className="p-4 md:p-6 text-[9px] md:text-[10px] uppercase w-16 md:w-24 text-center">Pos</th>
+                <th className="p-4 md:p-6 text-[9px] md:text-[10px] uppercase">Institución</th>
+                <th className="p-4 md:p-6 text-[9px] md:text-[10px] uppercase text-center hidden sm:table-cell">Estado</th>
+                <th className="p-4 md:p-6 text-[9px] md:text-[10px] uppercase text-right">Puntaje / Tiempo</th>
               </tr>
-            )})}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {sorted.map((t, i) => {
+                const stats = getRoundStats(t, selRondaView);
+                // Lógica de colores por posición
+                let posColor = "text-blue-900";
+                let posBg = "bg-transparent";
+                if (i === 0 && stats.score > 0) { posColor = "text-yellow-600"; posBg = "bg-yellow-100/50"; }
+                else if (i === 1 && stats.score > 0) { posColor = "text-slate-500"; posBg = "bg-slate-100"; }
+                else if (i === 2 && stats.score > 0) { posColor = "text-orange-700"; posBg = "bg-orange-50/50"; }
+
+                return (
+                <tr 
+                  key={t.id} 
+                  onClick={() => currentUser.role === 'admin' && onShowHistory(t.id)}
+                  className={`${t.status === 'disqualified' ? 'bg-red-50 opacity-50' : 'hover:bg-blue-50'} ${currentUser.role === 'admin' ? 'cursor-pointer transition-colors' : ''} ${posBg}`}
+                >
+                  <td className={`p-4 md:p-6 text-center font-black text-xl md:text-2xl ${posColor}`}>
+                    {i === 0 ? '🏆 1' : i === 1 ? '🥈 2' : i === 2 ? '🥉 3' : i + 1}
+                  </td>
+                  <td className="p-4 md:p-6">
+                      <div>
+                          <p className={`font-black text-base md:text-lg leading-tight ${posColor}`}>{getTeamDisplayNames(t).team}</p>
+                          <p className="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-tight mt-1">{getTeamDisplayNames(t).school}</p>
+                          <p className="hidden md:block text-[9px] text-slate-300 font-bold mt-1 uppercase tracking-tight">👤 {t.captainName}</p>
+                      </div>
+                  </td>
+                  <td className="p-4 md:p-6 text-center hidden sm:table-cell">
+                      <span className={`text-[8px] md:text-[9px] font-black px-3 md:px-4 py-1 md:py-1.5 rounded-full border ${t.status === 'disqualified' ? 'border-red-200 text-red-600 bg-red-50' : 'border-green-200 text-green-600 bg-green-50'}`}>
+                          {t.status.toUpperCase()}
+                      </span>
+                  </td>
+                  <td className="p-4 md:p-6 text-right">
+                      <div className="flex flex-col items-end">
+                          <span className={`text-2xl md:text-4xl font-black tracking-tighter ${posColor}`}>{stats.score}</span>
+                          <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase leading-none mt-1">{formatResultTime(stats.time)}</p>
+                      </div>
+                  </td>
+                </tr>
+              )})}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -1810,16 +1820,16 @@ function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam, 
   };
 
   return (
-    <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fadeIn">
-      <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-200">
-        <h2 className="text-2xl font-black text-blue-900 mb-8 uppercase italic flex items-center gap-3">
-            <Icon name="play-circle" className="text-blue-600 w-8 h-8" /> Mesa del Juez
+    <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 animate-fadeIn">
+      <div className="bg-white p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-xl border border-slate-200">
+        <h2 className="text-xl md:text-2xl font-black text-blue-900 mb-6 md:mb-8 uppercase italic flex items-center gap-3">
+            <Icon name="play-circle" className="text-blue-600 w-6 h-6 md:w-8 md:h-8" /> Mesa del Juez
         </h2>
         
-        <div className="space-y-6">
+        <div className="space-y-5 md:space-y-6">
           <div>
             <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Robot en Pista</label>
-            <select value={selTeam} onChange={e => setSelTeam(e.target.value)} className="w-full p-4 rounded-2xl bg-blue-50/50 border-2 border-blue-100 font-bold outline-none focus:border-blue-500 transition-all text-blue-900">
+            <select value={selTeam} onChange={e => setSelTeam(e.target.value)} className="w-full p-3 md:p-4 rounded-2xl bg-blue-50/50 border-2 border-blue-100 font-bold outline-none focus:border-blue-500 transition-all text-blue-900 text-sm md:text-base">
               <option value="">-- Seleccionar Equipo --</option>
               {activeTeams.map(t => <option key={t.id} value={t.id}>{t.school}</option>)}
             </select>
@@ -1828,57 +1838,59 @@ function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam, 
           <div>
             <div className="flex justify-between items-end mb-4">
                 <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block">Porcentaje de Recorrido</label>
-                <span className="text-4xl font-black text-blue-600 tracking-tighter">{percentage}%</span>
+                <span className="text-3xl md:text-4xl font-black text-blue-600 tracking-tighter">{percentage}%</span>
             </div>
             <input type="range" min="0" max="100" value={percentage} onChange={e => setPercentage(parseInt(e.target.value))} className="w-full h-3 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600" />
-            <div className="flex justify-between mt-2 text-[10px] font-bold text-slate-300">
+            <div className="flex justify-between mt-2 text-[9px] md:text-[10px] font-bold text-slate-300">
                 <span>INICIO (0%)</span><span>PROGRESO</span><span>META (100%)</span>
             </div>
           </div>
 
-          <div className="pt-6 border-t border-slate-100 flex gap-4">
+          <div className="pt-5 md:pt-6 border-t border-slate-100 flex flex-col sm:flex-row gap-3 md:gap-4">
               <button 
                 onClick={() => setPenalties(p => p + 1)}
-                className="flex-1 bg-orange-50 hover:bg-orange-100 text-orange-600 p-4 rounded-2xl border-2 border-orange-100 font-black text-xs flex flex-col items-center gap-1 transition-all"
+                className="flex-1 bg-orange-50 hover:bg-orange-100 text-orange-600 p-4 rounded-2xl border-2 border-orange-100 font-black text-[10px] md:text-xs flex flex-row sm:flex-col items-center justify-center gap-3 sm:gap-1 transition-all"
               >
-                  <Icon name="alert-triangle" /> Penalización (+5s)
-                  <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-[10px]">{penalties}</span>
+                  <Icon name="alert-triangle" className="w-4 h-4" /> 
+                  <span className="flex-1 sm:flex-none">Penalización (+5s)</span>
+                  <span className="bg-orange-500 text-white px-2.5 py-1 rounded-full text-[10px]">{penalties}</span>
               </button>
               <button 
                 onClick={() => { setPercentage(0); handleReset(); }}
-                className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 p-4 rounded-2xl border-2 border-red-100 font-black text-xs flex flex-col items-center gap-1 transition-all"
+                className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 p-4 rounded-2xl border-2 border-red-100 font-black text-[10px] md:text-xs flex flex-row sm:flex-col items-center justify-center gap-3 sm:gap-1 transition-all"
               >
-                  <Icon name="ban" /> Intento Nulo
+                  <Icon name="ban" className="w-4 h-4" /> 
+                  <span className="flex-1 sm:flex-none">Intento Nulo</span>
               </button>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col gap-6">
-        <div className="bg-slate-900 p-10 rounded-[3rem] shadow-2xl border-4 border-slate-800 text-center flex-1 flex flex-col justify-center relative overflow-hidden group">
+      <div className="flex flex-col gap-5 md:gap-6">
+        <div className="bg-slate-900 p-8 md:p-10 rounded-[2.5rem] md:rounded-[3rem] shadow-2xl border-4 border-slate-800 text-center flex-1 flex flex-col justify-center relative overflow-hidden group">
             <div className="absolute top-0 inset-x-0 h-1 bg-blue-600 group-hover:bg-blue-400 transition-colors"></div>
-            <p className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em] mb-4">Temporizador (2:00 Limite)</p>
-            <div className={`text-6xl font-black font-mono tracking-widest mb-10 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] transition-colors ${time < 10000 ? 'text-red-500 animate-pulse' : 'text-white'}`}>
+            <p className="text-[9px] md:text-[10px] font-black text-blue-400 uppercase tracking-[0.3em] md:tracking-[0.4em] mb-3 md:mb-4 leading-none">Temporizador (2:00 Limite)</p>
+            <div className={`text-5xl md:text-6xl font-black font-mono tracking-widest mb-8 md:mb-10 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] transition-colors ${time < 10000 ? 'text-red-500 animate-pulse' : 'text-white'}`}>
                 {formatStopwatch(time)}
             </div>
-            <div className="flex gap-4 justify-center">
+            <div className="flex gap-3 md:gap-4 justify-center">
                 {!running ? (
-                    <button onClick={handleStart} className="bg-blue-600 hover:bg-blue-500 text-white px-10 py-5 rounded-2xl font-black uppercase text-xs shadow-xl shadow-blue-600/30 transition-all flex items-center gap-2">
-                        <Icon name="play-circle" /> Iniciar
+                    <button onClick={handleStart} className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-500 text-white px-6 md:px-10 py-4 md:py-5 rounded-2xl font-black uppercase text-[10px] md:text-xs shadow-xl shadow-blue-600/30 transition-all flex items-center justify-center gap-2">
+                        <Icon name="play-circle" className="w-4 h-4 md:w-5 md:h-5" /> Iniciar
                     </button>
                 ) : (
-                    <button onClick={handlePause} className="bg-orange-500 hover:bg-orange-600 text-white px-10 py-5 rounded-2xl font-black uppercase text-xs shadow-xl shadow-orange-500/30 transition-all flex items-center gap-2">
-                        <Icon name="pause" /> Pausar
+                    <button onClick={handlePause} className="flex-1 sm:flex-none bg-orange-500 hover:bg-orange-600 text-white px-6 md:px-10 py-4 md:py-5 rounded-2xl font-black uppercase text-[10px] md:text-xs shadow-xl shadow-orange-500/30 transition-all flex items-center justify-center gap-2">
+                        <Icon name="pause" className="w-4 h-4 md:w-5 md:h-5" /> Pausar
                     </button>
                 )}
-                <button onClick={handleReset} className="bg-slate-700 hover:bg-slate-600 text-white px-10 py-5 rounded-2xl font-black uppercase text-xs transition-all">Reiniciar</button>
+                <button onClick={handleReset} className="flex-1 sm:flex-none bg-slate-700 hover:bg-slate-600 text-white px-6 md:px-10 py-4 md:py-5 rounded-2xl font-black uppercase text-[10px] md:text-xs transition-all">Reiniciar</button>
             </div>
         </div>
 
         <button 
            onClick={handleSave}
            disabled={!selTeam}
-           className="w-full bg-green-500 hover:bg-green-600 disabled:bg-slate-200 text-white font-black py-6 rounded-3xl shadow-2xl shadow-green-500/30 text-xl uppercase tracking-[0.2em] transition-all hover:scale-[1.02] active:scale-95"
+           className="w-full bg-green-500 hover:bg-green-600 disabled:bg-slate-200 text-white font-black py-5 md:py-6 rounded-[1.5rem] md:rounded-3xl shadow-2xl shadow-green-500/30 text-lg md:text-xl uppercase tracking-[0.1em] md:tracking-[0.2em] transition-all hover:scale-[1.01] active:scale-95"
         >
             Guardar Resultado
         </button>
@@ -2334,57 +2346,57 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
   };
 
   return (
-    <div className="flex h-full w-full bg-[#0f111a] text-slate-200 font-sans overflow-hidden select-none rounded-[2.5rem] shadow-xl">
+    <div className="flex flex-col md:flex-row h-full w-full bg-[#0f111a] text-slate-200 font-sans overflow-hidden select-none md:rounded-[2.5rem] shadow-xl">
       
       {initialMode === 'evaluate' && (
-      <div className="w-80 bg-[#161925] border-r border-[#2a2e3f] flex flex-col z-10 shadow-2xl relative overflow-y-auto custom-scrollbar">
+      <div className="w-full md:w-80 bg-[#161925] border-b md:border-b-0 md:border-r border-[#2a2e3f] flex flex-col z-10 shadow-2xl relative overflow-y-auto custom-scrollbar max-h-[40vh] md:max-h-full">
         {existingEvaluation && <div className="absolute inset-0 z-20 bg-slate-900/40 backdrop-blur-[2px] flex items-center justify-center">
-            <div className="bg-white/90 px-6 py-3 rounded-full shadow-2xl border border-white font-black text-blue-900 uppercase tracking-widest text-xs flex items-center gap-3">
+            <div className="bg-white/90 px-6 py-3 rounded-full shadow-2xl border border-white font-black text-blue-900 uppercase tracking-widest text-[10px] md:text-xs flex items-center gap-3">
               <Icon name="lock" className="w-4 h-4" /> Ya Evaluado
             </div>
         </div>}
-        <div className="p-6 border-b border-[#2a2e3f] shrink-0">
-          <h1 className="text-xl font-bold text-white flex items-center gap-2 tracking-wide mb-4">
+        <div className="p-4 md:p-6 border-b border-[#2a2e3f] shrink-0">
+          <h1 className="text-lg md:text-xl font-bold text-white flex items-center gap-2 tracking-wide mb-3 md:mb-4">
             <Icon name="play-circle" className="w-5 h-5 text-blue-500 fill-blue-500" /> MESA DEL JUEZ
           </h1>
-          <p className="text-xs text-slate-500 mt-1 uppercase tracking-wider font-semibold">Equipo en Pista</p>
-          <select value={selTeam} onChange={e => setSelTeam(e.target.value)} className="mt-2 w-full bg-[#0f111a] border border-[#2a2e3f] text-sm rounded-lg p-2.5 outline-none transition-colors">
+          <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-wider font-semibold">Equipo en Pista</p>
+          <select value={selTeam} onChange={e => setSelTeam(e.target.value)} className="mt-2 w-full bg-[#0f111a] border border-[#2a2e3f] text-xs md:text-sm rounded-lg p-2 md:p-2.5 outline-none transition-colors">
             <option value="">-- Seleccionar Equipo --</option>
             {activeTeams && activeTeams.map(t => <option key={t.id} value={t.id}>{t.school}</option>)}
           </select>
 
-          <div className="flex gap-3 mt-4">
+          <div className="flex gap-2 md:gap-3 mt-3 md:mt-4">
             <div className="flex-1">
-              <p className="text-xs text-slate-500 mb-1 uppercase tracking-wider font-semibold">Ronda</p>
-              <select value={selRonda} onChange={e => setSelRonda(parseInt(e.target.value))} className="w-full bg-[#0f111a] border border-[#2a2e3f] text-sm rounded-lg p-2.5 outline-none">
+              <p className="text-[9px] md:text-xs text-slate-500 mb-1 uppercase tracking-wider font-semibold">Ronda</p>
+              <select value={selRonda} onChange={e => setSelRonda(parseInt(e.target.value))} className="w-full bg-[#0f111a] border border-[#2a2e3f] text-[10px] md:text-sm rounded-lg p-1.5 md:p-2.5 outline-none">
                 {[1,2,3,4,5].map(r => <option key={r} value={r}>Ronda {r}</option>)}
               </select>
             </div>
             <div className="flex-1">
-              <p className="text-xs text-slate-500 mb-1 uppercase tracking-wider font-semibold">Pista</p>
-              <select value={selPista} onChange={e => setSelPista(parseInt(e.target.value))} className="w-full bg-[#0f111a] border border-[#2a2e3f] text-sm rounded-lg p-2.5 outline-none">
+              <p className="text-[9px] md:text-xs text-slate-500 mb-1 uppercase tracking-wider font-semibold">Pista</p>
+              <select value={selPista} onChange={e => setSelPista(parseInt(e.target.value))} className="w-full bg-[#0f111a] border border-[#2a2e3f] text-[10px] md:text-sm rounded-lg p-1.5 md:p-2.5 outline-none">
                 {[1,2,3,4,5].map(p => <option key={p} value={p}>Pista {p}</option>)}
               </select>
             </div>
           </div>
         </div>
 
-        <div className="p-6 flex-1 flex flex-col pt-4">
-          <div className="flex flex-col items-center mb-6">
-            <span className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Intentos (Máx 3)</span>
-            <div className="flex gap-4">
+        <div className="p-4 md:p-6 flex-1 flex flex-col pt-3 md:pt-4">
+          <div className="flex flex-col items-center mb-4 md:mb-6">
+            <span className="text-[9px] md:text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Intentos (Máx 3)</span>
+            <div className="flex gap-3 md:gap-4">
               {attempts.map((st, i) => (
-                <div key={i} className={`w-5 h-5 rounded-full border-2 transition-all ${st === 'valid' ? 'bg-green-500 border-green-400 shadow-[0_0_12px_#22c55e]' : st === 'nulled' ? 'bg-red-500 border-red-400 shadow-[0_0_12px_#ef4444]' : i === currentAttempt ? 'bg-yellow-500/50 border-yellow-400 animate-pulse' : 'bg-slate-800 border-slate-600'}`}/>
+                <div key={i} className={`w-4 h-4 md:w-5 md:h-5 rounded-full border-2 transition-all ${st === 'valid' ? 'bg-green-500 border-green-400 shadow-[0_0_12px_#22c55e]' : st === 'nulled' ? 'bg-red-500 border-red-400 shadow-[0_0_12px_#ef4444]' : i === currentAttempt ? 'bg-yellow-500/50 border-yellow-400 animate-pulse' : 'bg-slate-800 border-slate-600'}`}/>
               ))}
             </div>
           </div>
 
-          <div className="bg-[#1c1f2e] border border-[#2a2e3f] rounded-2xl p-4 mb-6 flex flex-col items-center shadow-inner shrink-0">
+          <div className="bg-[#1c1f2e] border border-[#2a2e3f] rounded-2xl p-3 md:p-4 mb-4 md:mb-6 flex flex-col items-center shadow-inner shrink-0 leading-none">
             <div className="flex items-center gap-2 mb-1">
-              <Icon name="timer" className="w-4 h-4 text-slate-400" />
-              <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Tiempo Restante</span>
+              <Icon name="timer" className="w-3 h-3 md:w-4 md:h-4 text-slate-400" />
+              <span className="text-[9px] md:text-xs text-slate-400 uppercase tracking-wider font-semibold">Tiempo Restante</span>
             </div>
-            <div className={`text-5xl font-mono font-bold tracking-widest mb-4 ${timeLeft <= 30 ? 'text-red-400 animate-pulse' : 'text-white'}`}>
+            <div className={`text-3xl md:text-5xl font-mono font-bold tracking-widest mb-3 md:mb-4 ${timeLeft <= 30 ? 'text-red-400 animate-pulse' : 'text-white'}`}>
               {formatTime(timeLeft)}
             </div>
             <div className="flex gap-2 w-full">
