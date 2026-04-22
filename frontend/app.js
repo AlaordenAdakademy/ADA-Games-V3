@@ -1256,10 +1256,11 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
                 : { sequence: [], obstacles: [] };
 
   // Pillar 2: Reglas de negocio (Bloqueo de duplicados)
+  // Solo bloquea si hay una evaluación OFICIAL (practice !== true) para esa ronda+pista
   const existingEvaluation = useMemo(() => {
     if (!selTeam) return null;
     const team = teams.find(t => t.id === selTeam);
-    return team?.history.find(h => h.ronda === selRonda && h.pista === selPista);
+    return team?.history.find(h => h.ronda === selRonda && h.pista === selPista && h.practice !== true);
   }, [teams, selTeam, selRonda, selPista]);
 
   const selectedTeamData = useMemo(() => teams.find(t => t.id === selTeam), [teams, selTeam]);
