@@ -483,6 +483,21 @@ function App() {
     showToast('✅ Datos del equipo actualizados');
   };
 
+  const handleDeleteTeam = (teamId) => {
+    const team = teams.find(t => t.id === teamId);
+    setConfirmDialog({
+        title: 'Eliminar Equipo',
+        message: `¿Estás seguro de que deseas eliminar permanentemente al equipo "${team?.teamName || team?.school}" y todo su historial? Esta acción no se puede deshacer.`,
+        onConfirm: () => {
+            const updated = teams.filter(t => t.id !== teamId);
+            setTeams(updated);
+            localStorage.setItem('ada_teams', JSON.stringify(updated));
+            postTeams(updated);
+            showToast('🗑️ Equipo eliminado permanentemente');
+        }
+    });
+  };
+
   const [selectedTeamHistory, setSelectedTeamHistory] = useState(null);
 
   if (loading) return (
@@ -648,6 +663,8 @@ function App() {
               postTeams={postTeams} 
               showToast={showToast} 
               isRunningInMainApp={true}
+              onUpdateTeamBase={handleUpdateTeamBase}
+              onDeleteTeam={handleDeleteTeam}
             />
         )}
         {activeTab === 'usuarios' && currentUser.role === 'admin' && (
@@ -660,7 +677,7 @@ function App() {
         )}
         {activeTab === 'evaluacion' && (
             currentUser.category === 'quest' ? 
-            <EvaluacionTab teams={teams} tracks={tracks} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} timer={timer} /> : 
+            <EvaluacionTab teams={teams} tracks={tracks} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} timer={timer} onUpdateTeamBase={handleUpdateTeamBase} onDeleteTeam={handleDeleteTeam} /> : 
             <EvaluadorDePistas 
               initialMode="evaluate" 
               tracks={tracks} 
@@ -673,6 +690,8 @@ function App() {
               postTeams={postTeams} 
               showToast={showToast} 
               isRunningInMainApp={true}
+              onUpdateTeamBase={handleUpdateTeamBase}
+              onDeleteTeam={handleDeleteTeam}
             />
         )}
         {activeTab === 'resultados' && <ResultadosTab teams={teams} currentUser={currentUser} onShowHistory={setSelectedTeamHistory} />}
@@ -1260,7 +1279,7 @@ function ConfigTab({ tracks, updateTrackData }) {
     </div>
   );
 }
-function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, postTeams, showToast, timer }) {
+function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, postTeams, showToast, timer, onUpdateTeamBase, onDeleteTeam }) {
   if (currentUser.category === 'line_follower') {
     return <LineFollowerEvaluacion teams={teams} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} selRonda={selRonda} />;
   }
@@ -1537,6 +1556,22 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
           </div>
         </div>
       </div>
+      
+      {showEditTeam && selTeam && teams && (
+          <EditTeamModal 
+              team={teams.find(t => t.id === selTeam)} 
+              onClose={() => setShowEditTeam(false)} 
+              onSave={(name, school) => {
+                  if (onUpdateTeamBase) onUpdateTeamBase(selTeam, name, school);
+                  setShowEditTeam(false);
+              }} 
+              onDelete={() => {
+                  setShowEditTeam(false);
+                  if (onDeleteTeam) onDeleteTeam(selTeam);
+                  setSelTeam('');
+              }}
+          />
+      )}
     </div>
   );
 }
@@ -1873,6 +1908,43 @@ function InspeccionTab({ teams, updateTeamStatus, disqualifyTeam }) {
       </div>
     </div>
   );
+}
+
+function EditTeamModal({ team, onClose, onSave, onDelete }) {
+    const [name, setName] = useState(team.teamName || '');
+    const [school, setSchool] = useState(team.schoolName || '');
+
+    return (
+        <div className="fixed inset-0 z-[200] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white max-w-sm w-full rounded-[2rem] shadow-2xl p-8 transform animate-fadeIn border-2 border-blue-500">
+                <h3 className="text-xl font-black text-center uppercase text-slate-800 mb-6">Editar Equipo</h3>
+                
+                <div className="space-y-4 mb-6">
+                    <div>
+                        <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Nombre del Equipo</label>
+                        <input value={name} onChange={e => setName(e.target.value)} className="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 font-bold focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                    </div>
+                    <div>
+                        <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Institución / Colegio</label>
+                        <input value={school} onChange={e => setSchool(e.target.value)} className="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 font-bold focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                    </div>
+                </div>
+
+                <div className="flex gap-2 mb-4">
+                    <button onClick={onClose} className="flex-1 py-3 rounded-xl bg-slate-100 text-slate-500 font-black text-xs uppercase hover:bg-slate-200">Cancelar</button>
+                    <button onClick={() => onSave(name, school)} className="flex-1 py-3 rounded-xl bg-blue-600 text-white font-black text-xs uppercase hover:bg-blue-700 shadow-lg shadow-blue-500/30">Guardar</button>
+                </div>
+                
+                {onDelete && (
+                    <div className="border-t border-slate-200 pt-4 mt-2">
+                        <button onClick={onDelete} className="w-full py-3 rounded-xl bg-red-50 text-red-500 font-black text-xs uppercase hover:bg-red-500 hover:text-white transition-all border border-red-100 flex items-center justify-center gap-2 shadow-sm">
+                            <Icon name="trash-2" className="w-4 h-4"/> Eliminar Permanentemente
+                        </button>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
 }
 
 const SchoolLogo = ({ schoolName, size = "w-8 h-8" }) => {
@@ -2535,7 +2607,7 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
 }
 
 
-function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, activeTeams, addScore, currentUser, disqualifyTeam, postTeams, showToast, isRunningInMainApp }) {
+function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, activeTeams, addScore, currentUser, disqualifyTeam, postTeams, showToast, isRunningInMainApp, onUpdateTeamBase, onDeleteTeam }) {
   const [mode, setMode] = useState(initialMode || 'edit');
   const [penalties, setPenalties] = useState(0);
   const [attempts, setAttempts] = useState(['pending', 'pending', 'pending']);
@@ -2551,6 +2623,7 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
   const [selTeam, setSelTeam] = useState('');
   const [selRonda, setSelRonda] = useState(1);
   const [selPista, setSelPista] = useState(1);
+  const [showEditTeam, setShowEditTeam] = useState(false);
 
   const [bgImage, setBgImage] = useState(null);
   const [points, setPoints] = useState([]);
@@ -2822,10 +2895,17 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
             <Icon name="play-circle" className="w-5 h-5 text-blue-500 fill-blue-500" /> MESA DEL JUEZ
           </h1>
           <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-wider font-semibold">Equipo en Pista</p>
-          <select value={selTeam} onChange={e => setSelTeam(e.target.value)} className="mt-2 w-full bg-[#0f111a] border border-[#2a2e3f] text-xs md:text-sm rounded-lg p-2 md:p-2.5 outline-none transition-colors">
-            <option value="">-- Seleccionar Equipo --</option>
-            {(isRunningInMainApp ? teams.filter(t => t.status === 'inspected' && t.category === 'line_follower' && (t.qualifiedRounds || [1]).includes(selRonda)) : activeTeams).map(t => <option key={t.id} value={t.id}>{t.school}</option>)}
-          </select>
+          <div className="flex gap-2">
+            <select value={selTeam} onChange={e => setSelTeam(e.target.value)} className="mt-2 w-full bg-[#0f111a] border border-[#2a2e3f] text-xs md:text-sm rounded-lg p-2 md:p-2.5 outline-none transition-colors">
+              <option value="">-- Seleccionar Equipo --</option>
+              {(isRunningInMainApp ? teams.filter(t => t.status === 'inspected' && t.category === 'line_follower' && (t.qualifiedRounds || [1]).includes(selRonda)) : activeTeams).map(t => <option key={t.id} value={t.id}>{t.teamName} ({t.schoolName})</option>)}
+            </select>
+            {selTeam && currentUser?.role === 'admin' && (
+                <button onClick={() => setShowEditTeam(true)} className="mt-2 bg-[#1a1d2d] border border-[#2a2e3f] p-2.5 rounded-lg text-blue-400 hover:bg-[#2a2e3f] transition-all flex-shrink-0">
+                    <Icon name="settings" className="w-5 h-5" />
+                </button>
+            )}
+          </div>
 
           <div className="flex gap-2 md:gap-3 mt-3 md:mt-4">
             <div className="flex-1">
@@ -3039,6 +3119,22 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
           )}
         </div>
       </div>
+      
+      {showEditTeam && selTeam && teams && (
+          <EditTeamModal 
+              team={teams.find(t => t.id === selTeam)} 
+              onClose={() => setShowEditTeam(false)} 
+              onSave={(name, school) => {
+                  if (onUpdateTeamBase) onUpdateTeamBase(selTeam, name, school);
+                  setShowEditTeam(false);
+              }} 
+              onDelete={() => {
+                  setShowEditTeam(false);
+                  if (onDeleteTeam) onDeleteTeam(selTeam);
+                  setSelTeam('');
+              }}
+          />
+      )}
     </div>
   );
 }
