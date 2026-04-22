@@ -1036,7 +1036,7 @@
                 ],
                 "bonusStart": "F6",
                 "bonusDir": "N",
-                "bonusRules": "El robot inicia en F6 en diagonal. Debe evitar H6, C2, I4, E5 y A3. Solo en puntos de coordenadas pares debe mostrar en el display las coordenadas en formato 'LETRA+NÚMERO'.",
+                "bonusRules": "El robot inicia en F6 orientado al Norte. Durante el recorrido puede usar movimientos diagonales. Debe evitar H6, C2, I4, E5 y A3. Solo en los puntos de coordenadas pares (columnas B,D,F,H,J y filas 2,4,6) debe mostrar en el display las coordenadas en formato 'LETRA+NÚMERO'.",
                 "bgImage": "/maps/mapa_ronda4_pista4.png",
                 "points": [
                     {
@@ -1100,7 +1100,7 @@
                 ],
                 "bonusStart": "C3",
                 "bonusDir": "N",
-                "bonusRules": "El robot inicia en C3 en movimientos diagonales. Debe evitar B5, D1, F4 e I3. El buzzer emite frecuencia creciente: 200Hz, 400Hz, 600Hz, 800Hz, 1000Hz, 1200Hz. LEDs blancos durante todo el recorrido.",
+                "bonusRules": "El robot inicia en C3 orientado al Norte. Se permiten movimientos diagonales entre puntos. El buzzer debe emitir un sonido de frecuencia creciente por cada punto visitado (200Hz a 1200Hz). Los LEDs permanecen blancos.",
                 "bgImage": "/maps/mapa_ronda4_pista5.png",
                 "points": [
                     {
@@ -1228,7 +1228,7 @@
                 ],
                 "bonusStart": "B4",
                 "bonusDir": "E",
-                "bonusRules": "El robot inicia en B4 realizando un zigzag. Debe evitar D5 y H4. El display debe mostrar doble coordenada: el punto actual y el siguiente (ej: 'B4→G2'). Los LEDs son azules en movimientos horizontales y verdes en movimientos verticales.",
+                "bonusRules": "El robot inicia en B4 hacia el Este. Debe realizar un trayecto en zigzag (alternando cambios de dirección) para evitar D5 y H4. El display debe mostrar la coordenada actual y la siguiente (ej: 'B4-G2'). LEDs azules en horizontal y verdes en vertical.",
                 "points": [
                     {
                         "id": 1,
@@ -1287,7 +1287,7 @@
                 "obstacles": [],
                 "bonusStart": "F1",
                 "bonusDir": "N",
-                "bonusRules": "El robot inicia en F1. Triple tarea: (1) El buzzer emite un tono diferente al cruzar cada fila (fila 1=Do, 2=Re, 3=Mi, 4=Fa, 5=Sol, 6=La). (2) El display muestra un contador del 0 al 5. (3) Los LEDs son blancos si la suma fila+columna es par, magenta si es impar.",
+                "bonusRules": "El robot inicia en F1 hacia el Norte. (1) El buzzer emite un tono diferente por fila (Do, Re, Mi, Fa, Sol, La) y EL DISPLAY DEBE MOSTRAR EL NOMBRE DE LA NOTA. (2) Los LEDs son blancos si la suma fila+columna es par, magenta si es impar.",
                 "points": [
                     {
                         "id": 1,
@@ -1414,7 +1414,7 @@
                 ],
                 "bonusStart": "D3",
                 "bonusDir": "E",
-                "bonusRules": "DESAFÍO MÁXIMO. El robot inicia en D3 en diagonal. Debe evitar B2, G3, I5 y E4. Debe realizar un giro de 360° en cada punto visitado. El buzzer reproduce una melodía completa de 8 notas al finalizar. El display acumula la distancia recorrida en celdas. Los LEDs deben mostrar el efecto arcoíris completo (rojo→naranja→amarillo→verde→azul→índigo→violeta) de forma continua.",
+                "bonusRules": "DESAFÍO FINAL. El robot inicia en D3 hacia el Este. Trayectoria libre (se permiten diagonales). Debe evitar B2, G3, I5 y E4. Debe realizar un giro de 360° en cada punto. Al final reproduce una melodía. El display muestra la distancia total en celdas. LEDs con efecto arcoíris continuo.",
                 "points": [
                     {
                         "id": 1,
