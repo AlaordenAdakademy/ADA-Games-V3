@@ -345,9 +345,14 @@ function App() {
             body: JSON.stringify({ userId: currentUser.id, password })
         });
         if (res.ok) {
-            localStorage.removeItem('ada_teams');
+            // Limpiar TODO el localStorage para evitar que datos viejos sobreescriban el reset
+            Object.keys(localStorage)
+                .filter(k => k.startsWith('ada_'))
+                .forEach(k => localStorage.removeItem(k));
+            setShowResetScores(false);
             window.location.reload();
         } else {
+            const err = await res.json().catch(() => ({}));
             showToast("Error de credenciales. No autorizado.");
         }
     } catch (err) {

@@ -85,13 +85,19 @@ def load_data():
         data["timer"]["updatedAt"] = time.time()
         changed = True
     
-    # Migración: Asegurar que todos los equipos tengan categoría y calificación de rondas
+    # Migración: Asegurar que todos los equipos tengan categoría, rondas y tickets
     for team in data.get("teams", []):
         if "category" not in team:
             team["category"] = "quest"
             changed = True
         if "qualifiedRounds" not in team:
             team["qualifiedRounds"] = [1]
+            changed = True
+        if "practiceTickets" not in team:
+            team["practiceTickets"] = 5
+            changed = True
+        if "evaluationTickets" not in team:
+            team["evaluationTickets"] = {"1": 1, "2": 1, "3": 1, "4": 1, "5": 1}
             changed = True
     
     if changed:
