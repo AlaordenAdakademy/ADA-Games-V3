@@ -650,13 +650,17 @@ function App() {
             <RegistroTab 
                 addTeam={addTeam} 
                 bulkAddTeams={bulkAddTeams} 
+            />
+        )}
+        {activeTab === 'inspeccion' && currentUser.role === 'admin' && (
+            <InspeccionTab 
                 teams={teams} 
-                currentUser={currentUser}
+                updateTeamStatus={updateTeamStatus} 
+                disqualifyTeam={disqualifyTeam} 
                 onUpdateTeamBase={handleUpdateTeamBase}
                 onDeleteTeam={handleDeleteTeam}
             />
         )}
-        {activeTab === 'inspeccion' && currentUser.role === 'admin' && <InspeccionTab teams={teams} updateTeamStatus={updateTeamStatus} disqualifyTeam={disqualifyTeam} />}
         {activeTab === 'config' && currentUser.role === 'admin' && (
             currentUser.category === 'quest' ? 
             <ConfigTab tracks={tracks} updateTrackData={updateTrackData} /> : 
@@ -1585,7 +1589,7 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
   );
 }
 
-function RegistroTab({ addTeam, bulkAddTeams, teams, currentUser, onUpdateTeamBase, onDeleteTeam }) {
+function RegistroTab({ addTeam, bulkAddTeams }) {
   const [teamName, setTeamName] = useState('');
   const [schoolName, setSchoolName] = useState('');
   const [cap, setCap] = useState('');
@@ -1595,7 +1599,6 @@ function RegistroTab({ addTeam, bulkAddTeams, teams, currentUser, onUpdateTeamBa
   const [member3, setMember3] = useState('');
   const [importPreview, setImportPreview] = useState(null); // null | array de equipos
   const [importError, setImportError] = useState('');
-  const [editingTeam, setEditingTeam] = useState(null);
   const fileInputRef = React.useRef(null);
 
   const getMembers = () => [member1, member2, member3].filter(m => m.trim() !== '');
@@ -1882,52 +1885,6 @@ function RegistroTab({ addTeam, bulkAddTeams, teams, currentUser, onUpdateTeamBa
           </button>
         </div>
       </div>
-
-      {/* LISTADO DE EQUIPOS REGISTRADOS */}
-      <div className="bg-white p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] shadow-2xl border border-slate-200 mt-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-2xl md:text-3xl font-black text-blue-900 uppercase italic tracking-tighter">Equipos Registrados</h2>
-            <p className="text-[10px] md:text-sm font-bold text-slate-400 uppercase tracking-widest mt-1">Gestión y edición de la base de datos</p>
-          </div>
-          <div className="bg-blue-100 text-blue-600 px-4 py-2 rounded-2xl font-black text-xs md:text-sm flex items-center gap-2">
-            <Icon name="users" className="w-4 h-4 md:w-5 md:h-5" />
-            {teams.length} TOTAL
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {teams.sort((a, b) => a.teamName.localeCompare(b.teamName)).map(team => (
-            <TeamCardManual 
-                key={team.id} 
-                team={team} 
-                onEdit={() => setEditingTeam(team)}
-            />
-          ))}
-        </div>
-
-        {teams.length === 0 && (
-          <div className="text-center py-20 bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200">
-            <Icon name="user-plus" className="w-16 h-16 text-slate-300 mx-auto mb-4 opacity-50" />
-            <p className="text-slate-400 font-black uppercase tracking-widest text-sm">No hay equipos registrados aún</p>
-          </div>
-        )}
-      </div>
-
-      {editingTeam && (
-          <EditTeamModal 
-              team={editingTeam} 
-              onClose={() => setEditingTeam(null)} 
-              onSave={(name, school) => {
-                  onUpdateTeamBase(editingTeam.id, name, school);
-                  setEditingTeam(null);
-              }} 
-              onDelete={() => {
-                  setEditingTeam(null);
-                  onDeleteTeam(editingTeam.id);
-              }}
-          />
-      )}
     </>
   );
 }
@@ -1951,12 +1908,15 @@ const TeamCardManual = ({ team, onEdit }) => (
 );
 
 
-function InspeccionTab({ teams, updateTeamStatus, disqualifyTeam }) {
+function InspeccionTab({ teams, updateTeamStatus, disqualifyTeam, onUpdateTeamBase, onDeleteTeam }) {
+  const [editingTeam, setEditingTeam] = useState(null);
   const pending = teams.filter(t => t.status === 'pending');
   return (
     <div className="max-w-4xl mx-auto animate-fadeIn">
       <h2 className="text-2xl md:text-3xl font-black text-blue-900 mb-6 md:mb-8 uppercase italic leading-tight">Inspección de Hardware</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+      
+      {/* ROBOTS PENDIENTES */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-12">
         {pending.length === 0 && (
           <div className="bg-white p-8 md:p-12 rounded-[2rem] border-2 border-dashed border-slate-200 flex flex-col items-center justify-center opacity-60 col-span-2">
             <Icon name="clipboard-check" className="w-12 h-12 md:w-16 md:h-16 text-slate-300 mb-4" />
@@ -1980,6 +1940,45 @@ function InspeccionTab({ teams, updateTeamStatus, disqualifyTeam }) {
           </div>
         ))}
       </div>
+
+      {/* GESTIÓN DE TODOS LOS EQUIPOS */}
+      <div className="bg-white p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] shadow-2xl border border-slate-200">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-xl md:text-2xl font-black text-blue-900 uppercase italic tracking-tighter">Base de Datos de Equipos</h2>
+            <p className="text-[10px] md:text-sm font-bold text-slate-400 uppercase tracking-widest mt-1">Edición y eliminación de registros</p>
+          </div>
+          <div className="bg-blue-100 text-blue-600 px-4 py-2 rounded-2xl font-black text-xs md:text-sm flex items-center gap-2">
+            <Icon name="users" className="w-4 h-4" />
+            {teams.length}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {teams.sort((a, b) => a.teamName.localeCompare(b.teamName)).map(team => (
+            <TeamCardManual 
+                key={team.id} 
+                team={team} 
+                onEdit={() => setEditingTeam(team)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {editingTeam && (
+          <EditTeamModal 
+              team={editingTeam} 
+              onClose={() => setEditingTeam(null)} 
+              onSave={(name, school) => {
+                  onUpdateTeamBase(editingTeam.id, name, school);
+                  setEditingTeam(null);
+              }} 
+              onDelete={() => {
+                  setEditingTeam(null);
+                  onDeleteTeam(editingTeam.id);
+              }}
+          />
+      )}
     </div>
   );
 }
