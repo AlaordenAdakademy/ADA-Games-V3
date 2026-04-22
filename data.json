@@ -20,6 +20,170 @@
             "qualifiedRounds": [
                 1
             ]
+        },
+        {
+            "id": "17768923483771",
+            "teamName": "IDEAL N 1",
+            "schoolName": "UE IDEAL",
+            "school": "IDEAL N 1 — UE IDEAL",
+            "captainName": "Kenay Silvera",
+            "coachName": "",
+            "members": [
+                "Kenay Rafael Silvera Romero",
+                "Diego Andres García Mora",
+                "Angelo Alessandro Mantovani Ortiz"
+            ],
+            "studentsCount": 3,
+            "status": "registered",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ]
+        },
+        {
+            "id": "17768923483882",
+            "teamName": "MENCA JAH",
+            "schoolName": "U.E. Doña Menca de Leoni",
+            "school": "MENCA JAH — U.E. Doña Menca de Leoni",
+            "captainName": "Jhean Brito",
+            "coachName": "",
+            "members": [
+                "Jhean Brito",
+                "Alejandro Cedeño",
+                "Hiroshi Yoshida"
+            ],
+            "studentsCount": 3,
+            "status": "registered",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ]
+        },
+        {
+            "id": "17768923483993",
+            "teamName": "Doragons",
+            "schoolName": "U.E. Raúl Leoni",
+            "school": "Doragons — U.E. Raúl Leoni",
+            "captainName": "Ariel Algarin",
+            "coachName": "",
+            "members": [
+                "Ariel Cristina Algarin García",
+                "Gabriel Jesús Molina Zapata",
+                "Angel Luis Rodriguez Vegas"
+            ],
+            "studentsCount": 3,
+            "status": "registered",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ]
+        },
+        {
+            "id": "17768923484104",
+            "teamName": "Los Boys",
+            "schoolName": "U.E. Abajo Cadenas",
+            "school": "Los Boys — U.E. Abajo Cadenas",
+            "captainName": "Eduardo Girot",
+            "coachName": "",
+            "members": [
+                "Eduardo Girot",
+                "José Romero",
+                "Jorge Zamora"
+            ],
+            "studentsCount": 3,
+            "status": "registered",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ]
+        },
+        {
+            "id": "17768923484205",
+            "teamName": "(Pendiente) Don Bosco",
+            "schoolName": "U.E. Colegio Don Bosco",
+            "school": "(Pendiente) Don Bosco — U.E. Colegio Don Bosco",
+            "captainName": "(Pendiente)",
+            "coachName": "",
+            "members": [
+                "(Pendiente)"
+            ],
+            "studentsCount": 1,
+            "status": "registered",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ]
+        },
+        {
+            "id": "17768923484316",
+            "teamName": "(Pendiente) La Paz",
+            "schoolName": "U.E. Nuestra Señora de La Paz",
+            "school": "(Pendiente) La Paz — U.E. Nuestra Señora de La Paz",
+            "captainName": "(Pendiente)",
+            "coachName": "",
+            "members": [
+                "(Pendiente)"
+            ],
+            "studentsCount": 1,
+            "status": "registered",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ]
+        },
+        {
+            "id": "17768923484417",
+            "teamName": "Lambda",
+            "schoolName": "U.E. Cacica Urimare",
+            "school": "Lambda — U.E. Cacica Urimare",
+            "captainName": "José Ramos",
+            "coachName": "",
+            "members": [
+                "Camila Vielma",
+                "Adrián Güipe",
+                "José Ramos"
+            ],
+            "studentsCount": 3,
+            "status": "registered",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ]
+        },
+        {
+            "id": "17768923484518",
+            "teamName": "Los Blinders",
+            "schoolName": "U.E. Nueva Barcelona",
+            "school": "Los Blinders — U.E. Nueva Barcelona",
+            "captainName": "Ilan Ávila",
+            "coachName": "",
+            "members": [
+                "Giovanny Ortiz",
+                "Ilan Avila",
+                "Wiston Molina"
+            ],
+            "studentsCount": 3,
+            "status": "registered",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ]
         }
     ],
     "tracks": {
