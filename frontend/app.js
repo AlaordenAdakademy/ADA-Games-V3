@@ -3096,9 +3096,9 @@ function FasesTab({ teams, onUpdateQualified, onUpdateManyQualified, showToast, 
   // Solo mostrar equipos aprobados en inspección
   const inspectedTeams = useMemo(() => teams.filter(t => t.status === 'inspected'), [teams]);
 
-  // Helper para obtener estadísticas de una ronda específica
+  // Helper para obtener estadísticas de una ronda específica (Solo Evaluaciones Oficiales)
   const getStats = (team, ronda) => {
-    const rh = team.history.filter(h => h.ronda === Number(ronda));
+    const rh = team.history.filter(h => h.ronda === Number(ronda) && h.practice !== true);
     if (rh.length === 0) return { score: 0, time: 999999, played: false };
     const score = rh.reduce((sum, h) => sum + (h.points || h.percentage || 0), 0);
     const time = rh.reduce((sum, h) => sum + (h.finalTimeMs || h.finalTime || 0), 0);
