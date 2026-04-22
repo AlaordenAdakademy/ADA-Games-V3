@@ -44,7 +44,7 @@ function App() {
   });
   
   // Estados para Competencia (v3.2)
-  const [competitionMode, setCompetitionMode] = useState(false);
+  const [competitionMode, setCompetitionMode] = useState(null); // null | 'individual' | 'dual'
   const [competitionDuration, setCompetitionDuration] = useState(() => {
     const saved = localStorage.getItem('ada_competition_duration');
     return saved ? parseInt(saved) : 30; // 30 min por defecto
@@ -449,7 +449,8 @@ function App() {
         onUpdateEvaluation={(idx, newData) => updateEvaluation(selectedTeamHistory, idx, newData)}
         currentUser={currentUser} 
       />
-      {competitionMode && <CompetitionOverlay teams={teams} timer={timer} timerActive={timerActive} toggleTimer={toggleTimer} resetTimer={resetTimer} formatTime={formatTime} onExit={() => setCompetitionMode(false)} category={currentUser.category} />}
+      {competitionMode === 'individual' && <CompetitionOverlay teams={teams} timer={timer} timerActive={timerActive} toggleTimer={toggleTimer} resetTimer={resetTimer} formatTime={formatTime} onExit={() => setCompetitionMode(null)} category={currentUser.category} />}
+      {competitionMode === 'dual' && <CompetitionDualOverlay teams={teams} timer={timer} timerActive={timerActive} toggleTimer={toggleTimer} resetTimer={resetTimer} formatTime={formatTime} onExit={() => setCompetitionMode(null)} />}
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-4 right-4 z-50 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl font-bold text-sm flex items-center gap-3 animate-fadeIn">
@@ -540,12 +541,20 @@ function App() {
         {/* Sección Inferior de la Sidebar (Solo Desktop) */}
         <div className="hidden md:block p-4 border-t border-blue-900 space-y-3 mt-auto">
             {currentUser.role === 'admin' && (
-                <button 
-                    onClick={() => setCompetitionMode(true)}
-                    className="w-full flex items-center gap-3 p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all font-black text-[10px] uppercase tracking-widest shadow-lg shadow-blue-500/20"
-                >
-                    <Icon name="monitor" className="w-4 h-4" /> Lanzar TV Ranking
-                </button>
+                <div className="flex flex-col gap-2">
+                    <button 
+                        onClick={() => setCompetitionMode('individual')}
+                        className="w-full flex items-center gap-3 p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all font-black text-[10px] uppercase tracking-widest shadow-lg shadow-blue-500/20"
+                    >
+                        <Icon name="monitor" className="w-4 h-4" /> Lanzar TV Individual
+                    </button>
+                    <button 
+                        onClick={() => setCompetitionMode('dual')}
+                        className="w-full flex items-center gap-3 p-3 bg-purple-600 hover:bg-purple-500 text-white rounded-xl transition-all font-black text-[10px] uppercase tracking-widest shadow-lg shadow-purple-500/20"
+                    >
+                        <Icon name="layout" className="w-4 h-4" /> Lanzar TV Dual
+                    </button>
+                </div>
             )}
             
             <button 
@@ -1959,6 +1968,152 @@ function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam, 
       </div>
     </div>
   );
+}
+
+function CompetitionDualOverlay({ teams, timer, timerActive, toggleTimer, resetTimer, formatTime, onExit }) {
+    const [allTeams, setAllTeams] = useState(teams);
+
+    useEffect(() => {
+        const fetchAll = async () => {
+            try {
+                const res = await fetch(`${API_BASE}/data`);
+                const data = await res.json();
+                if (data.teams) setAllTeams(data.teams);
+            } catch (err) { console.error("Dual TV fetch error:", err); }
+        };
+        fetchAll();
+        const interval = setInterval(fetchAll, 5000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const getSorted = (cat) => {
+        const list = Array.isArray(allTeams) ? allTeams.filter(t => t.category === cat) : [];
+        return [...list].sort((a, b) => {
+            if ((b.score || 0) !== (a.score || 0)) return (b.score || 0) - (a.score || 0);
+            return (a.lastTime || 9999999) - (b.lastTime || 9999999);
+        });
+    };
+
+    const questTeams = getSorted('quest');
+    const followerTeams = getSorted('line_follower');
+
+    const TeamRow = ({ team, index }) => {
+        const score = team.score || 0;
+        let posColorText = "text-blue-400", posBg = "bg-slate-900/50 border-slate-800", posBadge = "";
+        if (index === 0 && score > 0) { posColorText = "text-yellow-400"; posBg = "bg-yellow-600/20 border-yellow-500/50"; posBadge = "🏆"; }
+        else if (index === 1 && score > 0) { posColorText = "text-slate-300"; posBg = "bg-slate-400/10 border-slate-400/30"; posBadge = "🥈"; }
+        else if (index === 2 && score > 0) { posColorText = "text-orange-400"; posBg = "bg-orange-600/10 border-orange-500/30"; posBadge = "🥉"; }
+
+        return (
+            <div className={`flex items-center gap-3 p-3 rounded-2xl border transition-all ${posBg} ${team.status === 'disqualified' ? 'opacity-30' : ''}`}>
+                <div className="w-12 text-center">
+                    <span className={`text-2xl font-black italic ${posColorText}`}>#{index + 1}</span>
+                    <div className="text-xs">{posBadge}</div>
+                </div>
+                <div className="flex-1 min-w-0">
+                    <p className="text-sm font-black truncate">{team.teamName || team.school}</p>
+                    <p className="text-[10px] text-slate-400 truncate">{team.schoolName || ''}</p>
+                </div>
+                <div className={`text-2xl font-black ${posColorText}`}>{score}</div>
+            </div>
+        );
+    };
+
+    return (
+        <div className="fixed inset-0 z-[100] bg-slate-950 text-white flex flex-col overflow-hidden animate-fadeIn font-sans">
+            {/* Header */}
+            <div className="flex justify-between items-center px-8 py-4 border-b border-slate-800 flex-shrink-0">
+                <div className="flex items-center gap-4">
+                    <div className="bg-purple-600 p-3 rounded-2xl shadow-lg shadow-purple-500/30">
+                        <Icon name="layout" className="w-8 h-8 text-white" />
+                    </div>
+                    <div>
+                        <h1 className="text-3xl font-black italic tracking-tighter uppercase">Ranking Dual en Vivo</h1>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse inline-block"></span>
+                            Sincronizado en tiempo real · ADAGAMES V4.5
+                        </p>
+                    </div>
+                </div>
+                <div className="flex items-center gap-4">
+                    <div className={`px-6 py-3 rounded-2xl border-2 text-center transition-all ${timer < 300 ? 'bg-red-500/20 border-red-500 animate-pulse' : 'bg-slate-900 border-blue-500/30'}`}>
+                        <p className="text-[9px] text-slate-400 uppercase tracking-widest">Tiempo</p>
+                        <p className="text-3xl font-black font-mono">{formatTime(timer)}</p>
+                    </div>
+                    <div className="flex gap-2">
+                        <button onClick={toggleTimer} className={`px-4 py-2 rounded-xl font-black text-[10px] uppercase ${timerActive ? 'bg-orange-500 hover:bg-orange-600' : 'bg-green-600 hover:bg-green-700'}`}>
+                            {timerActive ? 'Pausar' : 'Iniciar'}
+                        </button>
+                        <button onClick={resetTimer} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl font-black text-[10px] uppercase">Reset</button>
+                        <button onClick={onExit} className="px-4 py-2 bg-slate-100/10 hover:bg-white hover:text-slate-900 rounded-xl font-black text-[10px] uppercase transition-all">Salir TV</button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Dual Panels */}
+            <div className="flex flex-1 overflow-hidden">
+                {/* Quest Panel */}
+                <div className="flex-1 flex flex-col overflow-hidden">
+                    <div className="bg-blue-600/20 border-b border-blue-500/40 px-6 py-3 flex-shrink-0">
+                        <h2 className="text-xl font-black uppercase tracking-widest text-blue-300 flex items-center gap-2">
+                            <Icon name="trophy" className="w-5 h-5" /> Robotics Quest
+                        </h2>
+                        <p className="text-[10px] text-blue-400 uppercase tracking-widest">{questTeams.length} equipos</p>
+                    </div>
+                    <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
+                        {questTeams.length === 0 ? (
+                            <p className="text-slate-500 text-center mt-8 font-bold">Sin equipos registrados</p>
+                        ) : questTeams.map((t, i) => <TeamRow key={t.id} team={t} index={i} />)}
+                    </div>
+                </div>
+
+                {/* Racing Separator */}
+                <div className="relative w-16 flex-shrink-0 flex flex-col items-center justify-center bg-slate-950 overflow-hidden">
+                    {/* Animated racing line */}
+                    <div className="absolute inset-0 flex flex-col items-center">
+                        <div className="w-0.5 h-full bg-gradient-to-b from-transparent via-purple-500 to-transparent animate-pulse"></div>
+                    </div>
+                    {/* Racing cars animation */}
+                    <div className="relative z-10 flex flex-col items-center gap-3">
+                        {[...Array(8)].map((_, i) => (
+                            <div key={i} className="text-lg" style={{
+                                animation: `racingCar ${1.5 + i * 0.3}s linear infinite`,
+                                animationDelay: `${i * 0.2}s`,
+                                opacity: 0.6 + (i % 3) * 0.15
+                            }}>
+                                {i % 3 === 0 ? '🏎️' : i % 3 === 1 ? '🤖' : '⚡'}
+                            </div>
+                        ))}
+                    </div>
+                    <style>{`
+                        @keyframes racingCar {
+                            0% { transform: translateY(-60px); opacity: 0; }
+                            10% { opacity: 1; }
+                            90% { opacity: 1; }
+                            100% { transform: translateY(60px); opacity: 0; }
+                        }
+                    `}</style>
+                    {/* ADA label */}
+                    <div className="absolute bottom-4 text-[8px] font-black text-purple-400 tracking-widest" style={{writingMode:'vertical-rl'}}>ADA GAMES</div>
+                </div>
+
+                {/* Line Follower Panel */}
+                <div className="flex-1 flex flex-col overflow-hidden">
+                    <div className="bg-green-600/20 border-b border-green-500/40 px-6 py-3 flex-shrink-0">
+                        <h2 className="text-xl font-black uppercase tracking-widest text-green-300 flex items-center gap-2">
+                            <Icon name="zap" className="w-5 h-5" /> Sigue Línea
+                        </h2>
+                        <p className="text-[10px] text-green-400 uppercase tracking-widest">{followerTeams.length} equipos</p>
+                    </div>
+                    <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
+                        {followerTeams.length === 0 ? (
+                            <p className="text-slate-500 text-center mt-8 font-bold">Sin equipos registrados</p>
+                        ) : followerTeams.map((t, i) => <TeamRow key={t.id} team={t} index={i} />)}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 }
 
 function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer, formatTime, onExit, category }) {
