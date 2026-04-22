@@ -375,28 +375,43 @@ function App() {
     });
   };
 
-  const addScore = (teamId, ronda, pista, points, finalTimeMs = null) => {
+  const addScore = (teamId, ronda, pista, points, finalTimeMs = null, isPractice = false) => {
     const updated = teams.map(t => {
       if (t.id === teamId) {
-        return {
-          ...t,
-          score: t.score + points,
-          lastTime: finalTimeMs !== null ? ((t.lastTime || 0) + finalTimeMs) : t.lastTime,
-          history: [...t.history, { 
-            ronda, 
-            pista, 
-            points, 
-            finalTimeMs,
-            date: new Date().toLocaleTimeString(),
-            judgeId: currentUser.id,
-            judgeName: currentUser.name
-          }]
-        };
+        // Inicializar tickets si no existen
+        const practiceTickets = t.practiceTickets !== undefined ? t.practiceTickets : 5;
+        const evalTickets = t.evaluationTickets || { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1 };
+
+        if (isPractice) {
+            return {
+                ...t,
+                practiceTickets: Math.max(0, practiceTickets - 1),
+                history: [...t.history, { 
+                    ronda, pista, points, finalTimeMs, practice: true,
+                    date: new Date().toLocaleTimeString(),
+                    judgeId: currentUser.id, judgeName: currentUser.name
+                }]
+            };
+        } else {
+            const newEvalTickets = { ...evalTickets };
+            newEvalTickets[pista] = 0;
+            return {
+                ...t,
+                score: (t.score || 0) + points,
+                lastTime: finalTimeMs !== null ? ((t.lastTime || 0) + finalTimeMs) : t.lastTime,
+                evaluationTickets: newEvalTickets,
+                history: [...t.history, { 
+                    ronda, pista, points, finalTimeMs, practice: false,
+                    date: new Date().toLocaleTimeString(),
+                    judgeId: currentUser.id, judgeName: currentUser.name
+                }]
+            };
+        }
       }
       return t;
     });
     postTeams(updated);
-    showToast('Puntaje guardado exitosamente');
+    showToast(isPractice ? 'Intento de PRÁCTICA registrado' : 'Evaluación OFICIAL guardada');
   };
 
   const updateQualifiedRounds = (teamId, rounds) => {
@@ -1176,6 +1191,7 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
   const [selTeam, setSelTeam] = useState('');
   const [selRonda, setSelRonda] = useState(1);
   const [selPista, setSelPista] = useState(1);
+  const [attemptType, setAttemptType] = useState('practice'); // 'practice' | 'evaluation'
   const [progressIdx, setProgressIdx] = useState(-1);
   const [bonus, setBonus] = useState(false);
   const [bonusIntention, setBonusIntention] = useState(null);
@@ -1192,22 +1208,46 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
     return team?.history.find(h => h.ronda === selRonda && h.pista === selPista);
   }, [teams, selTeam, selRonda, selPista]);
 
+  const selectedTeamData = useMemo(() => teams.find(t => t.id === selTeam), [teams, selTeam]);
+  const practiceRemaining = selectedTeamData?.practiceTickets !== undefined ? selectedTeamData.practiceTickets : 5;
+  const evalRemaining = (selectedTeamData?.evaluationTickets?.[selPista] !== undefined ? selectedTeamData.evaluationTickets[selPista] : 1) > 0;
+
+  // Forzar tipo de intento si no hay tickets de práctica
+  useEffect(() => {
+    if (selTeam) {
+        if (practiceRemaining <= 0) {
+            setAttemptType('evaluation');
+        } else if (!evalRemaining) {
+            setAttemptType('practice');
+        }
+    }
+  }, [selTeam, practiceRemaining, evalRemaining]);
+
   const handleSave = () => {
-    if (!selTeam || existingEvaluation) return;
+    if (!selTeam) return;
+    const isPractice = attemptType === 'practice';
+    if (!isPractice && !evalRemaining) {
+        showToast('Este equipo ya no tiene tickets de evaluación para esta pista', 'error');
+        return;
+    }
+    if (isPractice && practiceRemaining <= 0) {
+        showToast('Este equipo ya no tiene tickets de práctica', 'error');
+        return;
+    }
+
     const total = (progressIdx + 1) + (bonus ? 3 : 0);
     
-    // Lógica de Tiempo para Quest: Solo se captura el tiempo en la Pista 5
-    // El tiempo registrado es (30min - tiempo_restante)
     let finalTimeMs = 0;
     if (selPista === 5) {
         finalTimeMs = (1800 - timer) * 1000;
     }
     
-    addScore(selTeam, selRonda, selPista, total, finalTimeMs);
+    addScore(selTeam, selRonda, selPista, total, finalTimeMs, isPractice);
     setSelTeam('');
     setProgressIdx(-1);
     setBonus(false);
     setBonusIntention(null);
+    setAttemptType('practice');
   };
 
   return (
@@ -1240,6 +1280,51 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
                   </select>
                 </div>
               </div>
+
+              {selTeam && (
+                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                    <div className="flex justify-between items-center">
+                        <span className="text-[9px] font-black text-slate-500 uppercase">Tickets de Práctica</span>
+                        <div className="flex gap-1">
+                            {[1,2,3,4,5].map(i => (
+                                <div key={i} className={`w-3 h-5 rounded-sm border ${i <= practiceRemaining ? 'bg-blue-500 border-blue-400 shadow-[0_0_5px_rgba(59,130,246,0.5)]' : 'bg-slate-200 border-slate-300 opacity-30'}`}></div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                        <span className="text-[9px] font-black text-slate-500 uppercase">Evaluación P{selPista}</span>
+                        <div className={`w-8 h-4 rounded-full flex items-center px-1 transition-all ${evalRemaining ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                            <div className={`w-2 h-2 rounded-full mr-1 ${evalRemaining ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
+                            <span className="text-[8px] font-black">{evalRemaining ? 'DISP.' : 'AGOT.'}</span>
+                        </div>
+                    </div>
+                </div>
+              )}
+
+              {selTeam && (
+                <div className="pt-2">
+                    <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Tipo de Intento</label>
+                    <div className="flex gap-2">
+                        <button 
+                            onClick={() => setAttemptType('practice')}
+                            disabled={practiceRemaining <= 0}
+                            className={`flex-1 py-3 rounded-xl font-black text-[10px] uppercase border-2 transition-all ${attemptType === 'practice' ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/30' : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50'} ${practiceRemaining <= 0 ? 'opacity-30 cursor-not-allowed' : ''}`}
+                        >
+                            🎟️ Práctica ({practiceRemaining})
+                        </button>
+                        <button 
+                            onClick={() => setAttemptType('evaluation')}
+                            disabled={!evalRemaining}
+                            className={`flex-1 py-3 rounded-xl font-black text-[10px] uppercase border-2 transition-all ${attemptType === 'evaluation' ? 'bg-red-600 border-red-500 text-white shadow-lg shadow-red-600/30' : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50'} ${!evalRemaining ? 'opacity-30 cursor-not-allowed' : ''}`}
+                        >
+                            🎯 Evaluación
+                        </button>
+                    </div>
+                    {practiceRemaining <= 0 && attemptType === 'evaluation' && (
+                        <p className="text-[8px] font-bold text-red-500 mt-2 text-center uppercase tracking-tighter animate-bounce">⚠️ Tickets de práctica agotados. Muerte Súbita.</p>
+                    )}
+                </div>
+              )}
 
               {existingEvaluation && (
                 <div className="bg-orange-50 border border-orange-200 p-4 rounded-2xl flex gap-3 items-start animate-fadeIn">
