@@ -59,9 +59,10 @@ function App() {
   });
   
   // Estados para UI
+  const [showReset, setShowReset] = useState(false);
+  const [showResetScores, setShowResetScores] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const [toastMessage, setToastMessage] = useState('');
-  const [showReset, setShowReset] = useState(false);
 
   // 1. Cargar datos iniciales desde el servidor y sincronización periódica
   useEffect(() => {
@@ -334,6 +335,24 @@ function App() {
       } catch (err) {
           showToast("Error al reiniciar competencia");
       }
+  };
+
+  const handleResetScores = async (password) => {
+    try {
+        const res = await fetch(`${API_BASE}/reset/scores`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: currentUser.id, password })
+        });
+        if (res.ok) {
+            localStorage.removeItem('ada_teams');
+            window.location.reload();
+        } else {
+            showToast("Error de credenciales. No autorizado.");
+        }
+    } catch (err) {
+        showToast("Error al reiniciar puntajes");
+    }
   };
 
   const deleteEvaluation = (teamId, historyIndex) => {
@@ -641,6 +660,7 @@ function App() {
                 timerActive={timerActive}
                 setTimer={setTimer}
                 setShowReset={setShowReset}
+                setShowResetScores={setShowResetScores}
                 teams={teams}
                 currentUser={currentUser}
             />
@@ -672,6 +692,27 @@ function App() {
                         const pwd = document.getElementById('reset_pwd').value;
                         if(pwd) handleResetCompetition(pwd);
                     }} className="flex-1 py-3 rounded-xl bg-red-600 text-white font-black text-xs uppercase hover:bg-red-700 shadow-lg shadow-red-500/30">Aniquilar</button>
+                </div>
+            </div>
+        </div>
+      )}
+
+      {/* MODAL RESET PARCIAL (SOLO PUNTAJES) */}
+      {showResetScores && (
+        <div className="fixed inset-0 z-[200] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white max-w-sm w-full rounded-[2rem] shadow-2xl p-8 transform animate-fadeIn border-2 border-orange-500">
+                <div className="bg-orange-100 text-orange-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Icon name="refresh-cw" className="w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-black text-center uppercase text-slate-800 mb-2">Reset de Puntajes</h3>
+                <p className="text-[10px] text-center font-bold text-slate-500 mb-6 uppercase tracking-widest">Se borrarán puntajes, historial y tickets. LOS EQUIPOS SE MANTENDRÁN. Backup automático activo.</p>
+                <input type="password" id="reset_scores_pwd" placeholder="Contraseña Admin" className="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 mb-4 font-bold focus:outline-none focus:ring-2 focus:ring-orange-400" />
+                <div className="flex gap-2">
+                    <button onClick={() => setShowResetScores(false)} className="flex-1 py-3 rounded-xl bg-slate-100 text-slate-500 font-black text-xs uppercase hover:bg-slate-200">Cancelar</button>
+                    <button onClick={() => {
+                        const pwd = document.getElementById('reset_scores_pwd').value;
+                        if(pwd) handleResetScores(pwd);
+                    }} className="flex-1 py-3 rounded-xl bg-orange-600 text-white font-black text-xs uppercase hover:bg-orange-700 shadow-lg shadow-orange-500/30">Limpiar</button>
                 </div>
             </div>
         </div>
@@ -915,7 +956,7 @@ function HistorialModal({ teams, selectedId, onClose, onDeleteEvaluation, onUpda
     );
 }
 
-function SistemasTab({ competitionDuration, setCompetitionDuration, timerActive, setTimer, setShowReset, teams, currentUser }) {
+function SistemasTab({ competitionDuration, setCompetitionDuration, timerActive, setTimer, setShowReset, setShowResetScores, teams, currentUser }) {
     const totalTeams = teams.length;
     const inspectedTeams = teams.filter(t => t.status === 'inspected').length;
     
@@ -987,13 +1028,26 @@ function SistemasTab({ competitionDuration, setCompetitionDuration, timerActive,
                         <div className="bg-red-50 border border-red-100 p-5 md:p-6 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-5 md:gap-6">
                             <div className="text-center sm:text-left">
                                 <p className="font-black text-red-900 uppercase text-xs md:text-sm">Reiniciar Competencia</p>
-                                <p className="text-[9px] md:text-[10px] font-bold text-red-500/70 uppercase tracking-widest mt-1">Se borrará toda la data histórica.</p>
+                                <p className="text-[9px] md:text-[10px] font-bold text-red-500/70 uppercase tracking-widest mt-1">Se borrará toda la data histórica (Incluye equipos).</p>
                             </div>
                             <button 
                                 onClick={() => setShowReset(true)}
                                 className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white px-6 md:px-8 py-3 md:py-4 rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest transition-all shadow-lg shadow-red-500/30 flex items-center justify-center gap-2 active:scale-95"
                             >
                                 <Icon name="trash-2" className="w-4 h-4" /> Aniquilar Todo
+                            </button>
+                        </div>
+
+                        <div className="bg-orange-50 border border-orange-100 p-5 md:p-6 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-5 md:gap-6">
+                            <div className="text-center sm:text-left">
+                                <p className="font-black text-orange-900 uppercase text-xs md:text-sm">Limpiar Resultados</p>
+                                <p className="text-[9px] md:text-[10px] font-bold text-orange-500/70 uppercase tracking-widest mt-1">Mantiene los equipos. Borra puntajes, historial y tickets.</p>
+                            </div>
+                            <button 
+                                onClick={() => setShowResetScores(true)}
+                                className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700 text-white px-6 md:px-8 py-3 md:py-4 rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest transition-all shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 active:scale-95"
+                            >
+                                <Icon name="refresh-cw" className="w-4 h-4" /> Reset Parcial
                             </button>
                         </div>
                     </div>
