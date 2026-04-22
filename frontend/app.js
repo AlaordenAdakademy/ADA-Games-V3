@@ -1674,13 +1674,18 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
         totalTime = team.lastTime || 0;
     } else if (rh.length === 0) {
         return { score: 0, time: 999999 };
-    } else if (team.category === 'line_follower') {
-        const pista5 = rh.find(h => h.pista === 5);
-        totalScore = rh.reduce((sum, h) => sum + (h.points || h.percentage || 0), 0);
-        // Si terminó pista 5, usamos ese tiempo. Si no terminó pista 5, usamos tiempo máximo de ronda (30 min)
-        totalTime = pista5 ? (pista5.finalTimeMs || 0) : 1800000;
     } else {
-        totalTime = rh.reduce((sum, h) => sum + (h.finalTimeMs || h.finalTime || 0), 0);
+        // Calcular puntaje acumulado para la ronda seleccionada (todas las categorías)
+        totalScore = rh.reduce((sum, h) => sum + (h.points || h.percentage || 0), 0);
+        
+        if (team.category === 'line_follower') {
+            const pista5 = rh.find(h => h.pista === 5);
+            // Si terminó pista 5, usamos ese tiempo. Si no terminó pista 5, usamos tiempo máximo (30 min)
+            totalTime = pista5 ? (pista5.finalTimeMs || 0) : 1800000;
+        } else {
+            // Para Quest, sumamos los tiempos de las pistas registradas
+            totalTime = rh.reduce((sum, h) => sum + (h.finalTimeMs || h.finalTime || 0), 0);
+        }
     }
     return { score: totalScore, time: totalTime };
   };
