@@ -249,8 +249,9 @@ def reset_scores(auth: ResetAuth):
         team["score"] = 0
         team["history"] = []
         team["lastTime"] = 0
-        team["status"] = "inspected" # Back to ready
+        team["status"] = "inspected"
         team["practiceTickets"] = 5
+        # Asegurar que las llaves sean strings para compatibilidad JSON
         team["evaluationTickets"] = { "1": 1, "2": 1, "3": 1, "4": 1, "5": 1 }
     
     save_data(data)
