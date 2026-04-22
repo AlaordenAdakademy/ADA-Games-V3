@@ -1,5 +1,27 @@
 {
-    "teams": [],
+    "teams": [
+        {
+            "id": "1776892156424",
+            "teamName": "Jvg-Bot",
+            "schoolName": "U.E. Colegio Juan Vicente González",
+            "school": "Jvg-Bot — U.E. Colegio Juan Vicente González",
+            "captainName": "Christopher Sanchez",
+            "coachName": "",
+            "members": [
+                "Christopher Sanchez",
+                "Rahel Carreño",
+                "Sebastián Carvajal"
+            ],
+            "studentsCount": 3,
+            "status": "registered",
+            "score": 0,
+            "history": [],
+            "category": "Quest",
+            "qualifiedRounds": [
+                1
+            ]
+        }
+    ],
     "tracks": {
         "1": {
             "1": {
