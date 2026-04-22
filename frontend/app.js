@@ -1962,11 +1962,30 @@ function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam, 
 }
 
 function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer, formatTime, onExit, category }) {
+    const [viewCategory, setViewCategory] = useState(category);
+    const [vTeams, setVTeams] = useState(teams);
     const [selRondaView, setSelRondaView] = useState('global');
     const [isAutoScrolling, setIsAutoScrolling] = useState(false);
     const listRef = useRef(null);
     const scrollDirection = useRef(1);
     const exactScroll = useRef(0);
+
+    // Polling específico para la categoría en pantalla
+    useEffect(() => {
+        const fetchCategoryData = async () => {
+            try {
+                const res = await fetch(`${API_BASE}/data?category=${viewCategory}`);
+                const data = await res.json();
+                if (data.teams) setVTeams(data.teams);
+            } catch (err) {
+                console.error("Error fetching category data for TV:", err);
+            }
+        };
+
+        fetchCategoryData();
+        const interval = setInterval(fetchCategoryData, 5000);
+        return () => clearInterval(interval);
+    }, [viewCategory]);
 
     useEffect(() => {
         let animationFrameId;
@@ -2012,7 +2031,7 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
         let totalScore = rh.reduce((sum, h) => sum + (h.points || h.percentage || 0), 0);
         let totalTime = 0;
         
-        if (category === 'quest') {
+        if (viewCategory === 'quest') {
             const pista5 = rh.find(h => h.pista === 5);
             totalTime = pista5 ? (pista5.finalTimeMs || 0) : 1800000;
         } else {
@@ -2023,14 +2042,14 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
     };
 
     const sorted = useMemo(() => {
-        const list = Array.isArray(teams) ? teams : [];
+        const list = Array.isArray(vTeams) ? vTeams : [];
         return [...list].sort((a, b) => {
             const statsA = getRoundStats(a, selRondaView);
             const statsB = getRoundStats(b, selRondaView);
             if (statsB.score !== statsA.score) return statsB.score - statsA.score;
             return statsA.time - statsB.time;
         });
-    }, [teams, selRondaView]);
+    }, [vTeams, selRondaView, viewCategory]);
 
     const formatResultTime = (ms) => {
         if (!ms || ms === 999999) return "--:--.--";
@@ -2049,9 +2068,26 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
                     </div>
                     <div>
                         <h1 className="text-5xl font-black italic tracking-tighter uppercase leading-none">Ranking en Vivo</h1>
-                        <p className="text-blue-400 font-bold uppercase tracking-[0.3em] text-sm mt-2">
-                            {category === 'line_follower' ? 'Seguidor de Línea' : 'Robotics Quest'}
-                        </p>
+                        <div className="flex gap-4 items-center mt-3">
+                            <div className="flex bg-slate-900/80 p-1 rounded-2xl border border-slate-800 shadow-2xl">
+                                <button 
+                                    onClick={() => setViewCategory('quest')}
+                                    className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase transition-all ${viewCategory === 'quest' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-500 hover:text-slate-300'}`}
+                                >
+                                    Robotics Quest
+                                </button>
+                                <button 
+                                    onClick={() => setViewCategory('line_follower')}
+                                    className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase transition-all ${viewCategory === 'line_follower' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-500 hover:text-slate-300'}`}
+                                >
+                                    Seguidores Línea
+                                </button>
+                            </div>
+                            <span className="text-blue-500/50 font-black">|</span>
+                            <p className="text-blue-400 font-bold uppercase tracking-widest text-[10px]">
+                                {viewCategory === 'line_follower' ? 'Seguidor de Línea' : 'Robotics Quest'}
+                            </p>
+                        </div>
                         <div className="mt-4 flex gap-2">
                             <button onClick={() => setSelRondaView('global')} className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase transition-all shadow-lg ${selRondaView === 'global' ? 'bg-blue-600 text-white shadow-blue-600/50' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>Global</button>
                             {[1,2,3,4,5].map(r => (
@@ -2128,7 +2164,7 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
                 <p className="text-xs font-bold uppercase tracking-widest flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Datos sincronizados en tiempo real
                 </p>
-                <p className="text-xs font-black italic tracking-tighter">ADAGAMES V4.0 - {category === 'line_follower' ? 'LINE FOLLOWER' : 'ROBOTICS QUEST'} ENGINE</p>
+                <p className="text-xs font-black italic tracking-tighter">ADAGAMES V4.0 - {viewCategory === 'line_follower' ? 'LINE FOLLOWER' : 'ROBOTICS QUEST'} ENGINE</p>
             </div>
         </div>
     );
