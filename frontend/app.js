@@ -1282,17 +1282,17 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
               </div>
 
               {selTeam && (
-                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                <div className="p-4 bg-orange-50/50 rounded-2xl border border-orange-100 space-y-3">
                     <div className="flex justify-between items-center">
-                        <span className="text-[9px] font-black text-slate-500 uppercase">Tickets de Práctica</span>
+                        <span className="text-[9px] font-black text-orange-600 uppercase tracking-widest">Tickets de Práctica</span>
                         <div className="flex gap-1">
                             {[1,2,3,4,5].map(i => (
-                                <div key={i} className={`w-3 h-5 rounded-sm border ${i <= practiceRemaining ? 'bg-blue-500 border-blue-400 shadow-[0_0_5px_rgba(59,130,246,0.5)]' : 'bg-slate-200 border-slate-300 opacity-30'}`}></div>
+                                <div key={i} className={`w-3 h-5 rounded-sm border ${i <= practiceRemaining ? 'bg-orange-500 border-orange-400 shadow-[0_0_8px_rgba(249,115,22,0.4)]' : 'bg-slate-200 border-slate-300 opacity-30'}`}></div>
                             ))}
                         </div>
                     </div>
-                    <div className="flex justify-between items-center">
-                        <span className="text-[9px] font-black text-slate-500 uppercase">Evaluación P{selPista}</span>
+                    <div className="flex justify-between items-center pt-2 border-t border-orange-100/50">
+                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Evaluación P{selPista}</span>
                         <div className={`w-8 h-4 rounded-full flex items-center px-1 transition-all ${evalRemaining ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
                             <div className={`w-2 h-2 rounded-full mr-1 ${evalRemaining ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
                             <span className="text-[8px] font-black">{evalRemaining ? 'DISP.' : 'AGOT.'}</span>
@@ -1308,7 +1308,7 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
                         <button 
                             onClick={() => setAttemptType('practice')}
                             disabled={practiceRemaining <= 0}
-                            className={`flex-1 py-3 rounded-xl font-black text-[10px] uppercase border-2 transition-all ${attemptType === 'practice' ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/30' : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50'} ${practiceRemaining <= 0 ? 'opacity-30 cursor-not-allowed' : ''}`}
+                            className={`flex-1 py-3 rounded-xl font-black text-[10px] uppercase border-2 transition-all ${attemptType === 'practice' ? 'bg-orange-600 border-orange-500 text-white shadow-lg shadow-orange-600/30' : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50'} ${practiceRemaining <= 0 ? 'opacity-30 cursor-not-allowed' : ''}`}
                         >
                             🎟️ Práctica ({practiceRemaining})
                         </button>
