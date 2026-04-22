@@ -646,7 +646,16 @@ function App() {
       </nav>
 
       <main className="flex-1 p-4 md:p-8 w-full max-w-7xl mx-auto overflow-x-hidden">
-        {activeTab === 'registro' && currentUser.role === 'admin' && <RegistroTab addTeam={addTeam} bulkAddTeams={bulkAddTeams} />}
+        {activeTab === 'registro' && currentUser.role === 'admin' && (
+            <RegistroTab 
+                addTeam={addTeam} 
+                bulkAddTeams={bulkAddTeams} 
+                teams={teams} 
+                currentUser={currentUser}
+                onUpdateTeamBase={handleUpdateTeamBase}
+                onDeleteTeam={handleDeleteTeam}
+            />
+        )}
         {activeTab === 'inspeccion' && currentUser.role === 'admin' && <InspeccionTab teams={teams} updateTeamStatus={updateTeamStatus} disqualifyTeam={disqualifyTeam} />}
         {activeTab === 'config' && currentUser.role === 'admin' && (
             currentUser.category === 'quest' ? 
@@ -1576,7 +1585,7 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
   );
 }
 
-function RegistroTab({ addTeam, bulkAddTeams }) {
+function RegistroTab({ addTeam, bulkAddTeams, teams, currentUser, onUpdateTeamBase, onDeleteTeam }) {
   const [teamName, setTeamName] = useState('');
   const [schoolName, setSchoolName] = useState('');
   const [cap, setCap] = useState('');
@@ -1586,6 +1595,7 @@ function RegistroTab({ addTeam, bulkAddTeams }) {
   const [member3, setMember3] = useState('');
   const [importPreview, setImportPreview] = useState(null); // null | array de equipos
   const [importError, setImportError] = useState('');
+  const [editingTeam, setEditingTeam] = useState(null);
   const fileInputRef = React.useRef(null);
 
   const getMembers = () => [member1, member2, member3].filter(m => m.trim() !== '');
@@ -1872,9 +1882,73 @@ function RegistroTab({ addTeam, bulkAddTeams }) {
           </button>
         </div>
       </div>
+
+      {/* LISTADO DE EQUIPOS REGISTRADOS */}
+      <div className="bg-white p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] shadow-2xl border border-slate-200 mt-8">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-2xl md:text-3xl font-black text-blue-900 uppercase italic tracking-tighter">Equipos Registrados</h2>
+            <p className="text-[10px] md:text-sm font-bold text-slate-400 uppercase tracking-widest mt-1">Gestión y edición de la base de datos</p>
+          </div>
+          <div className="bg-blue-100 text-blue-600 px-4 py-2 rounded-2xl font-black text-xs md:text-sm flex items-center gap-2">
+            <Icon name="users" className="w-4 h-4 md:w-5 md:h-5" />
+            {teams.length} TOTAL
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {teams.sort((a, b) => a.teamName.localeCompare(b.teamName)).map(team => (
+            <TeamCardManual 
+                key={team.id} 
+                team={team} 
+                onEdit={() => setEditingTeam(team)}
+            />
+          ))}
+        </div>
+
+        {teams.length === 0 && (
+          <div className="text-center py-20 bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200">
+            <Icon name="user-plus" className="w-16 h-16 text-slate-300 mx-auto mb-4 opacity-50" />
+            <p className="text-slate-400 font-black uppercase tracking-widest text-sm">No hay equipos registrados aún</p>
+          </div>
+        )}
+      </div>
+
+      {editingTeam && (
+          <EditTeamModal 
+              team={editingTeam} 
+              onClose={() => setEditingTeam(null)} 
+              onSave={(name, school) => {
+                  onUpdateTeamBase(editingTeam.id, name, school);
+                  setEditingTeam(null);
+              }} 
+              onDelete={() => {
+                  setEditingTeam(null);
+                  onDeleteTeam(editingTeam.id);
+              }}
+          />
+      )}
     </>
   );
 }
+
+const TeamCardManual = ({ team, onEdit }) => (
+    <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 hover:border-blue-200 transition-all group flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3 min-w-0">
+            <SchoolLogo schoolName={team.schoolName} size="w-10 h-10" />
+            <div className="min-w-0">
+                <p className="font-black text-blue-900 uppercase tracking-tight truncate leading-tight">{team.teamName}</p>
+                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider truncate mt-0.5">{team.schoolName || 'Institución'}</p>
+            </div>
+        </div>
+        <button 
+            onClick={onEdit}
+            className="p-3 rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-blue-500 hover:border-blue-200 hover:bg-blue-50 transition-all flex-shrink-0 shadow-sm group-hover:shadow-md"
+        >
+            <Icon name="edit-3" className="w-4 h-4" />
+        </button>
+    </div>
+);
 
 
 function InspeccionTab({ teams, updateTeamStatus, disqualifyTeam }) {
