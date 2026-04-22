@@ -1,5 +1,27 @@
 {
-    "teams": [],
+    "teams": [
+        {
+            "id": "1776888950750",
+            "teamName": "Prueba 1",
+            "schoolName": "E.U. San Marino",
+            "school": "Prueba 1 — E.U. San Marino",
+            "captainName": "Lucas",
+            "coachName": "Jose",
+            "members": [
+                "Red",
+                "Blue",
+                "Green"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ]
+        }
+    ],
     "tracks": {
         "1": {
             "1": {
@@ -265,14 +287,12 @@
         },
         "2": {
             "1": {
-                "bgImage": "/maps/mapa_ronda2_pista1.png",
                 "sequence": [
                     "B5",
                     "E2",
                     "H6",
                     "C3",
-                    "I1",
-                    "F5"
+                    "I1"
                 ],
                 "obstacles": [
                     "A4",
@@ -282,7 +302,8 @@
                 ],
                 "bonusStart": "B5",
                 "bonusDir": "E",
-                "bonusRules": "El robot inicia en B5 apuntando hacia el Este. No debe pasar por A4, D6, G1, J5. Al llegar a F5 debe encender todos los LEDs en color blanco durante 2 segundos.",
+                "bonusRules": "El robot inicia en B5 apuntando hacia el Este. No debe pasar por A4, D6, G1, J5. Al llegar a I1 debe encender todos los LEDs en color blanco durante 2 segundos.",
+                "bgImage": "/maps/mapa_ronda2_pista1.png",
                 "points": [
                     {
                         "id": 1,
@@ -318,25 +339,16 @@
                         "y": 91.67,
                         "value": 1,
                         "label": "I1"
-                    },
-                    {
-                        "id": 6,
-                        "x": 55,
-                        "y": 25,
-                        "value": 1,
-                        "label": "F5"
                     }
                 ]
             },
             "2": {
-                "bgImage": "/maps/mapa_ronda2_pista2.png",
                 "sequence": [
                     "I3",
                     "D5",
                     "A2",
                     "F1",
-                    "J6",
-                    "C4"
+                    "J6"
                 ],
                 "obstacles": [
                     "B6",
@@ -345,7 +357,8 @@
                 ],
                 "bonusStart": "I3",
                 "bonusDir": "W",
-                "bonusRules": "El robot comienza en I3 hacia el Oeste. Los LEDs deben estar en color naranja entre I3 y A2, y en color cyan entre F1 y C4. Debe evitar los puntos B6, E4, H2.",
+                "bonusRules": "El robot comienza en I3 hacia el Oeste. Los LEDs deben estar en color naranja entre I3 y A2, y en color cyan entre F1 y J6. Debe evitar los puntos B6, E4, H2.",
+                "bgImage": "/maps/mapa_ronda2_pista2.png",
                 "points": [
                     {
                         "id": 1,
@@ -381,30 +394,22 @@
                         "y": 8.33,
                         "value": 1,
                         "label": "J6"
-                    },
-                    {
-                        "id": 6,
-                        "x": 25,
-                        "y": 33.33,
-                        "value": 1,
-                        "label": "C4"
                     }
                 ]
             },
             "3": {
-                "bgImage": "/maps/mapa_ronda2_pista3.png",
                 "sequence": [
                     "G1",
                     "C6",
                     "A3",
                     "E5",
-                    "J2",
-                    "D4"
+                    "J2"
                 ],
                 "obstacles": [],
                 "bonusStart": "G1",
                 "bonusDir": "N",
-                "bonusRules": "El robot inicia en G1 y debe emitir un sonido que aumente su tono (frecuencia) progresivamente con cada punto visitado. Al llegar a D4 debe reproducir una melodía corta de 3 notas.",
+                "bonusRules": "El robot inicia en G1 y debe emitir un sonido que aumente su tono progresivamente con cada punto visitado. Al llegar a J2 debe reproducir una melodía corta de 3 notas.",
+                "bgImage": "/maps/mapa_ronda2_pista3.png",
                 "points": [
                     {
                         "id": 1,
@@ -440,30 +445,22 @@
                         "y": 66.67,
                         "value": 1,
                         "label": "J2"
-                    },
-                    {
-                        "id": 6,
-                        "x": 35,
-                        "y": 33.33,
-                        "value": 1,
-                        "label": "D4"
                     }
                 ]
             },
             "4": {
-                "bgImage": "/maps/mapa_ronda2_pista4.png",
                 "sequence": [
                     "A6",
                     "D2",
                     "H5",
                     "B1",
-                    "J4",
-                    "E3"
+                    "J4"
                 ],
                 "obstacles": [],
                 "bonusStart": "A6",
                 "bonusDir": "S",
-                "bonusRules": "El robot inicia en A6 orientado hacia el Sur y debe realizar todo el recorrido en reversa (marcha atrás). Al finalizar en E3 debe mostrar en el display la letra 'R'.",
+                "bonusRules": "El robot inicia en A6 orientado hacia el Sur y debe realizar todo el recorrido en reversa. Al finalizar en J4 debe mostrar en el display la letra 'R'.",
+                "bgImage": "/maps/mapa_ronda2_pista4.png",
                 "points": [
                     {
                         "id": 1,
@@ -499,25 +496,16 @@
                         "y": 33.33,
                         "value": 1,
                         "label": "J4"
-                    },
-                    {
-                        "id": 6,
-                        "x": 45,
-                        "y": 50,
-                        "value": 1,
-                        "label": "E3"
                     }
                 ]
             },
             "5": {
-                "bgImage": "/maps/mapa_ronda2_pista5.png",
                 "sequence": [
                     "F2",
                     "B4",
                     "I6",
                     "C1",
-                    "H3",
-                    "A5"
+                    "H3"
                 ],
                 "obstacles": [
                     "D3",
@@ -527,7 +515,8 @@
                 ],
                 "bonusStart": "F2",
                 "bonusDir": "W",
-                "bonusRules": "El robot comienza en F2 y debe mostrar en el display cada punto visitado en formato de coordenadas (ej: F2, B4, etc.). Debe evitar las áreas marcadas en rojo: D3, E6, G4, J1.",
+                "bonusRules": "El robot comienza en F2 y debe mostrar en el display cada punto visitado en formato de coordenadas. Debe evitar las áreas marcadas en rojo: D3, E6, G4, J1.",
+                "bgImage": "/maps/mapa_ronda2_pista5.png",
                 "points": [
                     {
                         "id": 1,
@@ -563,13 +552,6 @@
                         "y": 50,
                         "value": 1,
                         "label": "H3"
-                    },
-                    {
-                        "id": 6,
-                        "x": 5,
-                        "y": 25,
-                        "value": 1,
-                        "label": "A5"
                     }
                 ]
             }
@@ -836,18 +818,22 @@
         },
         "4": {
             "1": {
-                "bgImage": "/maps/mapa_ronda4_pista1.png",
                 "sequence": [
                     "G6",
                     "C4",
                     "I2",
                     "E1",
-                    "A3"
+                    "A3",
+                    "H5"
                 ],
-                "obstacles": [],
+                "obstacles": [
+                    "D5",
+                    "F3"
+                ],
                 "bonusStart": "G6",
                 "bonusDir": "S",
-                "bonusRules": "El robot inicia en G6 y debe realizar todo el recorrido en reversa (marcha atrás). En cada punto visitado, los LEDs deben cambiar a un color aleatorio diferente. Al finalizar en A3 debe parpadear todos los LEDs 3 veces.",
+                "bonusRules": "El robot inicia en G6 en reversa. Debe evitar D5 y F3. En cada punto los LEDs cambian a un color aleatorio. Al finalizar en H5 debe parpadear todos los LEDs 3 veces.",
+                "bgImage": "/maps/mapa_ronda4_pista1.png",
                 "points": [
                     {
                         "id": 1,
@@ -883,26 +869,35 @@
                         "y": 50,
                         "value": 1,
                         "label": "A3"
+                    },
+                    {
+                        "id": 6,
+                        "x": 75,
+                        "y": 25,
+                        "value": 1,
+                        "label": "H5"
                     }
                 ]
             },
             "2": {
-                "bgImage": "/maps/mapa_ronda4_pista2.png",
                 "sequence": [
                     "B1",
                     "H4",
                     "D6",
                     "J2",
-                    "F3"
+                    "F3",
+                    "A5"
                 ],
                 "obstacles": [
                     "C3",
                     "G5",
-                    "E4"
+                    "E4",
+                    "I6"
                 ],
                 "bonusStart": "B1",
                 "bonusDir": "E",
-                "bonusRules": "El robot comienza en B1. Debe evitar C3, G5 y E4. Los primeros 2 puntos deben alcanzarse en retroceso y los últimos 3 de frente. Debe mostrar 'R' en display al avanzar en reversa y 'F' al avanzar de frente.",
+                "bonusRules": "El robot comienza en B1. Debe evitar C3, G5, E4 e I6. Los primeros 3 puntos en retroceso, los últimos 3 de frente. Mostrar 'R' en display en reversa y 'F' de frente.",
+                "bgImage": "/maps/mapa_ronda4_pista2.png",
                 "points": [
                     {
                         "id": 1,
@@ -938,22 +933,34 @@
                         "y": 50,
                         "value": 1,
                         "label": "F3"
+                    },
+                    {
+                        "id": 6,
+                        "x": 5,
+                        "y": 25,
+                        "value": 1,
+                        "label": "A5"
                     }
                 ]
             },
             "3": {
-                "bgImage": "/maps/mapa_ronda4_pista3.png",
                 "sequence": [
                     "A6",
                     "E2",
                     "I5",
                     "C1",
-                    "H3"
+                    "H3",
+                    "D4"
                 ],
-                "obstacles": [],
+                "obstacles": [
+                    "B4",
+                    "F6",
+                    "G2"
+                ],
                 "bonusStart": "A6",
                 "bonusDir": "E",
-                "bonusRules": "El robot inicia en A6. Debe moverse en diagonal (movimientos de exactamente 45°) entre cada punto. Los LEDs deben alternar rojo y blanco como luces de ambulancia (200ms cada color) durante todo el recorrido.",
+                "bonusRules": "El robot inicia en A6 en movimientos diagonales. Debe evitar B4, F6 y G2. Los LEDs alternan rojo y blanco como luces de ambulancia (200ms cada color) durante todo el recorrido.",
+                "bgImage": "/maps/mapa_ronda4_pista3.png",
                 "points": [
                     {
                         "id": 1,
@@ -989,26 +996,36 @@
                         "y": 50,
                         "value": 1,
                         "label": "H3"
+                    },
+                    {
+                        "id": 6,
+                        "x": 35,
+                        "y": 33.33,
+                        "value": 1,
+                        "label": "D4"
                     }
                 ]
             },
             "4": {
-                "bgImage": "/maps/mapa_ronda4_pista4.png",
                 "sequence": [
                     "F6",
                     "J3",
                     "B5",
                     "G1",
-                    "D4"
+                    "D4",
+                    "I6"
                 ],
                 "obstacles": [
                     "H6",
                     "C2",
-                    "I4"
+                    "I4",
+                    "E5",
+                    "A3"
                 ],
                 "bonusStart": "F6",
                 "bonusDir": "N",
-                "bonusRules": "El robot inicia en F6 en diagonal. Debe evitar H6, C2 e I4. Solo en los puntos de coordenadas pares (columnas B,D,F,H,J y filas 2,4,6) debe mostrar en el display las coordenadas en formato 'LETRA+NÚMERO'.",
+                "bonusRules": "El robot inicia en F6 en diagonal. Debe evitar H6, C2, I4, E5 y A3. Solo en puntos de coordenadas pares debe mostrar en el display las coordenadas en formato 'LETRA+NÚMERO'.",
+                "bgImage": "/maps/mapa_ronda4_pista4.png",
                 "points": [
                     {
                         "id": 1,
@@ -1044,22 +1061,35 @@
                         "y": 33.33,
                         "value": 1,
                         "label": "D4"
+                    },
+                    {
+                        "id": 6,
+                        "x": 85,
+                        "y": 8.33,
+                        "value": 1,
+                        "label": "I6"
                     }
                 ]
             },
             "5": {
-                "bgImage": "/maps/mapa_ronda4_pista5.png",
                 "sequence": [
                     "C3",
                     "H1",
                     "A4",
                     "J5",
-                    "E6"
+                    "E6",
+                    "G2"
                 ],
-                "obstacles": [],
+                "obstacles": [
+                    "B5",
+                    "D1",
+                    "F4",
+                    "I3"
+                ],
                 "bonusStart": "C3",
                 "bonusDir": "N",
-                "bonusRules": "El robot inicia en C3 en movimientos diagonales. El buzzer debe emitir un sonido de frecuencia creciente: punto 1 = 200Hz, punto 2 = 400Hz, punto 3 = 600Hz, punto 4 = 800Hz, punto 5 = 1000Hz. Los LEDs permanecen blancos durante todo el recorrido.",
+                "bonusRules": "El robot inicia en C3 en movimientos diagonales. Debe evitar B5, D1, F4 e I3. El buzzer emite frecuencia creciente: 200Hz, 400Hz, 600Hz, 800Hz, 1000Hz, 1200Hz. LEDs blancos durante todo el recorrido.",
+                "bgImage": "/maps/mapa_ronda4_pista5.png",
                 "points": [
                     {
                         "id": 1,
@@ -1095,6 +1125,13 @@
                         "y": 8.33,
                         "value": 1,
                         "label": "E6"
+                    },
+                    {
+                        "id": 6,
+                        "x": 65,
+                        "y": 66.67,
+                        "value": 1,
+                        "label": "G2"
                     }
                 ]
             }
