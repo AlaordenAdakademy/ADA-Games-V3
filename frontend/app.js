@@ -75,10 +75,13 @@ function App() {
         
         // Sincronizar temporizador desde el servidor
         if (data.timer) {
-            // Solo sincronizar si el cambio es significativo o el estado de pausa/play cambió
-            if (data.timer.timerActive !== timerActive || Math.abs(data.timer.timer - timer) > 5) {
-                setTimer(data.timer.timer);
-                setTimerActive(data.timer.timerActive);
+            // Sincronizar si el estado de pausa/play cambió o si la diferencia es mayor a 10s (desfase crítico)
+            const serverTimer = data.timer.timer;
+            const serverActive = data.timer.timerActive;
+            
+            if (serverActive !== timerActive || Math.abs(serverTimer - timer) > 10) {
+                setTimer(serverTimer);
+                setTimerActive(serverActive);
             }
         }
         
@@ -165,7 +168,21 @@ function App() {
       interval = setInterval(() => {
         setTimer(prev => {
             const next = prev - 1;
-            if (next % 5 === 0) localStorage.setItem('ada_timer', next.toString()); // Sincronizar cada 5s
+            
+            // Sincronizar localmente cada 5s
+            if (next % 5 === 0) localStorage.setItem('ada_timer', next.toString()); 
+            
+            // Si el tiempo se agota, informar al servidor y detener
+            if (next <= 0) {
+                fetch(`${API_BASE}/timer`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ timer: 0, timerActive: false })
+                }).catch(() => {});
+                setTimerActive(false);
+                return 0;
+            }
+            
             return next;
         });
       }, 1000);
@@ -2526,12 +2543,12 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
 
             <div ref={canvasRef} onClick={handleCanvasClick} className={`relative w-full h-full bg-white rounded-2xl overflow-hidden shadow-2xl border-2 ${mode === 'edit' ? 'border-dashed border-blue-500/50 cursor-crosshair' : 'border-solid border-[#2a2e3f]'}`}>
               {bgImage ? (
-                <img src={bgImage} alt="Pista" className="absolute inset-0 w-full h-full object-contain pointer-events-none opacity-80" />
+                <img src={bgImage} alt="Pista" className="absolute inset-0 w-full h-full object-contain pointer-events-none bg-white" />
               ) : (
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 pointer-events-none">
-                  <Icon name="image" className="w-16 h-16 mb-4 opacity-50" />
-                  <p className="font-semibold text-lg">Sube una imagen para la pista</p>
-                  {mode === 'edit' && <p className="text-sm mt-2">Haz clic en el panel inferior para cargar</p>}
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white text-slate-500 pointer-events-none">
+                  <Icon name="image" className="w-16 h-16 mb-4 opacity-30 text-slate-800" />
+                  <p className="font-semibold text-lg text-slate-600">Sube una imagen para la pista</p>
+                  {mode === 'edit' && <p className="text-sm mt-2 text-slate-500">Haz clic en el panel inferior para cargar</p>}
                 </div>
               )}
               <div className={`guide-handle absolute top-0 bottom-0 w-6 -ml-3 flex justify-center z-10 ${mode === 'edit' ? 'cursor-col-resize hover:bg-black/5' : 'pointer-events-none'}`} style={{ left: `${guideX}%` }} onMouseDown={(e) => { if (mode === 'edit') { e.stopPropagation(); setDragTarget({type: 'guideX'}); } }}>
@@ -2555,7 +2572,7 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
               <div className="flex items-center gap-4 bg-[#0f111a] px-4 py-2 rounded-xl border border-[#2a2e3f]">
                 <label className="flex items-center gap-2 cursor-pointer text-sm font-semibold hover:text-blue-400 transition-colors">
                   <Icon name="upload" className="w-5 h-5" /> <span>Cargar Mapa</span>
-                  <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                  <input type="file" accept="image/*,.svg,image/svg+xml" className="hidden" onChange={handleImageUpload} />
                 </label>
               </div>
               <div className="flex items-center gap-6 bg-[#0f111a] px-6 py-2 rounded-xl border border-[#2a2e3f] flex-1 max-w-xl">

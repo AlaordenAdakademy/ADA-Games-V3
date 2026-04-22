@@ -9,6 +9,7 @@ import socket
 import tempfile
 import threading
 from datetime import datetime
+import time
 
 # Lock global para evitar escrituras concurrentes en data.json
 _data_lock = threading.Lock()
@@ -49,7 +50,24 @@ def generate_initial_tracks():
     return structure
 
 def generate_initial_timer():
-    return {"timer": 1800, "timerActive": False}
+    return {"timer": 1800, "timerActive": False, "updatedAt": time.time()}
+
+def get_calculated_timer(timer_data):
+    """Calcula el tiempo restante real basado en el momento en que se activó."""
+    if not timer_data.get("timerActive", False):
+        return timer_data
+    
+    updated_at = timer_data.get("updatedAt", time.time())
+    original_timer = timer_data.get("timer", 0)
+    elapsed = int(time.time() - updated_at)
+    
+    current_timer = max(0, original_timer - elapsed)
+    active = timer_data["timerActive"]
+    
+    if current_timer <= 0:
+        active = False
+        
+    return {"timer": current_timer, "timerActive": active, "updatedAt": updated_at}
 
 def load_data():
     with _data_lock:
@@ -62,6 +80,9 @@ def load_data():
     changed = False
     if "timer" not in data:
         data["timer"] = generate_initial_timer()
+        changed = True
+    elif "updatedAt" not in data["timer"]:
+        data["timer"]["updatedAt"] = time.time()
         changed = True
     
     # Migración: Asegurar que todos los equipos tengan categoría
@@ -109,6 +130,9 @@ def save_data(data):
 @app.get("/api/data")
 def get_all_data(category: Optional[str] = None):
     data = load_data()
+    # Calcular tiempo real antes de enviar
+    data["timer"] = get_calculated_timer(data.get("timer", {}))
+    
     if category:
         # Filtrar equipos por categoría
         data["teams"] = [t for t in data["teams"] if t.get("category") == category]
@@ -161,7 +185,6 @@ def bulk_add_teams(new_teams: List[Dict[str, Any]], category: Optional[str] = No
     """Agrega múltiples equipos nuevos en una sola operación atómica.
     Mucho más seguro que llamar /api/teams múltiples veces seguidas."""
     data = load_data()
-    import time
     for team in new_teams:
         team['id'] = str(int(time.time() * 1000)) + str(hash(team.get('school','')) % 10000)
         team['status'] = 'pending'
@@ -205,7 +228,7 @@ def reset_competition(auth: ResetAuth):
 @app.get("/api/timer")
 def get_timer():
     data = load_data()
-    return data.get("timer", generate_initial_timer())
+    return get_calculated_timer(data.get("timer", generate_initial_timer()))
 
 class TimerSync(BaseModel):
     timer: int
@@ -214,7 +237,11 @@ class TimerSync(BaseModel):
 @app.post("/api/timer")
 def update_timer(sync: TimerSync):
     data = load_data()
-    data["timer"] = {"timer": sync.timer, "timerActive": sync.timerActive}
+    data["timer"] = {
+        "timer": sync.timer, 
+        "timerActive": sync.timerActive, 
+        "updatedAt": time.time()
+    }
     save_data(data)
     return {"status": "ok"}
 
@@ -232,7 +259,6 @@ async def upload_map(ronda: int = Form(...), pista: int = Form(...), file: Uploa
         shutil.copyfileobj(file.file, buffer)
         
     # Return cache-busted URL so browser updates it instantly
-    import time
     return {"url": f"/maps/{filename}?t={int(time.time())}"}
 
 # Serve frontend files at root
