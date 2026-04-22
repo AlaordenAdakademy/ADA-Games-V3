@@ -475,6 +475,14 @@ function App() {
     postTracks(updated);
   };
 
+  const handleUpdateTeamBase = (teamId, newTeamName, newSchoolName) => {
+    const updated = teams.map(t => t.id === teamId ? { ...t, teamName: newTeamName, schoolName: newSchoolName } : t);
+    setTeams(updated);
+    localStorage.setItem('ada_teams', JSON.stringify(updated));
+    postTeams(updated);
+    showToast('✅ Datos del equipo actualizados');
+  };
+
   const [selectedTeamHistory, setSelectedTeamHistory] = useState(null);
 
   if (loading) return (
@@ -1264,6 +1272,7 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
   const [progressIdx, setProgressIdx] = useState(-1);
   const [bonus, setBonus] = useState(false);
   const [bonusIntention, setBonusIntention] = useState(null);
+  const [showEditTeam, setShowEditTeam] = useState(false);
   
   const activeTeams = teams.filter(t => t.status === 'inspected' && (t.qualifiedRounds || [1]).includes(selRonda));
   const track = (tracks[selRonda] && tracks[selRonda][selPista])
@@ -1331,10 +1340,17 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
             <div className="space-y-4">
               <div>
                 <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Equipo en Pista</label>
-                <select value={selTeam} onChange={e => {setSelTeam(e.target.value); setProgressIdx(-1); setBonusIntention(null);}} className="w-full p-4 rounded-2xl bg-blue-50/50 border-2 border-blue-100 font-bold outline-none focus:border-blue-500 transition-all text-blue-900">
-                  <option value="">-- Seleccionar Equipo --</option>
-                  {activeTeams.map(t => <option key={t.id} value={t.id}>{t.school}</option>)}
-                </select>
+                <div className="flex gap-2">
+                    <select value={selTeam} onChange={e => {setSelTeam(e.target.value); setProgressIdx(-1); setBonusIntention(null);}} className="flex-1 p-4 rounded-2xl bg-blue-50/50 border-2 border-blue-100 font-bold outline-none focus:border-blue-500 transition-all text-blue-900">
+                        <option value="">-- Seleccionar Equipo --</option>
+                        {activeTeams.map(t => <option key={t.id} value={t.id}>{t.teamName} ({t.schoolName})</option>)}
+                    </select>
+                    {selTeam && currentUser?.role === 'admin' && (
+                        <button onClick={() => setShowEditTeam(true)} className="bg-white border-2 border-blue-100 p-4 rounded-2xl text-blue-500 hover:bg-blue-50 transition-all">
+                            <Icon name="settings" className="w-6 h-6" />
+                        </button>
+                    )}
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -1859,6 +1875,33 @@ function InspeccionTab({ teams, updateTeamStatus, disqualifyTeam }) {
   );
 }
 
+const SchoolLogo = ({ schoolName, size = "w-8 h-8" }) => {
+    const initials = schoolName ? schoolName.split(' ').filter(w => w.length > 2).map(w => w[0]).join('').substring(0, 2).toUpperCase() : '??';
+    const [hasError, setHasError] = useState(false);
+    
+    // Colores estables basados en el nombre
+    const colors = ['bg-blue-500', 'bg-purple-500', 'bg-emerald-500', 'bg-orange-500', 'bg-rose-500', 'bg-indigo-500'];
+    const colorIdx = schoolName ? schoolName.length % colors.length : 0;
+    const bgColor = colors[colorIdx] || 'bg-slate-700';
+
+    const logoPath = `/logos/${schoolName}.png`;
+
+    return (
+        <div className={`${size} rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center font-black text-[10px] text-white shadow-inner ${bgColor}`}>
+            {!hasError ? (
+                <img 
+                    src={logoPath} 
+                    alt="" 
+                    className="w-full h-full object-cover"
+                    onError={() => setHasError(true)}
+                />
+            ) : (
+                <span>{initials}</span>
+            )}
+        </div>
+    );
+};
+
 function ResultadosTab({ teams, currentUser, onShowHistory }) {
   const [selRondaView, setSelRondaView] = useState('global');
 
@@ -1952,10 +1995,13 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
                     {i === 0 ? '🏆 1' : i === 1 ? '🥈 2' : i === 2 ? '🥉 3' : i + 1}
                   </td>
                   <td className="p-4 md:p-6">
-                      <div>
-                          <p className={`font-black text-base md:text-lg leading-tight ${posColor}`}>{getTeamDisplayNames(t).team}</p>
-                          <p className="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-tight mt-1">{getTeamDisplayNames(t).school}</p>
-                          <p className="hidden md:block text-[9px] text-slate-300 font-bold mt-1 uppercase tracking-tight">👤 {t.captainName}</p>
+                      <div className="flex items-center gap-3">
+                          <SchoolLogo schoolName={t.schoolName} size="w-10 h-10 md:w-12 md:h-12" />
+                          <div className="min-w-0">
+                              <p className={`font-black text-base md:text-xl leading-tight ${posColor}`}>{t.teamName}</p>
+                              <p className="text-[9px] md:text-xs text-slate-400 font-bold uppercase tracking-widest leading-tight mt-1 truncate">{t.schoolName || 'Institución Independiente'}</p>
+                              <p className="hidden md:block text-[9px] text-slate-300 font-bold mt-1 uppercase tracking-tight">👤 {t.captainName}</p>
+                          </div>
                       </div>
                   </td>
                   <td className="p-4 md:p-6 text-center hidden sm:table-cell">
@@ -2149,27 +2195,30 @@ function CompetitionDualOverlay({ teams, timer, timerActive, toggleTimer, resetT
         });
     };
 
-    const questTeams = getSorted('quest');
-    const followerTeams = getSorted('line_follower');
+
 
     const TeamRow = ({ team, index }) => {
         const score = team.score || 0;
-        let posColorText = "text-blue-400", posBg = "bg-slate-900/50 border-slate-800", posBadge = "";
-        if (index === 0 && score > 0) { posColorText = "text-yellow-400"; posBg = "bg-yellow-600/20 border-yellow-500/50"; posBadge = "🏆"; }
-        else if (index === 1 && score > 0) { posColorText = "text-slate-300"; posBg = "bg-slate-400/10 border-slate-400/30"; posBadge = "🥈"; }
-        else if (index === 2 && score > 0) { posColorText = "text-orange-400"; posBg = "bg-orange-600/10 border-orange-500/30"; posBadge = "🥉"; }
+        let posColorText = "text-blue-400", posBg = "bg-slate-900/40 border-slate-800/50", posBadge = "";
+        if (index === 0 && score > 0) { posColorText = "text-yellow-400"; posBg = "bg-yellow-600/10 border-yellow-500/30"; posBadge = "🏆"; }
+        else if (index === 1 && score > 0) { posColorText = "text-slate-300"; posBg = "bg-slate-400/10 border-slate-400/20"; posBadge = "🥈"; }
+        else if (index === 2 && score > 0) { posColorText = "text-orange-400"; posBg = "bg-orange-600/10 border-orange-500/20"; posBadge = "🥉"; }
 
         return (
-            <div className={`flex items-center gap-3 p-3 rounded-2xl border transition-all ${posBg} ${team.status === 'disqualified' ? 'opacity-30' : ''}`}>
-                <div className="w-12 text-center">
-                    <span className={`text-2xl font-black italic ${posColorText}`}>#{index + 1}</span>
-                    <div className="text-xs">{posBadge}</div>
+            <div className={`flex items-center gap-3 p-3 rounded-2xl border transition-all ${posBg} ${team.status === 'disqualified' ? 'opacity-30' : ''} hover:scale-[1.02] duration-300`}>
+                <div className="w-10 text-center flex-shrink-0">
+                    <span className={`text-xl font-black italic ${posColorText}`}>#{index + 1}</span>
+                    <div className="text-[10px]">{posBadge}</div>
                 </div>
+                <SchoolLogo schoolName={team.schoolName} size="w-10 h-10" />
                 <div className="flex-1 min-w-0">
-                    <p className="text-sm font-black truncate">{team.teamName || team.school}</p>
-                    <p className="text-[10px] text-slate-400 truncate">{team.schoolName || ''}</p>
+                    <p className="text-sm font-black truncate text-white leading-tight uppercase italic">{team.teamName}</p>
+                    <p className="text-[9px] text-slate-400 truncate font-bold uppercase tracking-tight">{team.schoolName || 'Institución Independiente'}</p>
                 </div>
-                <div className={`text-2xl font-black ${posColorText}`}>{score}</div>
+                <div className="text-right flex-shrink-0">
+                    <p className={`text-2xl font-black ${posColorText} leading-none`}>{score}</p>
+                    <p className="text-[8px] text-slate-500 font-bold uppercase">Puntos</p>
+                </div>
             </div>
         );
     };
@@ -2450,21 +2499,25 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
                     }
 
                     return (
-                    <div key={t.id} className={`flex items-center gap-6 p-6 rounded-3xl border-2 transition-all ${posBg} ${t.status === 'disqualified' ? 'opacity-30' : ''}`}>
+                    <div key={t.id} className={`flex items-center gap-6 p-6 rounded-[2.5rem] border-2 transition-all ${posBg} ${t.status === 'disqualified' ? 'opacity-30' : ''}`}>
                         <div className="w-24 text-center flex flex-col items-center">
                             <span className={`text-5xl font-black italic ${posColorText}`}>#{i + 1}</span>
                             <span className={`text-[10px] font-bold mt-2 uppercase tracking-widest ${posColorText}`}>{posBadge}</span>
                         </div>
+                        <SchoolLogo schoolName={t.schoolName} size="w-20 h-20 md:w-24 md:h-24 shadow-xl" />
                         <div className="flex-1 min-w-0">
-                            <h3 className="text-3xl font-black truncate tracking-tight">{t.school}</h3>
-                            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mt-1">
+                            <h3 className="text-4xl font-black truncate tracking-tight text-white uppercase italic">{t.teamName}</h3>
+                            <p className="text-lg font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mt-1">
+                                {t.schoolName || 'Institución Independiente'}
+                            </p>
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-2 flex items-center gap-2">
                                 <Icon name="users" className="w-4 h-4"/> {t.captainName}
                             </p>
                         </div>
-                        <div className="bg-slate-950/50 px-8 py-4 rounded-2xl border border-slate-800/50 flex flex-col items-end justify-center min-w-[200px] shadow-inner">
-                             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Puntaje Total</p>
-                             <p className={`text-5xl font-black tracking-tighter ${posColorText}`}>{stats.score}</p>
-                             <p className="text-sm font-bold text-slate-400 mt-2 tracking-widest leading-none drop-shadow-md">{formatResultTime(stats.time)}</p>
+                        <div className="bg-slate-950/50 px-10 py-6 rounded-3xl border border-slate-800/50 flex flex-col items-end justify-center min-w-[250px] shadow-inner">
+                             <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Puntaje Total</p>
+                             <p className={`text-6xl font-black tracking-tighter ${posColorText}`}>{stats.score}</p>
+                             <p className="text-lg font-bold text-slate-400 mt-2 tracking-widest leading-none drop-shadow-md">{formatResultTime(stats.time)}</p>
                         </div>
                     </div>
                 )})}
