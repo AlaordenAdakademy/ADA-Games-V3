@@ -1315,7 +1315,7 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
                         <button 
                             onClick={() => setAttemptType('evaluation')}
                             disabled={!evalRemaining}
-                            className={`flex-1 py-3 rounded-xl font-black text-[10px] uppercase border-2 transition-all ${attemptType === 'evaluation' ? 'bg-red-600 border-red-500 text-white shadow-lg shadow-red-600/30' : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50'} ${!evalRemaining ? 'opacity-30 cursor-not-allowed' : ''}`}
+                            className={`flex-1 py-3 rounded-xl font-black text-[10px] uppercase border-2 transition-all ${attemptType === 'evaluation' ? 'bg-green-600 border-green-500 text-white shadow-lg shadow-green-600/30' : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50'} ${!evalRemaining ? 'opacity-30 cursor-not-allowed' : ''}`}
                         >
                             🎯 Evaluación
                         </button>
