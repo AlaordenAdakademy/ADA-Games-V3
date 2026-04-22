@@ -260,7 +260,15 @@ function App() {
 
   const addTeam = (teamData) => {
     const newId = Date.now().toString();
-    const updated = [...teams, { id: newId, ...teamData, status: 'pending', score: 0, history: [], category: currentUser.category }];
+    const updated = [...teams, { 
+        id: newId, 
+        ...teamData, 
+        status: 'pending', 
+        score: 0, 
+        history: [], 
+        category: currentUser.category,
+        qualifiedRounds: [1] 
+    }];
     postTeams(updated);
     showToast('Equipo registrado con éxito');
   };
@@ -391,6 +399,22 @@ function App() {
     showToast('Puntaje guardado exitosamente');
   };
 
+  const updateQualifiedRounds = (teamId, rounds) => {
+    const updated = teams.map(t => t.id === teamId ? { ...t, qualifiedRounds: rounds } : t);
+    postTeams(updated);
+  };
+
+  const updateManyQualifiedRounds = (updates) => {
+    // updates es un objeto { [id]: newRounds }
+    const updated = teams.map(t => {
+        if (updates[t.id]) {
+            return { ...t, qualifiedRounds: updates[t.id] };
+        }
+        return t;
+    });
+    postTeams(updated);
+  };
+
   const updateTrackData = (ronda, pista, data) => {
     const updated = {
       ...tracks,
@@ -505,6 +529,7 @@ function App() {
               <NavButton active={activeTab === 'inspeccion'} onClick={() => setActiveTab('inspeccion')} icon={<Icon name="clipboard-check" />} label="Inspección" />
               <NavButton active={activeTab === 'usuarios'} onClick={() => setActiveTab('usuarios')} icon={<Icon name="user-cog" />} label="Jueces" />
               <NavButton active={activeTab === 'config'} onClick={() => setActiveTab('config')} icon={<Icon name="map" />} label="Pistas" />
+              <NavButton active={activeTab === 'fases'} onClick={() => setActiveTab('fases')} icon={<Icon name="list-checks" />} label="Fases" />
               <NavButton active={activeTab === 'sistema'} onClick={() => setActiveTab('sistema')} icon={<Icon name="settings" />} label="Sistema" />
             </>
           )}
@@ -593,6 +618,15 @@ function App() {
                 setTimer={setTimer}
                 setShowReset={setShowReset}
                 teams={teams}
+                currentUser={currentUser}
+            />
+        )}
+        {activeTab === 'fases' && currentUser.role === 'admin' && (
+            <FasesTab 
+                teams={teams} 
+                onUpdateQualified={updateQualifiedRounds} 
+                onUpdateManyQualified={updateManyQualifiedRounds}
+                showToast={showToast}
                 currentUser={currentUser}
             />
         )}
@@ -1127,7 +1161,7 @@ function ConfigTab({ tracks, updateTrackData }) {
 }
 function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, postTeams, showToast, timer }) {
   if (currentUser.category === 'line_follower') {
-    return <LineFollowerEvaluacion teams={teams} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} />;
+    return <LineFollowerEvaluacion teams={teams} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} selRonda={selRonda} />;
   }
 
   const [selTeam, setSelTeam] = useState('');
@@ -1137,7 +1171,7 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
   const [bonus, setBonus] = useState(false);
   const [bonusIntention, setBonusIntention] = useState(null);
   
-  const activeTeams = teams.filter(t => t.status === 'inspected');
+  const activeTeams = teams.filter(t => t.status === 'inspected' && (t.qualifiedRounds || [1]).includes(selRonda));
   const track = (tracks[selRonda] && tracks[selRonda][selPista])
                 ? tracks[selRonda][selPista]
                 : { sequence: [], obstacles: [] };
@@ -1691,7 +1725,13 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
   };
 
   const sorted = useMemo(() => {
-    const list = Array.isArray(teams) ? teams : [];
+    let list = Array.isArray(teams) ? teams : [];
+    
+    // Filtrar equipos por calificación de ronda si no estamos en vista global
+    if (selRondaView !== 'global') {
+        list = list.filter(t => (t.qualifiedRounds || [1]).includes(Number(selRondaView)));
+    }
+
     return [...list].sort((a, b) => {
         const statsA = getRoundStats(a, selRondaView);
         const statsB = getRoundStats(b, selRondaView);
@@ -1775,7 +1815,7 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
   );
 }
 
-function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam, postTeams, showToast }) {
+function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam, postTeams, showToast, selRonda }) {
   const [selTeam, setSelTeam] = useState('');
   const [percentage, setPercentage] = useState(0);
   const [time, setTime] = useState(120000); // 2 min en ms
@@ -1783,7 +1823,7 @@ function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam, 
   const [penalties, setPenalties] = useState(0);
   const [startTime, setStartTime] = useState(null);
 
-  const activeTeams = teams.filter(t => t.status === 'inspected');
+  const activeTeams = teams.filter(t => t.status === 'inspected' && (t.qualifiedRounds || [1]).includes(selRonda));
 
   useEffect(() => {
     let interval;
@@ -2384,7 +2424,7 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
           <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-wider font-semibold">Equipo en Pista</p>
           <select value={selTeam} onChange={e => setSelTeam(e.target.value)} className="mt-2 w-full bg-[#0f111a] border border-[#2a2e3f] text-xs md:text-sm rounded-lg p-2 md:p-2.5 outline-none transition-colors">
             <option value="">-- Seleccionar Equipo --</option>
-            {activeTeams && activeTeams.map(t => <option key={t.id} value={t.id}>{t.school}</option>)}
+            {(isRunningInMainApp ? teams.filter(t => t.status === 'inspected' && t.category === 'line_follower' && (t.qualifiedRounds || [1]).includes(selRonda)) : activeTeams).map(t => <option key={t.id} value={t.id}>{t.school}</option>)}
           </select>
 
           <div className="flex gap-2 md:gap-3 mt-3 md:mt-4">
@@ -2703,3 +2743,236 @@ function UsuariosTab({ users, fetchUsers, showToast, setConfirmDialog }) {
 // Renderizado final
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<App />);
+
+function FasesTab({ teams, onUpdateQualified, onUpdateManyQualified, showToast, currentUser }) {
+  const [selRonda, setSelRonda] = useState(1);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const RONDAS = [1, 2, 3, 4, 5];
+
+  // Solo mostrar equipos aprobados en inspección
+  const inspectedTeams = useMemo(() => teams.filter(t => t.status === 'inspected'), [teams]);
+
+  // Helper para obtener estadísticas de una ronda específica
+  const getStats = (team, ronda) => {
+    const rh = team.history.filter(h => h.ronda === Number(ronda));
+    if (rh.length === 0) return { score: 0, time: 999999, played: false };
+    const score = rh.reduce((sum, h) => sum + (h.points || h.percentage || 0), 0);
+    const time = rh.reduce((sum, h) => sum + (h.finalTimeMs || h.finalTime || 0), 0);
+    return { score, time, played: true };
+  };
+
+  const currentQualified = inspectedTeams.filter(t => (t.qualifiedRounds || [1]).includes(selRonda));
+  
+  // Ordenar equipos de la ronda actual por desempeño
+  const rankedTeams = useMemo(() => {
+    return [...inspectedTeams].sort((a, b) => {
+      const isQualA = (a.qualifiedRounds || [1]).includes(selRonda);
+      const isQualB = (b.qualifiedRounds || [1]).includes(selRonda);
+      if (isQualA !== isQualB) return isQualB ? 1 : -1;
+
+      const sA = getStats(a, selRonda);
+      const sB = getStats(b, selRonda);
+      if (sB.score !== sA.score) return sB.score - sA.score;
+      return sA.time - sB.time;
+    });
+  }, [inspectedTeams, selRonda]);
+
+  const toggleRound = (team, r) => {
+    let rounds = [...(team.qualifiedRounds || [1])];
+    if (rounds.includes(r)) {
+      if (r === 1 && rounds.length === 1) return;
+      rounds = rounds.filter(x => x !== r);
+    } else {
+      rounds.push(r);
+    }
+    onUpdateQualified(team.id, rounds);
+  };
+
+  const promoteSelected = (toRonda) => {
+    if (selectedIds.length === 0) {
+        showToast("Selecciona equipos primero");
+        return;
+    }
+    const updates = {};
+    selectedIds.forEach(id => {
+        const team = teams.find(t => t.id === id);
+        if (team && !(team.qualifiedRounds || [1]).includes(toRonda)) {
+            updates[id] = [...(team.qualifiedRounds || [1]), toRonda];
+        }
+    });
+
+    if (Object.keys(updates).length > 0) {
+        onUpdateManyQualified(updates);
+        showToast(`✅ ${Object.keys(updates).length} equipos calificados para Ronda ${toRonda}`);
+    } else {
+        showToast("Los equipos seleccionados ya estaban calificados");
+    }
+    setSelectedIds([]);
+  };
+
+  const selectTop50 = () => {
+    const played = rankedTeams.filter(t => getStats(t, selRonda).played && (t.qualifiedRounds || [1]).includes(selRonda));
+    if (played.length === 0) {
+      showToast("No hay equipos con puntaje en esta ronda para sugerir");
+      return;
+    }
+    const countToPromote = Math.ceil(played.length / 2);
+    const winners = played.slice(0, countToPromote);
+    
+    setSelectedIds(winners.map(t => t.id));
+    showToast(`✨ Seleccionados los ${winners.length} mejores equipos de la Ronda ${selRonda}`);
+  };
+
+  const selectLosersR3 = () => {
+    const played = rankedTeams.filter(t => getStats(t, selRonda).played && (t.qualifiedRounds || [1]).includes(selRonda));
+    if (played.length === 0) {
+      showToast("No hay equipos con puntaje para evaluar");
+      return;
+    }
+    const countToPromote = Math.ceil(played.length / 2);
+    const losers = played.slice(countToPromote);
+    
+    setSelectedIds(losers.map(t => t.id));
+    showToast(`✨ Seleccionados los ${losers.length} equipos para Repechaje (R3)`);
+  };
+
+  const toggleSelection = (id) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+
+  return (
+    <div className="space-y-6 md:space-y-8 animate-fadeIn max-w-6xl mx-auto">
+      <div className="bg-white p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-xl border border-slate-200">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+          <div>
+            <h2 className="text-2xl md:text-3xl font-black text-blue-900 uppercase italic">Gestión de Fases</h2>
+            <p className="text-[10px] md:text-sm font-bold text-slate-400 uppercase tracking-widest mt-1">Control de acceso y promoción masiva</p>
+          </div>
+          <div className="flex bg-slate-100 p-1.5 rounded-2xl w-full md:w-auto">
+            {RONDAS.map(r => (
+              <button key={r} onClick={() => {setSelRonda(r); setSelectedIds([]);}} className={`flex-1 md:px-6 py-2.5 rounded-xl text-[10px] md:text-xs font-black transition-all ${selRonda === r ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:bg-slate-200'}`}>
+                R{r}{r === 3 ? ' (Rep)' : r === 5 ? ' (Fin)' : ''}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 md:gap-8">
+          {/* ASISTENTES DE PROMOCIÓN */}
+          <div className="lg:col-span-1 space-y-4">
+            <div className="bg-blue-50 p-6 rounded-3xl border border-blue-100">
+              <h3 className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <Icon name="check-square" className="w-4 h-4"/> Acciones Masivas
+              </h3>
+              <div className="space-y-3">
+                {selectedIds.length > 0 && (
+                    <div className="p-3 bg-white rounded-xl border border-blue-200 mb-2 animate-bounce">
+                        <p className="text-[9px] font-black text-blue-600 uppercase text-center">{selectedIds.length} seleccionados</p>
+                    </div>
+                )}
+                
+                <div className="grid grid-cols-1 gap-2">
+                    <p className="text-[9px] font-bold text-slate-400 uppercase">Calificar seleccionados para:</p>
+                    <div className="flex flex-wrap gap-1">
+                        {RONDAS.map(r => (
+                            <button 
+                                key={r}
+                                onClick={() => promoteSelected(r)}
+                                disabled={selectedIds.length === 0}
+                                className="flex-1 min-w-[40px] bg-white border border-blue-200 text-blue-600 py-2 rounded-lg font-black text-[10px] hover:bg-blue-600 hover:text-white transition-all disabled:opacity-30 disabled:grayscale"
+                            >
+                                R{r}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="pt-4 border-t border-blue-100">
+                    <h4 className="text-[9px] font-bold text-slate-400 uppercase mb-2">Asistentes Sugeridos</h4>
+                    <button onClick={() => selectTop50()} className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[10px] font-black uppercase shadow-lg shadow-blue-500/30 transition-all mb-2">Marcar Ganadores (Top 50%)</button>
+                    {(selRonda === 1 || selRonda === 2) && (
+                        <button onClick={() => selectLosersR3()} className="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-[10px] font-black uppercase shadow-lg shadow-orange-500/30 transition-all">Marcar Perdedores para R3</button>
+                    )}
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-slate-50 p-5 rounded-3xl border border-slate-100">
+               <p className="text-[9px] font-bold text-slate-400 uppercase leading-tight">En esta ronda participan:</p>
+               <p className="text-3xl font-black text-slate-800 leading-none mt-1">{currentQualified.length} <span className="text-xs text-slate-400 uppercase">Equipos</span></p>
+            </div>
+          </div>
+
+          {/* MATRIZ DE CALIFICACIÓN */}
+          <div className="lg:col-span-3">
+             <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm">
+                <table className="w-full text-left">
+                  <thead className="bg-slate-50 text-slate-400">
+                    <tr>
+                      <th className="p-4 w-12">
+                          <input 
+                            type="checkbox" 
+                            className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" 
+                            onChange={(e) => setSelectedIds(e.target.checked ? inspectedTeams.map(t => t.id) : [])}
+                            checked={selectedIds.length === inspectedTeams.length && inspectedTeams.length > 0}
+                          />
+                      </th>
+                      <th className="p-4 text-[9px] font-black uppercase">Equipo / Escuela</th>
+                      <th className="p-4 text-[9px] font-black uppercase text-center">Score R{selRonda}</th>
+                      <th className="p-4 text-[9px] font-black uppercase text-center">Calificación Manual</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50">
+                    {rankedTeams.map(t => {
+                      const stats = getStats(t, selRonda);
+                      const isQualCurrent = (t.qualifiedRounds || [1]).includes(selRonda);
+                      const isSelected = selectedIds.includes(t.id);
+                      
+                      return (
+                        <tr key={t.id} className={`${isSelected ? 'bg-blue-50/50' : 'hover:bg-slate-50/50'} transition-colors`}>
+                          <td className="p-4">
+                            <input 
+                                type="checkbox" 
+                                className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" 
+                                checked={isSelected}
+                                onChange={() => toggleSelection(t.id)}
+                            />
+                          </td>
+                          <td className="p-4">
+                            <p className={`text-sm font-black leading-tight ${isQualCurrent ? 'text-slate-800' : 'text-slate-400 grayscale'}`}>{getTeamDisplayNames(t).team}</p>
+                            <p className="text-[9px] font-bold text-slate-400 uppercase">{getTeamDisplayNames(t).school}</p>
+                            {!isQualCurrent && <span className="text-[7px] font-black text-slate-300 uppercase tracking-tighter">No calificado para esta ronda</span>}
+                          </td>
+                          <td className="p-4 text-center">
+                            <div className={`inline-block px-3 py-1 rounded-lg font-black text-xs ${stats.score > 0 ? 'bg-blue-100 text-blue-600' : 'bg-slate-50 text-slate-300'}`}>
+                              {stats.score}
+                            </div>
+                          </td>
+                          <td className="p-4 text-center">
+                            <div className="flex justify-center gap-1">
+                              {RONDAS.map(r => {
+                                const q = (t.qualifiedRounds || [1]).includes(r);
+                                return (
+                                  <button 
+                                    key={r} 
+                                    onClick={() => toggleRound(t, r)}
+                                    className={`w-7 h-7 rounded-lg text-[9px] font-black transition-all border-2 ${q ? 'bg-blue-600 border-blue-600 text-white shadow-md' : 'bg-white border-slate-100 text-slate-300 hover:border-blue-300 hover:text-blue-300'}`}
+                                  >
+                                    {r}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
