@@ -566,7 +566,10 @@
                     "H2",
                     "D6"
                 ],
-                "obstacles": [],
+                "obstacles": [
+                    "E4",
+                    "G5"
+                ],
                 "bonusStart": "C1",
                 "bonusDir": "E",
                 "bonusRules": "El robot inicia en C1 orientado al Este. Debe realizar un giro exacto de 90° hacia la derecha en el punto F4 antes de continuar. Al llegar a D6 debe emitir un sonido de tres tonos ascendentes.",
@@ -617,7 +620,10 @@
                     "B4",
                     "E6"
                 ],
-                "obstacles": [],
+                "obstacles": [
+                    "C5",
+                    "H3"
+                ],
                 "bonusStart": "I5",
                 "bonusDir": "W",
                 "bonusRules": "El robot comienza en I5 hacia el Oeste. En el display debe mostrar el número del punto visitado (1, 2, 3...) cada vez que alcance una coordenada de la secuencia. Al finalizar en E6 debe mostrar 'FIN'.",
@@ -668,7 +674,10 @@
                     "C5",
                     "G3"
                 ],
-                "obstacles": [],
+                "obstacles": [
+                    "F2",
+                    "H5"
+                ],
                 "bonusStart": "A2",
                 "bonusDir": "N",
                 "bonusRules": "El robot inicia en A2. Los LEDs deben cambiar de color en cada punto de la secuencia (rojo, verde, azul, amarillo, morado). Al llegar a G3 debe mostrar en el display el texto 'COLORES'.",
@@ -719,7 +728,10 @@
                     "I3",
                     "A1"
                 ],
-                "obstacles": [],
+                "obstacles": [
+                    "D4",
+                    "J2"
+                ],
                 "bonusStart": "H6",
                 "bonusDir": "S",
                 "bonusRules": "El robot inicia en H6 y debe encender LEDs azules al cruzar las coordenadas cuya columna sea B, D, F o H. Al iniciar el recorrido debe mostrar 'START' y al terminar en A1 debe mostrar 'END' en el display.",
