@@ -2195,7 +2195,8 @@ function CompetitionDualOverlay({ teams, timer, timerActive, toggleTimer, resetT
         });
     };
 
-
+    const questTeams = getSorted('quest');
+    const followerTeams = getSorted('line_follower');
 
     const TeamRow = ({ team, index }) => {
         const score = team.score || 0;
