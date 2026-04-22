@@ -345,18 +345,32 @@ function App() {
             body: JSON.stringify({ userId: currentUser.id, password })
         });
         if (res.ok) {
-            // Limpiar TODO el localStorage para evitar que datos viejos sobreescriban el reset
-            Object.keys(localStorage)
-                .filter(k => k.startsWith('ada_'))
-                .forEach(k => localStorage.removeItem(k));
+            // Resetear directamente en el estado de React — sin reload, sin condición de carrera
+            const resetTeams = teams.map(t => ({
+                ...t,
+                score: 0,
+                history: [],
+                lastTime: 0,
+                status: 'inspected',
+                practiceTickets: 5,
+                evaluationTickets: { "1": 1, "2": 1, "3": 1, "4": 1, "5": 1 }
+            }));
+            // Actualizar estado local
+            setTeams(resetTeams);
+            localStorage.setItem('ada_teams', JSON.stringify(resetTeams));
+            // Enviar TODOS los equipos al servidor sin filtro de categoría
+            await fetch(`${API_BASE}/teams`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(resetTeams)
+            });
             setShowResetScores(false);
-            window.location.reload();
+            showToast('✅ Resultados reiniciados. Tickets restaurados al máximo.');
         } else {
-            const err = await res.json().catch(() => ({}));
-            showToast("Error de credenciales. No autorizado.");
+            showToast('Contraseña incorrecta. No autorizado.');
         }
     } catch (err) {
-        showToast("Error al reiniciar puntajes");
+        showToast('Error al reiniciar puntajes');
     }
   };
 
@@ -1853,7 +1867,7 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
   const [selRondaView, setSelRondaView] = useState('global');
 
   const getRoundStats = (team, roundFilter) => {
-    const rh = team.history.filter(h => h.ronda === Number(roundFilter));
+    const rh = team.history.filter(h => h.ronda === Number(roundFilter) && h.practice !== true);
     let totalScore = 0;
     let totalTime = 0;
 
