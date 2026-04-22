@@ -337,41 +337,35 @@ function App() {
       }
   };
 
-  const handleResetScores = async (password) => {
-    try {
-        const res = await fetch(`${API_BASE}/reset/scores`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId: currentUser.id, password })
-        });
-        if (res.ok) {
-            // Resetear directamente en el estado de React — sin reload, sin condición de carrera
-            const resetTeams = teams.map(t => ({
-                ...t,
-                score: 0,
-                history: [],
-                lastTime: 0,
-                status: 'inspected',
-                practiceTickets: 5,
-                evaluationTickets: { "1": 1, "2": 1, "3": 1, "4": 1, "5": 1 }
-            }));
-            // Actualizar estado local
-            setTeams(resetTeams);
-            localStorage.setItem('ada_teams', JSON.stringify(resetTeams));
-            // Enviar TODOS los equipos al servidor sin filtro de categoría
-            await fetch(`${API_BASE}/teams`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(resetTeams)
-            });
-            setShowResetScores(false);
-            showToast('✅ Resultados reiniciados. Tickets restaurados al máximo.');
-        } else {
-            showToast('Contraseña incorrecta. No autorizado.');
-        }
-    } catch (err) {
-        showToast('Error al reiniciar puntajes');
+  const handleResetScores = (password) => {
+    // Verificar contraseña localmente con los usuarios en memoria
+    const adminUser = users.find(u => u.id === currentUser.id && u.password === password && u.role === 'admin');
+    if (!adminUser) {
+        showToast('Contraseña incorrecta. Operación cancelada.');
+        return;
     }
+    // Resetear tickets, puntajes e historial directamente en el estado de React
+    const resetTeams = teams.map(t => ({
+        ...t,
+        score: 0,
+        history: [],
+        lastTime: 0,
+        status: 'inspected',
+        practiceTickets: 5,
+        evaluationTickets: { "1": 1, "2": 1, "3": 1, "4": 1, "5": 1 }
+    }));
+    // 1. Cerrar modal inmediatamente
+    setShowResetScores(false);
+    // 2. Actualizar el estado local de React (la UI se actualiza en el mismo frame)
+    setTeams(resetTeams);
+    localStorage.setItem('ada_teams', JSON.stringify(resetTeams));
+    // 3. Guardar en el servidor en segundo plano (sin await, no bloquea la UI)
+    fetch(`${API_BASE}/teams`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(resetTeams)
+    }).catch(() => console.warn('Error sincronizando reset al servidor'));
+    showToast('✅ Tickets y puntajes restaurados correctamente.');
   };
 
   const deleteEvaluation = (teamId, historyIndex) => {
@@ -730,7 +724,7 @@ function App() {
                     <button onClick={() => setShowResetScores(false)} className="flex-1 py-3 rounded-xl bg-slate-100 text-slate-500 font-black text-xs uppercase hover:bg-slate-200">Cancelar</button>
                     <button onClick={() => {
                         const pwd = document.getElementById('reset_scores_pwd').value;
-                        if(pwd) handleResetScores(pwd);
+                        handleResetScores(pwd);
                     }} className="flex-1 py-3 rounded-xl bg-orange-600 text-white font-black text-xs uppercase hover:bg-orange-700 shadow-lg shadow-orange-500/30">Limpiar</button>
                 </div>
             </div>
