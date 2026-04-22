@@ -184,6 +184,191 @@
             "qualifiedRounds": [
                 1
             ]
+        },
+        {
+            "id": "1776892474497",
+            "teamName": "Wall-E",
+            "schoolName": "U.E. Colegio Juan Vicente González",
+            "school": "Wall-E — U.E. Colegio Juan Vicente González",
+            "captainName": "Ruth Suárez",
+            "coachName": "",
+            "members": [
+                "Ruth Suárez",
+                "Richard Rodriguez",
+                "Josué Aular"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ]
+        },
+        {
+            "id": "177689253967410",
+            "teamName": "IDEAL N 2",
+            "schoolName": "U.E. IDEAL",
+            "school": "IDEAL N 2 — U.E. IDEAL",
+            "captainName": "Pastor Sosa",
+            "coachName": "",
+            "members": [
+                "Pastor Sosa",
+                "Roberto Rivas",
+                "Fabiana Quijada"
+            ],
+            "studentsCount": 3,
+            "status": "registered",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ]
+        },
+        {
+            "id": "177689253968511",
+            "teamName": "Menca PRJ",
+            "schoolName": "U.E. Doña Menca de Leoni",
+            "school": "Menca PRJ — U.E. Doña Menca de Leoni",
+            "captainName": "Rogelio Fernández",
+            "coachName": "",
+            "members": [
+                "Rogelio Fernández",
+                "José Camperos",
+                "Roberto Monagas"
+            ],
+            "studentsCount": 3,
+            "status": "registered",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ]
+        },
+        {
+            "id": "177689253969612",
+            "teamName": "Nitro Bytes",
+            "schoolName": "U.E. Raúl Leoni",
+            "school": "Nitro Bytes — U.E. Raúl Leoni",
+            "captainName": "Fernando Rojas",
+            "coachName": "",
+            "members": [
+                "Fernando Javier Rojas Figueroa",
+                "Isabella Lucia del Valle Jiménez Zambrano",
+                "Laura Cristina Macadan Noriega"
+            ],
+            "studentsCount": 3,
+            "status": "registered",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ]
+        },
+        {
+            "id": "177689253970613",
+            "teamName": "(Pendiente) Abajo Cadenas",
+            "schoolName": "U.E. Abajo Cadenas",
+            "school": "(Pendiente) Abajo Cadenas — U.E. Abajo Cadenas",
+            "captainName": "(Pendiente)",
+            "coachName": "",
+            "members": [
+                "(Pendiente)"
+            ],
+            "studentsCount": 1,
+            "status": "registered",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ]
+        },
+        {
+            "id": "177689253971614",
+            "teamName": "Don Bosco Tech",
+            "schoolName": "U.E. Colegio Don Bosco",
+            "school": "Don Bosco Tech — U.E. Colegio Don Bosco",
+            "captainName": "Michelle Fariñas",
+            "coachName": "",
+            "members": [
+                "Michelle de los Angeles Fariñas Sanchez",
+                "Augusto Anselmetti Bruzual"
+            ],
+            "studentsCount": 2,
+            "status": "registered",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ]
+        },
+        {
+            "id": "177689253972715",
+            "teamName": "La Paz Tech",
+            "schoolName": "U.E. Nuestra Señora de La Paz",
+            "school": "La Paz Tech — U.E. Nuestra Señora de La Paz",
+            "captainName": "José Marcos Laya",
+            "coachName": "",
+            "members": [
+                "José Marcos Laya Candurin",
+                "Antonella Sánchez Ysaccis"
+            ],
+            "studentsCount": 2,
+            "status": "registered",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ]
+        },
+        {
+            "id": "177689253973716",
+            "teamName": "PyBulis",
+            "schoolName": "U.E. Cacica Urimare",
+            "school": "PyBulis — U.E. Cacica Urimare",
+            "captainName": "Carmila Benitez",
+            "coachName": "",
+            "members": [
+                "Camila Benitez",
+                "Victor Jiménez",
+                "Leonardo Rodríguez"
+            ],
+            "studentsCount": 3,
+            "status": "registered",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ]
+        },
+        {
+            "id": "177689253974817",
+            "teamName": "Los Promnue28",
+            "schoolName": "U.E. Nueva Barcelona",
+            "school": "Los Promnue28 — U.E. Nueva Barcelona",
+            "captainName": "Eduardo Villegas",
+            "coachName": "",
+            "members": [
+                "Francisco Deffitt",
+                "Eduardo Villegas",
+                "Salomón Turmero"
+            ],
+            "studentsCount": 3,
+            "status": "registered",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ]
         }
     ],
     "tracks": {
