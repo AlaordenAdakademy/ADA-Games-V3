@@ -356,11 +356,13 @@ function App() {
     }));
     // 1. Cerrar modal inmediatamente
     setShowResetScores(false);
-    // 2. Actualizar el estado local de React (la UI se actualiza en el mismo frame)
+    // 2. Actualizar el estado local de React
     setTeams(resetTeams);
     localStorage.setItem('ada_teams', JSON.stringify(resetTeams));
-    // 3. Guardar en el servidor en segundo plano (sin await, no bloquea la UI)
-    fetch(`${API_BASE}/teams`, {
+    // 3. Guardar en el servidor CON filtro de categoría para NO borrar otras categorías
+    const category = currentUser?.category;
+    const url = category ? `${API_BASE}/teams?category=${category}` : `${API_BASE}/teams`;
+    fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(resetTeams)
