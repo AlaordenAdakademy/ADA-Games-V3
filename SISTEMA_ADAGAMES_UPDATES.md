@@ -73,6 +73,16 @@ Este documento detalla las funcionalidades principales y la evolución del siste
 
 ---
 
+## 🚀 Últimas Mejoras Core (Sesión Actual)
+- **Identidad Visual y Branding**: Implementación del componente `SchoolLogo` que genera escudos dinámicos basados en el nombre del colegio o carga archivos PNG personalizados desde `/logos/`.
+- **Integración en Rankings y TV**: Los logos y nombres de instituciones ahora son visibles en el Ranking Oficial y en todos los modos de transmisión (TV Individual y TV Dual).
+- **Gestión Administrativa Avanzada**: Centralización de la edición y eliminación permanente de equipos dentro de la pestaña de **Inspección**, permitiendo correcciones de nombres y purga de datos basura sin salir de la app.
+- **Acceso Rápido en Mesa de Juez**: Icono de ajustes (⚙️) integrado en el selector de equipos para ediciones relámpago durante la evaluación.
+- **Robustez de Datos (Modo Espejo)**: Configuración de `data-1.json` como backup estático de referencia, asegurando la preservación de coordenadas de Quest y Seguidor de Línea ante fallos eléctricos o del servidor.
+
+
+---
+
 ## 📁 Estructura del Proyecto
 - `backend/main.py`: Lógica del servidor y APIs.
 - `backend/data.json`: Base de datos de equipos y pistas.

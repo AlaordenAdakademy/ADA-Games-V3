@@ -85,13 +85,19 @@ def load_data():
         data["timer"]["updatedAt"] = time.time()
         changed = True
     
-    # Migración: Asegurar que todos los equipos tengan categoría y calificación de rondas
+    # Migración: Asegurar que todos los equipos tengan categoría, rondas y tickets
     for team in data.get("teams", []):
         if "category" not in team:
             team["category"] = "quest"
             changed = True
         if "qualifiedRounds" not in team:
             team["qualifiedRounds"] = [1]
+            changed = True
+        if "practiceTickets" not in team:
+            team["practiceTickets"] = 5
+            changed = True
+        if "evaluationTickets" not in team:
+            team["evaluationTickets"] = {"1": 1, "2": 1, "3": 1, "4": 1, "5": 1}
             changed = True
     
     if changed:
@@ -226,6 +232,35 @@ def reset_competition(auth: ResetAuth):
         
     initial_data = {"teams": [], "tracks": generate_initial_tracks(), "timer": generate_initial_timer()}
     save_data(initial_data)
+    return {"status": "ok"}
+
+@app.post("/api/reset/scores")
+def reset_scores(auth: ResetAuth):
+    users = load_users()
+    admin_user = next((u for u in users if u["id"] == auth.userId and u["password"] == auth.password and u.get("role") == "admin"), None)
+    if not admin_user:
+        raise HTTPException(status_code=401, detail="Credenciales de administrador inválidas o insuficientes")
+    
+    data = load_data()
+    # Backup
+    backups_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "backups"))
+    os.makedirs(backups_dir, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    backup_path = os.path.join(backups_dir, f"scores_backup_{timestamp}.json")
+    save_data(data) # Ensure current is saved
+    shutil.copy2(DATA_FILE, backup_path)
+
+    # Reset only scores, history and tickets
+    for team in data.get("teams", []):
+        team["score"] = 0
+        team["history"] = []
+        team["lastTime"] = 0
+        team["status"] = "inspected"
+        team["practiceTickets"] = 5
+        # Asegurar que las llaves sean strings para compatibilidad JSON
+        team["evaluationTickets"] = { "1": 1, "2": 1, "3": 1, "4": 1, "5": 1 }
+    
+    save_data(data)
     return {"status": "ok"}
 
 @app.get("/api/timer")

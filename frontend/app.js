@@ -44,7 +44,7 @@ function App() {
   });
   
   // Estados para Competencia (v3.2)
-  const [competitionMode, setCompetitionMode] = useState(false);
+  const [competitionMode, setCompetitionMode] = useState(null); // null | 'individual' | 'dual'
   const [competitionDuration, setCompetitionDuration] = useState(() => {
     const saved = localStorage.getItem('ada_competition_duration');
     return saved ? parseInt(saved) : 30; // 30 min por defecto
@@ -59,9 +59,10 @@ function App() {
   });
   
   // Estados para UI
+  const [showReset, setShowReset] = useState(false);
+  const [showResetScores, setShowResetScores] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const [toastMessage, setToastMessage] = useState('');
-  const [showReset, setShowReset] = useState(false);
 
   // 1. Cargar datos iniciales desde el servidor y sincronización periódica
   useEffect(() => {
@@ -336,6 +337,39 @@ function App() {
       }
   };
 
+  const handleResetScores = (password) => {
+    // Verificar contraseña localmente con los usuarios en memoria
+    const adminUser = users.find(u => u.id === currentUser.id && u.password === password && u.role === 'admin');
+    if (!adminUser) {
+        showToast('Contraseña incorrecta. Operación cancelada.');
+        return;
+    }
+    // Resetear tickets, puntajes e historial directamente en el estado de React
+    const resetTeams = teams.map(t => ({
+        ...t,
+        score: 0,
+        history: [],
+        lastTime: 0,
+        status: 'inspected',
+        practiceTickets: 5,
+        evaluationTickets: { "1": 1, "2": 1, "3": 1, "4": 1, "5": 1 }
+    }));
+    // 1. Cerrar modal inmediatamente
+    setShowResetScores(false);
+    // 2. Actualizar el estado local de React
+    setTeams(resetTeams);
+    localStorage.setItem('ada_teams', JSON.stringify(resetTeams));
+    // 3. Guardar en el servidor CON filtro de categoría para NO borrar otras categorías
+    const category = currentUser?.category;
+    const url = category ? `${API_BASE}/teams?category=${category}` : `${API_BASE}/teams`;
+    fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(resetTeams)
+    }).catch(() => console.warn('Error sincronizando reset al servidor'));
+    showToast('✅ Tickets y puntajes restaurados correctamente.');
+  };
+
   const deleteEvaluation = (teamId, historyIndex) => {
       const team = teams.find(t => t.id === teamId);
       if (!team) return;
@@ -375,28 +409,43 @@ function App() {
     });
   };
 
-  const addScore = (teamId, ronda, pista, points, finalTimeMs = null) => {
+  const addScore = (teamId, ronda, pista, points, finalTimeMs = null, isPractice = false) => {
     const updated = teams.map(t => {
       if (t.id === teamId) {
-        return {
-          ...t,
-          score: t.score + points,
-          lastTime: finalTimeMs !== null ? ((t.lastTime || 0) + finalTimeMs) : t.lastTime,
-          history: [...t.history, { 
-            ronda, 
-            pista, 
-            points, 
-            finalTimeMs,
-            date: new Date().toLocaleTimeString(),
-            judgeId: currentUser.id,
-            judgeName: currentUser.name
-          }]
-        };
+        // Inicializar tickets si no existen
+        const practiceTickets = t.practiceTickets !== undefined ? t.practiceTickets : 5;
+        const evalTickets = t.evaluationTickets || { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1 };
+
+        if (isPractice) {
+            return {
+                ...t,
+                practiceTickets: Math.max(0, practiceTickets - 1),
+                history: [...t.history, { 
+                    ronda, pista, points, finalTimeMs, practice: true,
+                    date: new Date().toLocaleTimeString(),
+                    judgeId: currentUser.id, judgeName: currentUser.name
+                }]
+            };
+        } else {
+            const newEvalTickets = { ...evalTickets };
+            newEvalTickets[pista] = 0;
+            return {
+                ...t,
+                score: (t.score || 0) + points,
+                lastTime: finalTimeMs !== null ? ((t.lastTime || 0) + finalTimeMs) : t.lastTime,
+                evaluationTickets: newEvalTickets,
+                history: [...t.history, { 
+                    ronda, pista, points, finalTimeMs, practice: false,
+                    date: new Date().toLocaleTimeString(),
+                    judgeId: currentUser.id, judgeName: currentUser.name
+                }]
+            };
+        }
       }
       return t;
     });
     postTeams(updated);
-    showToast('Puntaje guardado exitosamente');
+    showToast(isPractice ? 'Intento de PRÁCTICA registrado' : 'Evaluación OFICIAL guardada');
   };
 
   const updateQualifiedRounds = (teamId, rounds) => {
@@ -426,6 +475,29 @@ function App() {
     postTracks(updated);
   };
 
+  const handleUpdateTeamBase = (teamId, newTeamName, newSchoolName) => {
+    const updated = teams.map(t => t.id === teamId ? { ...t, teamName: newTeamName, schoolName: newSchoolName } : t);
+    setTeams(updated);
+    localStorage.setItem('ada_teams', JSON.stringify(updated));
+    postTeams(updated);
+    showToast('✅ Datos del equipo actualizados');
+  };
+
+  const handleDeleteTeam = (teamId) => {
+    const team = teams.find(t => t.id === teamId);
+    setConfirmDialog({
+        title: 'Eliminar Equipo',
+        message: `¿Estás seguro de que deseas eliminar permanentemente al equipo "${team?.teamName || team?.school}" y todo su historial? Esta acción no se puede deshacer.`,
+        onConfirm: () => {
+            const updated = teams.filter(t => t.id !== teamId);
+            setTeams(updated);
+            localStorage.setItem('ada_teams', JSON.stringify(updated));
+            postTeams(updated);
+            showToast('🗑️ Equipo eliminado permanentemente');
+        }
+    });
+  };
+
   const [selectedTeamHistory, setSelectedTeamHistory] = useState(null);
 
   if (loading) return (
@@ -449,7 +521,8 @@ function App() {
         onUpdateEvaluation={(idx, newData) => updateEvaluation(selectedTeamHistory, idx, newData)}
         currentUser={currentUser} 
       />
-      {competitionMode && <CompetitionOverlay teams={teams} timer={timer} timerActive={timerActive} toggleTimer={toggleTimer} resetTimer={resetTimer} formatTime={formatTime} onExit={() => setCompetitionMode(false)} category={currentUser.category} />}
+      {competitionMode === 'individual' && <CompetitionOverlay teams={teams} timer={timer} timerActive={timerActive} toggleTimer={toggleTimer} resetTimer={resetTimer} formatTime={formatTime} onExit={() => setCompetitionMode(null)} category={currentUser.category} />}
+      {competitionMode === 'dual' && <CompetitionDualOverlay teams={teams} timer={timer} timerActive={timerActive} toggleTimer={toggleTimer} resetTimer={resetTimer} formatTime={formatTime} onExit={() => setCompetitionMode(null)} />}
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-4 right-4 z-50 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl font-bold text-sm flex items-center gap-3 animate-fadeIn">
@@ -540,12 +613,20 @@ function App() {
         {/* Sección Inferior de la Sidebar (Solo Desktop) */}
         <div className="hidden md:block p-4 border-t border-blue-900 space-y-3 mt-auto">
             {currentUser.role === 'admin' && (
-                <button 
-                    onClick={() => setCompetitionMode(true)}
-                    className="w-full flex items-center gap-3 p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all font-black text-[10px] uppercase tracking-widest shadow-lg shadow-blue-500/20"
-                >
-                    <Icon name="monitor" className="w-4 h-4" /> Lanzar TV Ranking
-                </button>
+                <div className="flex flex-col gap-2">
+                    <button 
+                        onClick={() => setCompetitionMode('individual')}
+                        className="w-full flex items-center gap-3 p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all font-black text-[10px] uppercase tracking-widest shadow-lg shadow-blue-500/20"
+                    >
+                        <Icon name="monitor" className="w-4 h-4" /> Lanzar TV Individual
+                    </button>
+                    <button 
+                        onClick={() => setCompetitionMode('dual')}
+                        className="w-full flex items-center gap-3 p-3 bg-purple-600 hover:bg-purple-500 text-white rounded-xl transition-all font-black text-[10px] uppercase tracking-widest shadow-lg shadow-purple-500/20"
+                    >
+                        <Icon name="layout" className="w-4 h-4" /> Lanzar TV Dual
+                    </button>
+                </div>
             )}
             
             <button 
@@ -565,8 +646,21 @@ function App() {
       </nav>
 
       <main className="flex-1 p-4 md:p-8 w-full max-w-7xl mx-auto overflow-x-hidden">
-        {activeTab === 'registro' && currentUser.role === 'admin' && <RegistroTab addTeam={addTeam} bulkAddTeams={bulkAddTeams} />}
-        {activeTab === 'inspeccion' && currentUser.role === 'admin' && <InspeccionTab teams={teams} updateTeamStatus={updateTeamStatus} disqualifyTeam={disqualifyTeam} />}
+        {activeTab === 'registro' && currentUser.role === 'admin' && (
+            <RegistroTab 
+                addTeam={addTeam} 
+                bulkAddTeams={bulkAddTeams} 
+            />
+        )}
+        {activeTab === 'inspeccion' && currentUser.role === 'admin' && (
+            <InspeccionTab 
+                teams={teams} 
+                updateTeamStatus={updateTeamStatus} 
+                disqualifyTeam={disqualifyTeam} 
+                onUpdateTeamBase={handleUpdateTeamBase}
+                onDeleteTeam={handleDeleteTeam}
+            />
+        )}
         {activeTab === 'config' && currentUser.role === 'admin' && (
             currentUser.category === 'quest' ? 
             <ConfigTab tracks={tracks} updateTrackData={updateTrackData} /> : 
@@ -582,6 +676,8 @@ function App() {
               postTeams={postTeams} 
               showToast={showToast} 
               isRunningInMainApp={true}
+              onUpdateTeamBase={handleUpdateTeamBase}
+              onDeleteTeam={handleDeleteTeam}
             />
         )}
         {activeTab === 'usuarios' && currentUser.role === 'admin' && (
@@ -594,7 +690,7 @@ function App() {
         )}
         {activeTab === 'evaluacion' && (
             currentUser.category === 'quest' ? 
-            <EvaluacionTab teams={teams} tracks={tracks} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} timer={timer} /> : 
+            <EvaluacionTab teams={teams} tracks={tracks} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} timer={timer} onUpdateTeamBase={handleUpdateTeamBase} onDeleteTeam={handleDeleteTeam} /> : 
             <EvaluadorDePistas 
               initialMode="evaluate" 
               tracks={tracks} 
@@ -607,6 +703,8 @@ function App() {
               postTeams={postTeams} 
               showToast={showToast} 
               isRunningInMainApp={true}
+              onUpdateTeamBase={handleUpdateTeamBase}
+              onDeleteTeam={handleDeleteTeam}
             />
         )}
         {activeTab === 'resultados' && <ResultadosTab teams={teams} currentUser={currentUser} onShowHistory={setSelectedTeamHistory} />}
@@ -617,6 +715,7 @@ function App() {
                 timerActive={timerActive}
                 setTimer={setTimer}
                 setShowReset={setShowReset}
+                setShowResetScores={setShowResetScores}
                 teams={teams}
                 currentUser={currentUser}
             />
@@ -648,6 +747,27 @@ function App() {
                         const pwd = document.getElementById('reset_pwd').value;
                         if(pwd) handleResetCompetition(pwd);
                     }} className="flex-1 py-3 rounded-xl bg-red-600 text-white font-black text-xs uppercase hover:bg-red-700 shadow-lg shadow-red-500/30">Aniquilar</button>
+                </div>
+            </div>
+        </div>
+      )}
+
+      {/* MODAL RESET PARCIAL (SOLO PUNTAJES) */}
+      {showResetScores && (
+        <div className="fixed inset-0 z-[200] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white max-w-sm w-full rounded-[2rem] shadow-2xl p-8 transform animate-fadeIn border-2 border-orange-500">
+                <div className="bg-orange-100 text-orange-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Icon name="refresh-cw" className="w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-black text-center uppercase text-slate-800 mb-2">Reset de Puntajes</h3>
+                <p className="text-[10px] text-center font-bold text-slate-500 mb-6 uppercase tracking-widest">Se borrarán puntajes, historial y tickets. LOS EQUIPOS SE MANTENDRÁN. Backup automático activo.</p>
+                <input type="password" id="reset_scores_pwd" placeholder="Contraseña Admin" className="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 mb-4 font-bold focus:outline-none focus:ring-2 focus:ring-orange-400" />
+                <div className="flex gap-2">
+                    <button onClick={() => setShowResetScores(false)} className="flex-1 py-3 rounded-xl bg-slate-100 text-slate-500 font-black text-xs uppercase hover:bg-slate-200">Cancelar</button>
+                    <button onClick={() => {
+                        const pwd = document.getElementById('reset_scores_pwd').value;
+                        handleResetScores(pwd);
+                    }} className="flex-1 py-3 rounded-xl bg-orange-600 text-white font-black text-xs uppercase hover:bg-orange-700 shadow-lg shadow-orange-500/30">Limpiar</button>
                 </div>
             </div>
         </div>
@@ -891,7 +1011,7 @@ function HistorialModal({ teams, selectedId, onClose, onDeleteEvaluation, onUpda
     );
 }
 
-function SistemasTab({ competitionDuration, setCompetitionDuration, timerActive, setTimer, setShowReset, teams, currentUser }) {
+function SistemasTab({ competitionDuration, setCompetitionDuration, timerActive, setTimer, setShowReset, setShowResetScores, teams, currentUser }) {
     const totalTeams = teams.length;
     const inspectedTeams = teams.filter(t => t.status === 'inspected').length;
     
@@ -963,13 +1083,26 @@ function SistemasTab({ competitionDuration, setCompetitionDuration, timerActive,
                         <div className="bg-red-50 border border-red-100 p-5 md:p-6 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-5 md:gap-6">
                             <div className="text-center sm:text-left">
                                 <p className="font-black text-red-900 uppercase text-xs md:text-sm">Reiniciar Competencia</p>
-                                <p className="text-[9px] md:text-[10px] font-bold text-red-500/70 uppercase tracking-widest mt-1">Se borrará toda la data histórica.</p>
+                                <p className="text-[9px] md:text-[10px] font-bold text-red-500/70 uppercase tracking-widest mt-1">Se borrará toda la data histórica (Incluye equipos).</p>
                             </div>
                             <button 
                                 onClick={() => setShowReset(true)}
                                 className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white px-6 md:px-8 py-3 md:py-4 rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest transition-all shadow-lg shadow-red-500/30 flex items-center justify-center gap-2 active:scale-95"
                             >
                                 <Icon name="trash-2" className="w-4 h-4" /> Aniquilar Todo
+                            </button>
+                        </div>
+
+                        <div className="bg-orange-50 border border-orange-100 p-5 md:p-6 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-5 md:gap-6">
+                            <div className="text-center sm:text-left">
+                                <p className="font-black text-orange-900 uppercase text-xs md:text-sm">Limpiar Resultados</p>
+                                <p className="text-[9px] md:text-[10px] font-bold text-orange-500/70 uppercase tracking-widest mt-1">Mantiene los equipos. Borra puntajes, historial y tickets.</p>
+                            </div>
+                            <button 
+                                onClick={() => setShowResetScores(true)}
+                                className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700 text-white px-6 md:px-8 py-3 md:py-4 rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest transition-all shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 active:scale-95"
+                            >
+                                <Icon name="refresh-cw" className="w-4 h-4" /> Reset Parcial
                             </button>
                         </div>
                     </div>
@@ -1159,7 +1292,7 @@ function ConfigTab({ tracks, updateTrackData }) {
     </div>
   );
 }
-function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, postTeams, showToast, timer }) {
+function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, postTeams, showToast, timer, onUpdateTeamBase, onDeleteTeam }) {
   if (currentUser.category === 'line_follower') {
     return <LineFollowerEvaluacion teams={teams} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} selRonda={selRonda} />;
   }
@@ -1167,9 +1300,11 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
   const [selTeam, setSelTeam] = useState('');
   const [selRonda, setSelRonda] = useState(1);
   const [selPista, setSelPista] = useState(1);
+  const [attemptType, setAttemptType] = useState('practice'); // 'practice' | 'evaluation'
   const [progressIdx, setProgressIdx] = useState(-1);
   const [bonus, setBonus] = useState(false);
   const [bonusIntention, setBonusIntention] = useState(null);
+  const [showEditTeam, setShowEditTeam] = useState(false);
   
   const activeTeams = teams.filter(t => t.status === 'inspected' && (t.qualifiedRounds || [1]).includes(selRonda));
   const track = (tracks[selRonda] && tracks[selRonda][selPista])
@@ -1177,28 +1312,53 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
                 : { sequence: [], obstacles: [] };
 
   // Pillar 2: Reglas de negocio (Bloqueo de duplicados)
+  // Solo bloquea si hay una evaluación OFICIAL (practice !== true) para esa ronda+pista
   const existingEvaluation = useMemo(() => {
     if (!selTeam) return null;
     const team = teams.find(t => t.id === selTeam);
-    return team?.history.find(h => h.ronda === selRonda && h.pista === selPista);
+    return team?.history.find(h => h.ronda === selRonda && h.pista === selPista && h.practice !== true);
   }, [teams, selTeam, selRonda, selPista]);
 
+  const selectedTeamData = useMemo(() => teams.find(t => t.id === selTeam), [teams, selTeam]);
+  const practiceRemaining = selectedTeamData?.practiceTickets !== undefined ? selectedTeamData.practiceTickets : 5;
+  const evalRemaining = (selectedTeamData?.evaluationTickets?.[selPista] !== undefined ? selectedTeamData.evaluationTickets[selPista] : 1) > 0;
+
+  // Forzar tipo de intento si no hay tickets de práctica
+  useEffect(() => {
+    if (selTeam) {
+        if (practiceRemaining <= 0) {
+            setAttemptType('evaluation');
+        } else if (!evalRemaining) {
+            setAttemptType('practice');
+        }
+    }
+  }, [selTeam, practiceRemaining, evalRemaining]);
+
   const handleSave = () => {
-    if (!selTeam || existingEvaluation) return;
+    if (!selTeam) return;
+    const isPractice = attemptType === 'practice';
+    if (!isPractice && !evalRemaining) {
+        showToast('Este equipo ya no tiene tickets de evaluación para esta pista', 'error');
+        return;
+    }
+    if (isPractice && practiceRemaining <= 0) {
+        showToast('Este equipo ya no tiene tickets de práctica', 'error');
+        return;
+    }
+
     const total = (progressIdx + 1) + (bonus ? 3 : 0);
     
-    // Lógica de Tiempo para Quest: Solo se captura el tiempo en la Pista 5
-    // El tiempo registrado es (30min - tiempo_restante)
     let finalTimeMs = 0;
     if (selPista === 5) {
         finalTimeMs = (1800 - timer) * 1000;
     }
     
-    addScore(selTeam, selRonda, selPista, total, finalTimeMs);
+    addScore(selTeam, selRonda, selPista, total, finalTimeMs, isPractice);
     setSelTeam('');
     setProgressIdx(-1);
     setBonus(false);
     setBonusIntention(null);
+    setAttemptType('practice');
   };
 
   return (
@@ -1212,10 +1372,17 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
             <div className="space-y-4">
               <div>
                 <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Equipo en Pista</label>
-                <select value={selTeam} onChange={e => {setSelTeam(e.target.value); setProgressIdx(-1); setBonusIntention(null);}} className="w-full p-4 rounded-2xl bg-blue-50/50 border-2 border-blue-100 font-bold outline-none focus:border-blue-500 transition-all text-blue-900">
-                  <option value="">-- Seleccionar Equipo --</option>
-                  {activeTeams.map(t => <option key={t.id} value={t.id}>{t.school}</option>)}
-                </select>
+                <div className="flex gap-2">
+                    <select value={selTeam} onChange={e => {setSelTeam(e.target.value); setProgressIdx(-1); setBonusIntention(null);}} className="flex-1 p-4 rounded-2xl bg-blue-50/50 border-2 border-blue-100 font-bold outline-none focus:border-blue-500 transition-all text-blue-900">
+                        <option value="">-- Seleccionar Equipo --</option>
+                        {activeTeams.map(t => <option key={t.id} value={t.id}>{t.teamName} ({t.schoolName})</option>)}
+                    </select>
+                    {selTeam && currentUser?.role === 'admin' && (
+                        <button onClick={() => setShowEditTeam(true)} className="bg-white border-2 border-blue-100 p-4 rounded-2xl text-blue-500 hover:bg-blue-50 transition-all">
+                            <Icon name="settings" className="w-6 h-6" />
+                        </button>
+                    )}
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -1231,6 +1398,51 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
                   </select>
                 </div>
               </div>
+
+              {selTeam && (
+                <div className="p-4 bg-orange-50/50 rounded-2xl border border-orange-100 space-y-3">
+                    <div className="flex justify-between items-center">
+                        <span className="text-[9px] font-black text-orange-600 uppercase tracking-widest">Tickets de Práctica</span>
+                        <div className="flex gap-1">
+                            {[1,2,3,4,5].map(i => (
+                                <div key={i} className={`w-3 h-5 rounded-sm border ${i <= practiceRemaining ? 'bg-orange-500 border-orange-400 shadow-[0_0_8px_rgba(249,115,22,0.4)]' : 'bg-slate-200 border-slate-300 opacity-30'}`}></div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="flex justify-between items-center pt-2 border-t border-orange-100/50">
+                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Evaluación P{selPista}</span>
+                        <div className={`w-8 h-4 rounded-full flex items-center px-1 transition-all ${evalRemaining ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                            <div className={`w-2 h-2 rounded-full mr-1 ${evalRemaining ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
+                            <span className="text-[8px] font-black">{evalRemaining ? 'DISP.' : 'AGOT.'}</span>
+                        </div>
+                    </div>
+                </div>
+              )}
+
+              {selTeam && (
+                <div className="pt-2">
+                    <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Tipo de Intento</label>
+                    <div className="flex gap-2">
+                        <button 
+                            onClick={() => setAttemptType('practice')}
+                            disabled={practiceRemaining <= 0}
+                            className={`flex-1 py-3 rounded-xl font-black text-[10px] uppercase border-2 transition-all ${attemptType === 'practice' ? 'bg-orange-600 border-orange-500 text-white shadow-lg shadow-orange-600/30' : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50'} ${practiceRemaining <= 0 ? 'opacity-30 cursor-not-allowed' : ''}`}
+                        >
+                            🎟️ Práctica ({practiceRemaining})
+                        </button>
+                        <button 
+                            onClick={() => setAttemptType('evaluation')}
+                            disabled={!evalRemaining}
+                            className={`flex-1 py-3 rounded-xl font-black text-[10px] uppercase border-2 transition-all ${attemptType === 'evaluation' ? 'bg-green-600 border-green-500 text-white shadow-lg shadow-green-600/30' : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50'} ${!evalRemaining ? 'opacity-30 cursor-not-allowed' : ''}`}
+                        >
+                            🎯 Evaluación
+                        </button>
+                    </div>
+                    {practiceRemaining <= 0 && attemptType === 'evaluation' && (
+                        <p className="text-[8px] font-bold text-red-500 mt-2 text-center uppercase tracking-tighter animate-bounce">⚠️ Tickets de práctica agotados. Muerte Súbita.</p>
+                    )}
+                </div>
+              )}
 
               {existingEvaluation && (
                 <div className="bg-orange-50 border border-orange-200 p-4 rounded-2xl flex gap-3 items-start animate-fadeIn">
@@ -1357,6 +1569,22 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
           </div>
         </div>
       </div>
+      
+      {showEditTeam && selTeam && teams && (
+          <EditTeamModal 
+              team={teams.find(t => t.id === selTeam)} 
+              onClose={() => setShowEditTeam(false)} 
+              onSave={(name, school) => {
+                  if (onUpdateTeamBase) onUpdateTeamBase(selTeam, name, school);
+                  setShowEditTeam(false);
+              }} 
+              onDelete={() => {
+                  setShowEditTeam(false);
+                  if (onDeleteTeam) onDeleteTeam(selTeam);
+                  setSelTeam('');
+              }}
+          />
+      )}
     </div>
   );
 }
@@ -1661,13 +1889,34 @@ function RegistroTab({ addTeam, bulkAddTeams }) {
   );
 }
 
+const TeamCardManual = ({ team, onEdit }) => (
+    <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 hover:border-blue-200 transition-all group flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3 min-w-0">
+            <SchoolLogo schoolName={team.schoolName} size="w-10 h-10" />
+            <div className="min-w-0">
+                <p className="font-black text-blue-900 uppercase tracking-tight truncate leading-tight">{team.teamName}</p>
+                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider truncate mt-0.5">{team.schoolName || 'Institución'}</p>
+            </div>
+        </div>
+        <button 
+            onClick={onEdit}
+            className="p-3 rounded-xl bg-white border border-slate-200 text-slate-400 hover:text-blue-500 hover:border-blue-200 hover:bg-blue-50 transition-all flex-shrink-0 shadow-sm group-hover:shadow-md"
+        >
+            <Icon name="edit-3" className="w-4 h-4" />
+        </button>
+    </div>
+);
 
-function InspeccionTab({ teams, updateTeamStatus, disqualifyTeam }) {
+
+function InspeccionTab({ teams, updateTeamStatus, disqualifyTeam, onUpdateTeamBase, onDeleteTeam }) {
+  const [editingTeam, setEditingTeam] = useState(null);
   const pending = teams.filter(t => t.status === 'pending');
   return (
     <div className="max-w-4xl mx-auto animate-fadeIn">
       <h2 className="text-2xl md:text-3xl font-black text-blue-900 mb-6 md:mb-8 uppercase italic leading-tight">Inspección de Hardware</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+      
+      {/* ROBOTS PENDIENTES */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-12">
         {pending.length === 0 && (
           <div className="bg-white p-8 md:p-12 rounded-[2rem] border-2 border-dashed border-slate-200 flex flex-col items-center justify-center opacity-60 col-span-2">
             <Icon name="clipboard-check" className="w-12 h-12 md:w-16 md:h-16 text-slate-300 mb-4" />
@@ -1691,15 +1940,118 @@ function InspeccionTab({ teams, updateTeamStatus, disqualifyTeam }) {
           </div>
         ))}
       </div>
+
+      {/* GESTIÓN DE TODOS LOS EQUIPOS */}
+      <div className="bg-white p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] shadow-2xl border border-slate-200">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-xl md:text-2xl font-black text-blue-900 uppercase italic tracking-tighter">Base de Datos de Equipos</h2>
+            <p className="text-[10px] md:text-sm font-bold text-slate-400 uppercase tracking-widest mt-1">Edición y eliminación de registros</p>
+          </div>
+          <div className="bg-blue-100 text-blue-600 px-4 py-2 rounded-2xl font-black text-xs md:text-sm flex items-center gap-2">
+            <Icon name="users" className="w-4 h-4" />
+            {teams.length}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {teams.sort((a, b) => a.teamName.localeCompare(b.teamName)).map(team => (
+            <TeamCardManual 
+                key={team.id} 
+                team={team} 
+                onEdit={() => setEditingTeam(team)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {editingTeam && (
+          <EditTeamModal 
+              team={editingTeam} 
+              onClose={() => setEditingTeam(null)} 
+              onSave={(name, school) => {
+                  onUpdateTeamBase(editingTeam.id, name, school);
+                  setEditingTeam(null);
+              }} 
+              onDelete={() => {
+                  setEditingTeam(null);
+                  onDeleteTeam(editingTeam.id);
+              }}
+          />
+      )}
     </div>
   );
 }
+
+function EditTeamModal({ team, onClose, onSave, onDelete }) {
+    const [name, setName] = useState(team.teamName || '');
+    const [school, setSchool] = useState(team.schoolName || '');
+
+    return (
+        <div className="fixed inset-0 z-[200] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white max-w-sm w-full rounded-[2rem] shadow-2xl p-8 transform animate-fadeIn border-2 border-blue-500">
+                <h3 className="text-xl font-black text-center uppercase text-slate-800 mb-6">Editar Equipo</h3>
+                
+                <div className="space-y-4 mb-6">
+                    <div>
+                        <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Nombre del Equipo</label>
+                        <input value={name} onChange={e => setName(e.target.value)} className="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 font-bold focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                    </div>
+                    <div>
+                        <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Institución / Colegio</label>
+                        <input value={school} onChange={e => setSchool(e.target.value)} className="w-full p-4 rounded-xl bg-slate-50 border border-slate-200 font-bold focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                    </div>
+                </div>
+
+                <div className="flex gap-2 mb-4">
+                    <button onClick={onClose} className="flex-1 py-3 rounded-xl bg-slate-100 text-slate-500 font-black text-xs uppercase hover:bg-slate-200">Cancelar</button>
+                    <button onClick={() => onSave(name, school)} className="flex-1 py-3 rounded-xl bg-blue-600 text-white font-black text-xs uppercase hover:bg-blue-700 shadow-lg shadow-blue-500/30">Guardar</button>
+                </div>
+                
+                {onDelete && (
+                    <div className="border-t border-slate-200 pt-4 mt-2">
+                        <button onClick={onDelete} className="w-full py-3 rounded-xl bg-red-50 text-red-500 font-black text-xs uppercase hover:bg-red-500 hover:text-white transition-all border border-red-100 flex items-center justify-center gap-2 shadow-sm">
+                            <Icon name="trash-2" className="w-4 h-4"/> Eliminar Permanentemente
+                        </button>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+const SchoolLogo = ({ schoolName, size = "w-8 h-8" }) => {
+    const initials = schoolName ? schoolName.split(' ').filter(w => w.length > 2).map(w => w[0]).join('').substring(0, 2).toUpperCase() : '??';
+    const [hasError, setHasError] = useState(false);
+    
+    // Colores estables basados en el nombre
+    const colors = ['bg-blue-500', 'bg-purple-500', 'bg-emerald-500', 'bg-orange-500', 'bg-rose-500', 'bg-indigo-500'];
+    const colorIdx = schoolName ? schoolName.length % colors.length : 0;
+    const bgColor = colors[colorIdx] || 'bg-slate-700';
+
+    const logoPath = `/logos/${schoolName}.png`;
+
+    return (
+        <div className={`${size} rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center font-black text-[10px] text-white shadow-inner ${bgColor}`}>
+            {!hasError ? (
+                <img 
+                    src={logoPath} 
+                    alt="" 
+                    className="w-full h-full object-cover"
+                    onError={() => setHasError(true)}
+                />
+            ) : (
+                <span>{initials}</span>
+            )}
+        </div>
+    );
+};
 
 function ResultadosTab({ teams, currentUser, onShowHistory }) {
   const [selRondaView, setSelRondaView] = useState('global');
 
   const getRoundStats = (team, roundFilter) => {
-    const rh = team.history.filter(h => h.ronda === Number(roundFilter));
+    const rh = team.history.filter(h => h.ronda === Number(roundFilter) && h.practice !== true);
     let totalScore = 0;
     let totalTime = 0;
 
@@ -1788,10 +2140,13 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
                     {i === 0 ? '🏆 1' : i === 1 ? '🥈 2' : i === 2 ? '🥉 3' : i + 1}
                   </td>
                   <td className="p-4 md:p-6">
-                      <div>
-                          <p className={`font-black text-base md:text-lg leading-tight ${posColor}`}>{getTeamDisplayNames(t).team}</p>
-                          <p className="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-tight mt-1">{getTeamDisplayNames(t).school}</p>
-                          <p className="hidden md:block text-[9px] text-slate-300 font-bold mt-1 uppercase tracking-tight">👤 {t.captainName}</p>
+                      <div className="flex items-center gap-3">
+                          <SchoolLogo schoolName={t.schoolName} size="w-10 h-10 md:w-12 md:h-12" />
+                          <div className="min-w-0">
+                              <p className={`font-black text-base md:text-xl leading-tight ${posColor}`}>{t.teamName}</p>
+                              <p className="text-[9px] md:text-xs text-slate-400 font-bold uppercase tracking-widest leading-tight mt-1 truncate">{t.schoolName || 'Institución Independiente'}</p>
+                              <p className="hidden md:block text-[9px] text-slate-300 font-bold mt-1 uppercase tracking-tight">👤 {t.captainName}</p>
+                          </div>
                       </div>
                   </td>
                   <td className="p-4 md:p-6 text-center hidden sm:table-cell">
@@ -1959,6 +2314,156 @@ function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam, 
       </div>
     </div>
   );
+}
+
+function CompetitionDualOverlay({ teams, timer, timerActive, toggleTimer, resetTimer, formatTime, onExit }) {
+    const [allTeams, setAllTeams] = useState(teams);
+
+    useEffect(() => {
+        const fetchAll = async () => {
+            try {
+                const res = await fetch(`${API_BASE}/data`);
+                const data = await res.json();
+                if (data.teams) setAllTeams(data.teams);
+            } catch (err) { console.error("Dual TV fetch error:", err); }
+        };
+        fetchAll();
+        const interval = setInterval(fetchAll, 5000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const getSorted = (cat) => {
+        const list = Array.isArray(allTeams) ? allTeams.filter(t => t.category === cat) : [];
+        return [...list].sort((a, b) => {
+            if ((b.score || 0) !== (a.score || 0)) return (b.score || 0) - (a.score || 0);
+            return (a.lastTime || 9999999) - (b.lastTime || 9999999);
+        });
+    };
+
+    const questTeams = getSorted('quest');
+    const followerTeams = getSorted('line_follower');
+
+    const TeamRow = ({ team, index }) => {
+        const score = team.score || 0;
+        let posColorText = "text-blue-400", posBg = "bg-slate-900/40 border-slate-800/50", posBadge = "";
+        if (index === 0 && score > 0) { posColorText = "text-yellow-400"; posBg = "bg-yellow-600/10 border-yellow-500/30"; posBadge = "🏆"; }
+        else if (index === 1 && score > 0) { posColorText = "text-slate-300"; posBg = "bg-slate-400/10 border-slate-400/20"; posBadge = "🥈"; }
+        else if (index === 2 && score > 0) { posColorText = "text-orange-400"; posBg = "bg-orange-600/10 border-orange-500/20"; posBadge = "🥉"; }
+
+        return (
+            <div className={`flex items-center gap-3 p-3 rounded-2xl border transition-all ${posBg} ${team.status === 'disqualified' ? 'opacity-30' : ''} hover:scale-[1.02] duration-300`}>
+                <div className="w-10 text-center flex-shrink-0">
+                    <span className={`text-xl font-black italic ${posColorText}`}>#{index + 1}</span>
+                    <div className="text-[10px]">{posBadge}</div>
+                </div>
+                <SchoolLogo schoolName={team.schoolName} size="w-10 h-10" />
+                <div className="flex-1 min-w-0">
+                    <p className="text-sm font-black truncate text-white leading-tight uppercase italic">{team.teamName}</p>
+                    <p className="text-[9px] text-slate-400 truncate font-bold uppercase tracking-tight">{team.schoolName || 'Institución Independiente'}</p>
+                </div>
+                <div className="text-right flex-shrink-0">
+                    <p className={`text-2xl font-black ${posColorText} leading-none`}>{score}</p>
+                    <p className="text-[8px] text-slate-500 font-bold uppercase">Puntos</p>
+                </div>
+            </div>
+        );
+    };
+
+    return (
+        <div className="fixed inset-0 z-[100] bg-slate-950 text-white flex flex-col overflow-hidden animate-fadeIn font-sans">
+            {/* Header */}
+            <div className="flex justify-between items-center px-8 py-4 border-b border-slate-800 flex-shrink-0">
+                <div className="flex items-center gap-4">
+                    <div className="bg-purple-600 p-3 rounded-2xl shadow-lg shadow-purple-500/30">
+                        <Icon name="layout" className="w-8 h-8 text-white" />
+                    </div>
+                    <div>
+                        <h1 className="text-3xl font-black italic tracking-tighter uppercase">Ranking Dual en Vivo</h1>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse inline-block"></span>
+                            Sincronizado en tiempo real · ADAGAMES V4.5
+                        </p>
+                    </div>
+                </div>
+                <div className="flex items-center gap-4">
+                    <div className={`px-6 py-3 rounded-2xl border-2 text-center transition-all ${timer < 300 ? 'bg-red-500/20 border-red-500 animate-pulse' : 'bg-slate-900 border-blue-500/30'}`}>
+                        <p className="text-[9px] text-slate-400 uppercase tracking-widest">Tiempo</p>
+                        <p className="text-3xl font-black font-mono">{formatTime(timer)}</p>
+                    </div>
+                    <div className="flex gap-2">
+                        <button onClick={toggleTimer} className={`px-4 py-2 rounded-xl font-black text-[10px] uppercase ${timerActive ? 'bg-orange-500 hover:bg-orange-600' : 'bg-green-600 hover:bg-green-700'}`}>
+                            {timerActive ? 'Pausar' : 'Iniciar'}
+                        </button>
+                        <button onClick={resetTimer} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl font-black text-[10px] uppercase">Reset</button>
+                        <button onClick={onExit} className="px-4 py-2 bg-slate-100/10 hover:bg-white hover:text-slate-900 rounded-xl font-black text-[10px] uppercase transition-all">Salir TV</button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Dual Panels */}
+            <div className="flex flex-1 overflow-hidden">
+                {/* Quest Panel */}
+                <div className="flex-1 flex flex-col overflow-hidden">
+                    <div className="bg-blue-600/20 border-b border-blue-500/40 px-6 py-3 flex-shrink-0">
+                        <h2 className="text-xl font-black uppercase tracking-widest text-blue-300 flex items-center gap-2">
+                            <Icon name="trophy" className="w-5 h-5" /> Robotics Quest
+                        </h2>
+                        <p className="text-[10px] text-blue-400 uppercase tracking-widest">{questTeams.length} equipos</p>
+                    </div>
+                    <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
+                        {questTeams.length === 0 ? (
+                            <p className="text-slate-500 text-center mt-8 font-bold">Sin equipos registrados</p>
+                        ) : questTeams.map((t, i) => <TeamRow key={t.id} team={t} index={i} />)}
+                    </div>
+                </div>
+
+                {/* Racing Separator */}
+                <div className="relative w-16 flex-shrink-0 flex flex-col items-center justify-center bg-slate-950 overflow-hidden">
+                    {/* Animated racing line */}
+                    <div className="absolute inset-0 flex flex-col items-center">
+                        <div className="w-0.5 h-full bg-gradient-to-b from-transparent via-purple-500 to-transparent animate-pulse"></div>
+                    </div>
+                    {/* Racing cars animation */}
+                    <div className="relative z-10 flex flex-col items-center gap-3">
+                        {[...Array(8)].map((_, i) => (
+                            <div key={i} className="text-lg" style={{
+                                animation: `racingCar ${1.5 + i * 0.3}s linear infinite`,
+                                animationDelay: `${i * 0.2}s`,
+                                opacity: 0.6 + (i % 3) * 0.15
+                            }}>
+                                {i % 3 === 0 ? '🏎️' : i % 3 === 1 ? '🤖' : '⚡'}
+                            </div>
+                        ))}
+                    </div>
+                    <style>{`
+                        @keyframes racingCar {
+                            0% { transform: translateY(-60px); opacity: 0; }
+                            10% { opacity: 1; }
+                            90% { opacity: 1; }
+                            100% { transform: translateY(60px); opacity: 0; }
+                        }
+                    `}</style>
+                    {/* ADA label */}
+                    <div className="absolute bottom-4 text-[8px] font-black text-purple-400 tracking-widest" style={{writingMode:'vertical-rl'}}>ADA GAMES</div>
+                </div>
+
+                {/* Line Follower Panel */}
+                <div className="flex-1 flex flex-col overflow-hidden">
+                    <div className="bg-green-600/20 border-b border-green-500/40 px-6 py-3 flex-shrink-0">
+                        <h2 className="text-xl font-black uppercase tracking-widest text-green-300 flex items-center gap-2">
+                            <Icon name="zap" className="w-5 h-5" /> Sigue Línea
+                        </h2>
+                        <p className="text-[10px] text-green-400 uppercase tracking-widest">{followerTeams.length} equipos</p>
+                    </div>
+                    <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
+                        {followerTeams.length === 0 ? (
+                            <p className="text-slate-500 text-center mt-8 font-bold">Sin equipos registrados</p>
+                        ) : followerTeams.map((t, i) => <TeamRow key={t.id} team={t} index={i} />)}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 }
 
 function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer, formatTime, onExit, category }) {
@@ -2140,21 +2645,25 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
                     }
 
                     return (
-                    <div key={t.id} className={`flex items-center gap-6 p-6 rounded-3xl border-2 transition-all ${posBg} ${t.status === 'disqualified' ? 'opacity-30' : ''}`}>
+                    <div key={t.id} className={`flex items-center gap-6 p-6 rounded-[2.5rem] border-2 transition-all ${posBg} ${t.status === 'disqualified' ? 'opacity-30' : ''}`}>
                         <div className="w-24 text-center flex flex-col items-center">
                             <span className={`text-5xl font-black italic ${posColorText}`}>#{i + 1}</span>
                             <span className={`text-[10px] font-bold mt-2 uppercase tracking-widest ${posColorText}`}>{posBadge}</span>
                         </div>
+                        <SchoolLogo schoolName={t.schoolName} size="w-20 h-20 md:w-24 md:h-24 shadow-xl" />
                         <div className="flex-1 min-w-0">
-                            <h3 className="text-3xl font-black truncate tracking-tight">{t.school}</h3>
-                            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mt-1">
+                            <h3 className="text-4xl font-black truncate tracking-tight text-white uppercase italic">{t.teamName}</h3>
+                            <p className="text-lg font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mt-1">
+                                {t.schoolName || 'Institución Independiente'}
+                            </p>
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-2 flex items-center gap-2">
                                 <Icon name="users" className="w-4 h-4"/> {t.captainName}
                             </p>
                         </div>
-                        <div className="bg-slate-950/50 px-8 py-4 rounded-2xl border border-slate-800/50 flex flex-col items-end justify-center min-w-[200px] shadow-inner">
-                             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Puntaje Total</p>
-                             <p className={`text-5xl font-black tracking-tighter ${posColorText}`}>{stats.score}</p>
-                             <p className="text-sm font-bold text-slate-400 mt-2 tracking-widest leading-none drop-shadow-md">{formatResultTime(stats.time)}</p>
+                        <div className="bg-slate-950/50 px-10 py-6 rounded-3xl border border-slate-800/50 flex flex-col items-end justify-center min-w-[250px] shadow-inner">
+                             <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Puntaje Total</p>
+                             <p className={`text-6xl font-black tracking-tighter ${posColorText}`}>{stats.score}</p>
+                             <p className="text-lg font-bold text-slate-400 mt-2 tracking-widest leading-none drop-shadow-md">{formatResultTime(stats.time)}</p>
                         </div>
                     </div>
                 )})}
@@ -2171,7 +2680,7 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
 }
 
 
-function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, activeTeams, addScore, currentUser, disqualifyTeam, postTeams, showToast, isRunningInMainApp }) {
+function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, activeTeams, addScore, currentUser, disqualifyTeam, postTeams, showToast, isRunningInMainApp, onUpdateTeamBase, onDeleteTeam }) {
   const [mode, setMode] = useState(initialMode || 'edit');
   const [penalties, setPenalties] = useState(0);
   const [attempts, setAttempts] = useState(['pending', 'pending', 'pending']);
@@ -2187,6 +2696,7 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
   const [selTeam, setSelTeam] = useState('');
   const [selRonda, setSelRonda] = useState(1);
   const [selPista, setSelPista] = useState(1);
+  const [showEditTeam, setShowEditTeam] = useState(false);
 
   const [bgImage, setBgImage] = useState(null);
   const [points, setPoints] = useState([]);
@@ -2458,10 +2968,17 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
             <Icon name="play-circle" className="w-5 h-5 text-blue-500 fill-blue-500" /> MESA DEL JUEZ
           </h1>
           <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-wider font-semibold">Equipo en Pista</p>
-          <select value={selTeam} onChange={e => setSelTeam(e.target.value)} className="mt-2 w-full bg-[#0f111a] border border-[#2a2e3f] text-xs md:text-sm rounded-lg p-2 md:p-2.5 outline-none transition-colors">
-            <option value="">-- Seleccionar Equipo --</option>
-            {(isRunningInMainApp ? teams.filter(t => t.status === 'inspected' && t.category === 'line_follower' && (t.qualifiedRounds || [1]).includes(selRonda)) : activeTeams).map(t => <option key={t.id} value={t.id}>{t.school}</option>)}
-          </select>
+          <div className="flex gap-2">
+            <select value={selTeam} onChange={e => setSelTeam(e.target.value)} className="mt-2 w-full bg-[#0f111a] border border-[#2a2e3f] text-xs md:text-sm rounded-lg p-2 md:p-2.5 outline-none transition-colors">
+              <option value="">-- Seleccionar Equipo --</option>
+              {(isRunningInMainApp ? teams.filter(t => t.status === 'inspected' && t.category === 'line_follower' && (t.qualifiedRounds || [1]).includes(selRonda)) : activeTeams).map(t => <option key={t.id} value={t.id}>{t.teamName} ({t.schoolName})</option>)}
+            </select>
+            {selTeam && currentUser?.role === 'admin' && (
+                <button onClick={() => setShowEditTeam(true)} className="mt-2 bg-[#1a1d2d] border border-[#2a2e3f] p-2.5 rounded-lg text-blue-400 hover:bg-[#2a2e3f] transition-all flex-shrink-0">
+                    <Icon name="settings" className="w-5 h-5" />
+                </button>
+            )}
+          </div>
 
           <div className="flex gap-2 md:gap-3 mt-3 md:mt-4">
             <div className="flex-1">
@@ -2675,6 +3192,22 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
           )}
         </div>
       </div>
+      
+      {showEditTeam && selTeam && teams && (
+          <EditTeamModal 
+              team={teams.find(t => t.id === selTeam)} 
+              onClose={() => setShowEditTeam(false)} 
+              onSave={(name, school) => {
+                  if (onUpdateTeamBase) onUpdateTeamBase(selTeam, name, school);
+                  setShowEditTeam(false);
+              }} 
+              onDelete={() => {
+                  setShowEditTeam(false);
+                  if (onDeleteTeam) onDeleteTeam(selTeam);
+                  setSelTeam('');
+              }}
+          />
+      )}
     </div>
   );
 }
@@ -2788,9 +3321,9 @@ function FasesTab({ teams, onUpdateQualified, onUpdateManyQualified, showToast, 
   // Solo mostrar equipos aprobados en inspección
   const inspectedTeams = useMemo(() => teams.filter(t => t.status === 'inspected'), [teams]);
 
-  // Helper para obtener estadísticas de una ronda específica
+  // Helper para obtener estadísticas de una ronda específica (Solo Evaluaciones Oficiales)
   const getStats = (team, ronda) => {
-    const rh = team.history.filter(h => h.ronda === Number(ronda));
+    const rh = team.history.filter(h => h.ronda === Number(ronda) && h.practice !== true);
     if (rh.length === 0) return { score: 0, time: 999999, played: false };
     const score = rh.reduce((sum, h) => sum + (h.points || h.percentage || 0), 0);
     const time = rh.reduce((sum, h) => sum + (h.finalTimeMs || h.finalTime || 0), 0);

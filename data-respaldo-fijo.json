@@ -1,0 +1,1586 @@
+{
+    "teams": [
+        {
+            "id": "1776892474497",
+            "teamName": "Wall-E",
+            "schoolName": "U.E. Colegio Juan Vicente González",
+            "school": "Wall-E — U.E. Colegio Juan Vicente González",
+            "captainName": "Ruth Suárez",
+            "coachName": "",
+            "members": [
+                "Ruth Suárez",
+                "Richard Rodriguez",
+                "Josué Aular"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            }
+        },
+        {
+            "id": "177689253967410",
+            "teamName": "IDEAL N 2",
+            "schoolName": "U.E. IDEAL",
+            "school": "IDEAL N 2 — U.E. IDEAL",
+            "captainName": "Pastor Sosa",
+            "coachName": "",
+            "members": [
+                "Pastor Sosa",
+                "Roberto Rivas",
+                "Fabiana Quijada"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            }
+        },
+        {
+            "id": "177689253968511",
+            "teamName": "Menca PRJ",
+            "schoolName": "U.E. Doña Menca de Leoni",
+            "school": "Menca PRJ — U.E. Doña Menca de Leoni",
+            "captainName": "Rogelio Fernández",
+            "coachName": "",
+            "members": [
+                "Rogelio Fernández",
+                "José Camperos",
+                "Roberto Monagas"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            }
+        },
+        {
+            "id": "177689253969612",
+            "teamName": "Nitro Bytes",
+            "schoolName": "U.E. Raúl Leoni",
+            "school": "Nitro Bytes — U.E. Raúl Leoni",
+            "captainName": "Fernando Rojas",
+            "coachName": "",
+            "members": [
+                "Fernando Javier Rojas Figueroa",
+                "Isabella Lucia del Valle Jiménez Zambrano",
+                "Laura Cristina Macadan Noriega"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            }
+        },
+        {
+            "id": "177689253970613",
+            "teamName": "(Pendiente) Abajo Cadenas",
+            "schoolName": "U.E. Abajo Cadenas",
+            "school": "(Pendiente) Abajo Cadenas — U.E. Abajo Cadenas",
+            "captainName": "(Pendiente)",
+            "coachName": "",
+            "members": [
+                "(Pendiente)"
+            ],
+            "studentsCount": 1,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            }
+        },
+        {
+            "id": "177689253971614",
+            "teamName": "Don Bosco Tech",
+            "schoolName": "U.E. Colegio Don Bosco",
+            "school": "Don Bosco Tech — U.E. Colegio Don Bosco",
+            "captainName": "Michelle Fariñas",
+            "coachName": "",
+            "members": [
+                "Michelle de los Angeles Fariñas Sanchez",
+                "Augusto Anselmetti Bruzual"
+            ],
+            "studentsCount": 2,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            }
+        },
+        {
+            "id": "177689253972715",
+            "teamName": "La Paz Tech",
+            "schoolName": "U.E. Nuestra Señora de La Paz",
+            "school": "La Paz Tech — U.E. Nuestra Señora de La Paz",
+            "captainName": "José Marcos Laya",
+            "coachName": "",
+            "members": [
+                "José Marcos Laya Candurin",
+                "Antonella Sánchez Ysaccis"
+            ],
+            "studentsCount": 2,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            }
+        },
+        {
+            "id": "177689253973716",
+            "teamName": "PyBulis",
+            "schoolName": "U.E. Cacica Urimare",
+            "school": "PyBulis — U.E. Cacica Urimare",
+            "captainName": "Carmila Benitez",
+            "coachName": "",
+            "members": [
+                "Camila Benitez",
+                "Victor Jiménez",
+                "Leonardo Rodríguez"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            }
+        },
+        {
+            "id": "177689253974817",
+            "teamName": "Los Promnue28",
+            "schoolName": "U.E. Nueva Barcelona",
+            "school": "Los Promnue28 — U.E. Nueva Barcelona",
+            "captainName": "Eduardo Villegas",
+            "coachName": "",
+            "members": [
+                "Francisco Deffitt",
+                "Eduardo Villegas",
+                "Salomón Turmero"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            }
+        },
+        {
+            "id": "1776892156424",
+            "teamName": "Jvg-Bot",
+            "schoolName": "U.E. Colegio Juan Vicente González",
+            "school": "Jvg-Bot — U.E. Colegio Juan Vicente González",
+            "captainName": "Christopher Sanchez",
+            "coachName": "",
+            "members": [
+                "Christopher Sanchez",
+                "Rahel Carreño",
+                "Sebastián Carvajal"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "17768923483771",
+            "teamName": "IDEAL N 1",
+            "schoolName": "UE IDEAL",
+            "school": "IDEAL N 1 — UE IDEAL",
+            "captainName": "Kenay Silvera",
+            "coachName": "",
+            "members": [
+                "Kenay Rafael Silvera Romero",
+                "Diego Andres García Mora",
+                "Angelo Alessandro Mantovani Ortiz"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "17768923483882",
+            "teamName": "MENCA JAH",
+            "schoolName": "U.E. Doña Menca de Leoni",
+            "school": "MENCA JAH — U.E. Doña Menca de Leoni",
+            "captainName": "Jhean Brito",
+            "coachName": "",
+            "members": [
+                "Jhean Brito",
+                "Alejandro Cedeño",
+                "Hiroshi Yoshida"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "17768923483993",
+            "teamName": "Doragons",
+            "schoolName": "U.E. Raúl Leoni",
+            "school": "Doragons — U.E. Raúl Leoni",
+            "captainName": "Ariel Algarin",
+            "coachName": "",
+            "members": [
+                "Ariel Cristina Algarin García",
+                "Gabriel Jesús Molina Zapata",
+                "Angel Luis Rodriguez Vegas"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "17768923484104",
+            "teamName": "Los Boys",
+            "schoolName": "U.E. Abajo Cadenas",
+            "school": "Los Boys — U.E. Abajo Cadenas",
+            "captainName": "Eduardo Girot",
+            "coachName": "",
+            "members": [
+                "Eduardo Girot",
+                "José Romero",
+                "Jorge Zamora"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "17768923484205",
+            "teamName": "(Pendiente) Don Bosco",
+            "schoolName": "U.E. Colegio Don Bosco",
+            "school": "(Pendiente) Don Bosco — U.E. Colegio Don Bosco",
+            "captainName": "(Pendiente)",
+            "coachName": "",
+            "members": [
+                "(Pendiente)"
+            ],
+            "studentsCount": 1,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "17768923484316",
+            "teamName": "(Pendiente) La Paz",
+            "schoolName": "U.E. Nuestra Señora de La Paz",
+            "school": "(Pendiente) La Paz — U.E. Nuestra Señora de La Paz",
+            "captainName": "(Pendiente)",
+            "coachName": "",
+            "members": [
+                "(Pendiente)"
+            ],
+            "studentsCount": 1,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "17768923484417",
+            "teamName": "Lambda",
+            "schoolName": "U.E. Cacica Urimare",
+            "school": "Lambda — U.E. Cacica Urimare",
+            "captainName": "José Ramos",
+            "coachName": "",
+            "members": [
+                "Camila Vielma",
+                "Adrián Güipe",
+                "José Ramos"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "17768923484518",
+            "teamName": "Los Blinders",
+            "schoolName": "U.E. Nueva Barcelona",
+            "school": "Los Blinders — U.E. Nueva Barcelona",
+            "captainName": "Ilan Ávila",
+            "coachName": "",
+            "members": [
+                "Giovanny Ortiz",
+                "Ilan Avila",
+                "Wiston Molina"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        }
+    ],
+    "tracks": {
+        "1": {
+            "1": {
+                "sequence": [
+                    "D6",
+                    "G4",
+                    "C2",
+                    "A5",
+                    "E1"
+                ],
+                "obstacles": [],
+                "bgImage": "/maps/mapa_ronda1_pista1.png?t=1775879164",
+                "points": [
+                    {
+                        "id": 1775879168663,
+                        "x": 8.67117117117117,
+                        "y": 15.045045045045043,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879172023,
+                        "x": 64.63963963963964,
+                        "y": 15.045045045045043,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879173711,
+                        "x": 32.88288288288289,
+                        "y": 44.77477477477477,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879184263,
+                        "x": 51.126126126126124,
+                        "y": 48.73873873873874,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879187207,
+                        "x": 65.990990990991,
+                        "y": 88.01801801801801,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879189015,
+                        "x": 46.95945945945946,
+                        "y": 83.51351351351352,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879190279,
+                        "x": 29.054054054054053,
+                        "y": 84.41441441441442,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879191559,
+                        "x": 12.612612612612612,
+                        "y": 84.23423423423422,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879192831,
+                        "x": 12.162162162162163,
+                        "y": 52.702702702702695,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879197223,
+                        "x": 87.95045045045045,
+                        "y": 16.486486486486488,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879205480,
+                        "x": 34.234234234234236,
+                        "y": 8.378378378378379,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879212879,
+                        "x": 87.72522522522522,
+                        "y": 43.513513513513516,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879216383,
+                        "x": 92.68018018018019,
+                        "y": 90.90090090090091,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879222159,
+                        "x": 45.94594594594595,
+                        "y": 21.71171171171171,
+                        "value": 5,
+                        "isCompleted": false
+                    }
+                ],
+                "guideX": 39.07657657657658,
+                "guideY": 67.47747747747748,
+                "bonusDir": "S",
+                "bonusRules": "El robot inicia en D6 y debe encender los LEDs en color azul al llegar a C2. Al alcanzar el punto final (E1), debe emitir un sonido de celebración y apagar todos los LEDs.",
+                "bonusStart": "D6"
+            },
+            "2": {
+                "sequence": [
+                    "F5",
+                    "B3",
+                    "H1",
+                    "D4",
+                    "I6"
+                ],
+                "obstacles": [],
+                "bonusRules": "El robot comienza en F5 con los LEDs encendidos en amarillo. Debe pasar obligatoriamente por el punto central (E3) antes de llegar a I6, donde debe cambiar los LEDs a color morado.",
+                "bonusDir": "E",
+                "bonusStart": "F5"
+            },
+            "3": {
+                "sequence": [
+                    "A3",
+                    "C5",
+                    "G3",
+                    "I1",
+                    "B6"
+                ],
+                "obstacles": [],
+                "bonusStart": "A3",
+                "bonusDir": "E",
+                "bonusRules": "El robot inicia en A3 orientado hacia el Este y debe realizar un giro de 180 grados en el punto G3 antes de continuar hacia I1. Al finalizar debe mostrar en el display el número '5'."
+            },
+            "4": {
+                "sequence": [
+                    "H4",
+                    "D2",
+                    "B5",
+                    "F1",
+                    "J6"
+                ],
+                "obstacles": [],
+                "bonusStart": "H4",
+                "bonusDir": "S",
+                "bonusRules": "El robot inicia en H4 y solo puede moverse verticalmente hasta la fila 2, luego horizontalmente hasta la columna B, y continuar la ruta de forma libre."
+            },
+            "5": {
+                "sequence": [
+                    "C4",
+                    "H6",
+                    "A1",
+                    "G2",
+                    "D5"
+                ],
+                "obstacles": [
+                    "B2",
+                    "E5",
+                    "F3",
+                    "I5"
+                ],
+                "bonusStart": "C4",
+                "bonusDir": "N",
+                "bonusRules": "El robot comienza en C4 y debe evitar los siguientes puntos: B2, E5, F3, I5. Debe emitir un pitido corto cada vez que cambie de dirección durante su recorrido."
+            }
+        },
+        "2": {
+            "1": {
+                "sequence": [
+                    "B5",
+                    "E2",
+                    "H6",
+                    "C3",
+                    "I1"
+                ],
+                "obstacles": [
+                    "A4",
+                    "D6",
+                    "G1",
+                    "J5"
+                ],
+                "bonusStart": "B5",
+                "bonusDir": "E",
+                "bonusRules": "El robot inicia en B5 apuntando hacia el Este. No debe pasar por A4, D6, G1, J5. Al llegar a I1 debe encender todos los LEDs en color blanco durante 2 segundos."
+            },
+            "2": {
+                "sequence": [
+                    "I3",
+                    "D5",
+                    "A2",
+                    "F1",
+                    "J6"
+                ],
+                "obstacles": [
+                    "B6",
+                    "E4",
+                    "H2"
+                ],
+                "bgImage": "/maps/mapa_ronda2_pista2.png?t=1775879446",
+                "points": [
+                    {
+                        "id": 1775879463503,
+                        "x": 29.054054054054053,
+                        "y": 86.03603603603604,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879466216,
+                        "x": 72.2972972972973,
+                        "y": 88.91891891891892,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879471959,
+                        "x": 65.87837837837837,
+                        "y": 6.936936936936937,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879479471,
+                        "x": 51.46396396396396,
+                        "y": 6.216216216216217,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879498903,
+                        "x": 48.1981981981982,
+                        "y": 45.4954954954955,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879507535,
+                        "x": 49.0990990990991,
+                        "y": 95.04504504504504,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879511207,
+                        "x": 14.076576576576578,
+                        "y": 83.87387387387388,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879513687,
+                        "x": 7.094594594594595,
+                        "y": 13.783783783783784,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879514615,
+                        "x": 29.504504504504503,
+                        "y": 7.117117117117116,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879520967,
+                        "x": 12.725225225225225,
+                        "y": 37.207207207207205,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879522431,
+                        "x": 7.657657657657657,
+                        "y": 64.41441441441441,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879529831,
+                        "x": 29.27927927927928,
+                        "y": 51.80180180180181,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879534199,
+                        "x": 65.54054054054053,
+                        "y": 47.83783783783784,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879536991,
+                        "x": 88.40090090090091,
+                        "y": 53.6036036036036,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879540335,
+                        "x": 87.5,
+                        "y": 16.306306306306308,
+                        "value": 5,
+                        "isCompleted": false
+                    }
+                ],
+                "guideX": 40.31531531531532,
+                "guideY": 29.099099099099103,
+                "bonusStart": "I3",
+                "bonusDir": "W",
+                "bonusRules": "El robot comienza en I3 hacia el Oeste. Los LEDs deben estar en color naranja entre I3 y A2, y en color cyan entre F1 y J6. Debe evitar los puntos B6, E4, H2."
+            },
+            "3": {
+                "sequence": [
+                    "G1",
+                    "C6",
+                    "A3",
+                    "E5",
+                    "J2"
+                ],
+                "obstacles": [],
+                "bonusStart": "G1",
+                "bonusDir": "N",
+                "bonusRules": "El robot inicia en G1 y debe emitir un sonido que aumente su tono progresivamente con cada punto visitado. Al llegar a J2 debe reproducir una melodía corta de 3 notas."
+            },
+            "4": {
+                "sequence": [
+                    "A6",
+                    "D2",
+                    "H5",
+                    "B1",
+                    "J4"
+                ],
+                "obstacles": [],
+                "bonusStart": "A6",
+                "bonusDir": "S",
+                "bonusRules": "El robot inicia en A6 orientado hacia el Sur y debe realizar todo el recorrido en reversa. Al finalizar en J4 debe mostrar en el display la letra 'R'."
+            },
+            "5": {
+                "sequence": [
+                    "F2",
+                    "B4",
+                    "I6",
+                    "C1",
+                    "H3"
+                ],
+                "obstacles": [
+                    "D3",
+                    "E6",
+                    "G4",
+                    "J1"
+                ],
+                "bonusStart": "F2",
+                "bonusDir": "W",
+                "bonusRules": "El robot comienza en F2 y debe mostrar en el display cada punto visitado en formato de coordenadas. Debe evitar las áreas marcadas en rojo: D3, E6, G4, J1."
+            }
+        },
+        "3": {
+            "1": {
+                "sequence": [
+                    "C1",
+                    "F4",
+                    "A5",
+                    "H2",
+                    "D6"
+                ],
+                "obstacles": [
+                    "E4",
+                    "G5"
+                ],
+                "bonusStart": "C1",
+                "bonusDir": "E",
+                "bonusRules": "El robot inicia en C1 orientado al Este. Debe realizar un giro exacto de 90° hacia la derecha en el punto F4 antes de continuar. Al llegar a D6 debe emitir un sonido de tres tonos ascendentes."
+            },
+            "2": {
+                "sequence": [
+                    "I5",
+                    "D3",
+                    "G1",
+                    "B4",
+                    "E6"
+                ],
+                "obstacles": [
+                    "C5",
+                    "H3"
+                ],
+                "bonusStart": "I5",
+                "bonusDir": "W",
+                "bonusRules": "El robot comienza en I5 hacia el Oeste. En el display debe mostrar el número del punto visitado (1, 2, 3...) cada vez que alcance una coordenada de la secuencia. Al finalizar en E6 debe mostrar 'FIN'."
+            },
+            "3": {
+                "sequence": [
+                    "A2",
+                    "E4",
+                    "J1",
+                    "C5",
+                    "G3"
+                ],
+                "obstacles": [
+                    "F2",
+                    "H5"
+                ],
+                "bgImage": "/maps/mapa_ronda3_pista3.png?t=1775879577",
+                "points": [
+                    {
+                        "id": 1775879614383,
+                        "x": 25,
+                        "y": 86.57657657657658,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879615591,
+                        "x": 32.0945945945946,
+                        "y": 56.846846846846844,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879616823,
+                        "x": 8.220720720720722,
+                        "y": 60.450450450450454,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879619503,
+                        "x": 29.617117117117115,
+                        "y": 18.46846846846847,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879621575,
+                        "x": 51.91441441441441,
+                        "y": 55.945945945945944,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879623367,
+                        "x": 51.238738738738746,
+                        "y": 92.52252252252252,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879624879,
+                        "x": 73.08558558558559,
+                        "y": 93.78378378378378,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879626295,
+                        "x": 88.06306306306307,
+                        "y": 54.68468468468468,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879627895,
+                        "x": 87.95045045045045,
+                        "y": 84.41441441441442,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879635391,
+                        "x": 8.108108108108109,
+                        "y": 24.774774774774773,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879640847,
+                        "x": 52.92792792792793,
+                        "y": 8.198198198198197,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879644111,
+                        "x": 89.75225225225225,
+                        "y": 24.414414414414416,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879647759,
+                        "x": 67.45495495495496,
+                        "y": 20.63063063063063,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879653575,
+                        "x": 70.15765765765765,
+                        "y": 53.96396396396397,
+                        "value": 5,
+                        "isCompleted": false
+                    }
+                ],
+                "guideX": 59.909909909909906,
+                "guideY": 38.46846846846847,
+                "bonusStart": "A2",
+                "bonusDir": "N",
+                "bonusRules": "El robot inicia en A2. Los LEDs deben cambiar de color en cada punto de la secuencia (rojo, verde, azul, amarillo, morado). Al llegar a G3 debe mostrar en el display el texto 'COLORES'."
+            },
+            "4": {
+                "sequence": [
+                    "H6",
+                    "B2",
+                    "F5",
+                    "I3",
+                    "A1"
+                ],
+                "obstacles": [
+                    "D4",
+                    "J2"
+                ],
+                "bonusStart": "H6",
+                "bonusDir": "S",
+                "bonusRules": "El robot inicia en H6 y debe encender LEDs azules al cruzar las coordenadas cuya columna sea B, D, F o H. Al iniciar el recorrido debe mostrar 'START' y al terminar en A1 debe mostrar 'END' en el display."
+            },
+            "5": {
+                "sequence": [
+                    "D1",
+                    "G5",
+                    "B3",
+                    "J4",
+                    "C6"
+                ],
+                "obstacles": [
+                    "E2",
+                    "H3"
+                ],
+                "bonusStart": "D1",
+                "bonusDir": "E",
+                "bonusRules": "El robot comienza en D1 y debe evitar E2 y H3. Los LEDs deben ser de color verde en los puntos con número de fila par (2,4,6) y naranja en los de fila impar (1,3,5). Debe evitar obstáculos marcados en rojo."
+            }
+        },
+        "4": {
+            "1": {
+                "sequence": [
+                    "G6",
+                    "C4",
+                    "I2",
+                    "E1",
+                    "A3",
+                    "H5"
+                ],
+                "obstacles": [
+                    "D5",
+                    "F3"
+                ],
+                "bonusStart": "G6",
+                "bonusDir": "S",
+                "bonusRules": "El robot inicia en G6 en reversa. Debe evitar D5 y F3. En cada punto los LEDs cambian a un color aleatorio. Al finalizar en H5 debe parpadear todos los LEDs 3 veces."
+            },
+            "2": {
+                "sequence": [
+                    "B1",
+                    "H4",
+                    "D6",
+                    "J2",
+                    "F3",
+                    "A5"
+                ],
+                "obstacles": [
+                    "C3",
+                    "G5",
+                    "E4",
+                    "I6"
+                ],
+                "bonusStart": "B1",
+                "bonusDir": "E",
+                "bonusRules": "El robot comienza en B1. Debe evitar C3, G5, E4 e I6. Los primeros 3 puntos en retroceso, los últimos 3 de frente. Mostrar 'R' en display en reversa y 'F' de frente."
+            },
+            "3": {
+                "sequence": [
+                    "A6",
+                    "E2",
+                    "I5",
+                    "C1",
+                    "H3",
+                    "D4"
+                ],
+                "obstacles": [
+                    "B4",
+                    "F6",
+                    "G2"
+                ],
+                "bonusStart": "A6",
+                "bonusDir": "E",
+                "bonusRules": "El robot inicia en A6 en movimientos diagonales. Debe evitar B4, F6 y G2. Los LEDs alternan rojo y blanco como luces de ambulancia (200ms cada color) durante todo el recorrido."
+            },
+            "4": {
+                "sequence": [
+                    "F6",
+                    "J3",
+                    "B5",
+                    "G1",
+                    "D4",
+                    "I6"
+                ],
+                "obstacles": [
+                    "H6",
+                    "C2",
+                    "I4",
+                    "E5",
+                    "A3"
+                ],
+                "bgImage": "/maps/mapa_ronda4_pista4.png?t=1775879675",
+                "points": [
+                    {
+                        "id": 1775879697151,
+                        "x": 34.346846846846844,
+                        "y": 5.8558558558558556,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879699519,
+                        "x": 73.08558558558559,
+                        "y": 5.315315315315315,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879701079,
+                        "x": 87.95045045045045,
+                        "y": 33.42342342342342,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879702767,
+                        "x": 93.69369369369369,
+                        "y": 60.630630630630634,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879704223,
+                        "x": 71.95945945945947,
+                        "y": 64.41441441441441,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879705639,
+                        "x": 71.84684684684684,
+                        "y": 31.44144144144144,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879710711,
+                        "x": 9.797297297297296,
+                        "y": 88.55855855855856,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879712239,
+                        "x": 13.513513513513514,
+                        "y": 59.909909909909906,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879714808,
+                        "x": 54.84234234234234,
+                        "y": 54.68468468468468,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879717887,
+                        "x": 14.527027027027026,
+                        "y": 36.126126126126124,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879720599,
+                        "x": 14.527027027027026,
+                        "y": 13.243243243243244,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879725807,
+                        "x": 52.47747747747747,
+                        "y": 5.8558558558558556,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879729550,
+                        "x": 55.29279279279279,
+                        "y": 32.88288288288289,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879732791,
+                        "x": 36.5990990990991,
+                        "y": 33.24324324324324,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879735767,
+                        "x": 71.84684684684684,
+                        "y": 85.4954954954955,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879738023,
+                        "x": 91.77927927927928,
+                        "y": 83.51351351351352,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879740894,
+                        "x": 51.01351351351351,
+                        "y": 85.13513513513513,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879743655,
+                        "x": 31.644144144144143,
+                        "y": 55.945945945945944,
+                        "value": 5,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879746607,
+                        "x": 31.869369369369373,
+                        "y": 81.89189189189189,
+                        "value": 5,
+                        "isCompleted": false
+                    }
+                ],
+                "guideX": 44.932432432432435,
+                "guideY": 45.31531531531531,
+                "bonusStart": "F6",
+                "bonusDir": "N",
+                "bonusRules": "El robot inicia en F6 orientado al Norte. Durante el recorrido puede usar movimientos diagonales. Debe evitar H6, C2, I4, E5 y A3. Solo en los puntos de coordenadas pares (columnas B,D,F,H,J y filas 2,4,6) debe mostrar en el display las coordenadas en formato 'LETRA+NÚMERO'."
+            },
+            "5": {
+                "sequence": [
+                    "C3",
+                    "H1",
+                    "A4",
+                    "J5",
+                    "E6",
+                    "G2"
+                ],
+                "obstacles": [
+                    "B5",
+                    "D1",
+                    "F4",
+                    "I3"
+                ],
+                "bonusStart": "C3",
+                "bonusDir": "N",
+                "bonusRules": "El robot inicia en C3 orientado al Norte. Se permiten movimientos diagonales entre puntos. El buzzer debe emitir un sonido de frecuencia creciente por cada punto visitado (200Hz a 1200Hz). Los LEDs permanecen blancos."
+            }
+        },
+        "5": {
+            "1": {
+                "sequence": [
+                    "I6",
+                    "D4",
+                    "A1",
+                    "H3",
+                    "C5",
+                    "F2"
+                ],
+                "obstacles": [
+                    "B6",
+                    "E3",
+                    "J4"
+                ],
+                "bonusStart": "I6",
+                "bonusDir": "W",
+                "bonusRules": "El robot inicia en I6 en reversa completa. Debe evitar B6, E3 y J4. Los LEDs deben dividirse en cuadrantes: superior-izquierdo=rojo, superior-derecho=verde, inferior-izquierdo=azul, inferior-derecho=amarillo. Al finalizar en F2 debe mostrar 'CAMPEÓN' en display."
+            },
+            "2": {
+                "sequence": [
+                    "B4",
+                    "G2",
+                    "J6",
+                    "C1",
+                    "I5",
+                    "E3"
+                ],
+                "obstacles": [
+                    "D5",
+                    "H4"
+                ],
+                "bonusStart": "B4",
+                "bonusDir": "E",
+                "bonusRules": "El robot inicia en B4 hacia el Este. Debe realizar un trayecto en zigzag (alternando cambios de dirección) para evitar D5 y H4. El display debe mostrar la coordenada actual y la siguiente (ej: 'B4-G2'). LEDs azules en horizontal y verdes en vertical."
+            },
+            "3": {
+                "sequence": [
+                    "F1",
+                    "A3",
+                    "H5",
+                    "D2",
+                    "J6",
+                    "B4"
+                ],
+                "obstacles": [],
+                "bonusStart": "F1",
+                "bonusDir": "N",
+                "bonusRules": "El robot inicia en F1 hacia el Norte. (1) El buzzer emite un tono diferente por fila (Do, Re, Mi, Fa, Sol, La) y EL DISPLAY DEBE MOSTRAR EL NOMBRE DE LA NOTA. (2) Los LEDs son blancos si la suma fila+columna es par, magenta si es impar."
+            },
+            "4": {
+                "sequence": [
+                    "G5",
+                    "C2",
+                    "I4",
+                    "A6",
+                    "J1",
+                    "E3"
+                ],
+                "obstacles": [
+                    "F5",
+                    "B3",
+                    "H2"
+                ],
+                "bonusStart": "G5",
+                "bonusDir": "S",
+                "bonusRules": "El robot inicia en G5 en reversa. Debe evitar F5, B3 y H2. El display debe mostrar un contador regresivo desde 5 hasta 0 conforme avanza. Los LEDs siguen el patrón semáforo: verde=avanzando, amarillo=girando, rojo=detenido en cada punto."
+            },
+            "5": {
+                "sequence": [
+                    "D3",
+                    "J6",
+                    "A1",
+                    "H4",
+                    "C5",
+                    "F2"
+                ],
+                "obstacles": [
+                    "B2",
+                    "G3",
+                    "I5",
+                    "E4"
+                ],
+                "bgImage": "/maps/mapa_ronda5_pista5.png?t=1775879780",
+                "points": [
+                    {
+                        "id": 1775879785655,
+                        "x": 23.76126126126126,
+                        "y": 28.91891891891892,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879788646,
+                        "x": 23.76126126126126,
+                        "y": 51.98198198198198,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879791319,
+                        "x": 24.0990990990991,
+                        "y": 70,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879799206,
+                        "x": 40.090090090090094,
+                        "y": 93.42342342342343,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879801646,
+                        "x": 24.21171171171171,
+                        "y": 91.08108108108108,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879806063,
+                        "x": 65.42792792792793,
+                        "y": 95.76576576576576,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879807191,
+                        "x": 77.81531531531532,
+                        "y": 93.6036036036036,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879808447,
+                        "x": 80.74324324324324,
+                        "y": 71.26126126126127,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879812967,
+                        "x": 80.2927927927928,
+                        "y": 51.44144144144144,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879816982,
+                        "x": 78.490990990991,
+                        "y": 32.7027027027027,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879818751,
+                        "x": 62.95045045045045,
+                        "y": 30,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879821726,
+                        "x": 53.37837837837838,
+                        "y": 9.27927927927928,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879823103,
+                        "x": 64.75225225225225,
+                        "y": 9.27927927927928,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879834199,
+                        "x": 63.4009009009009,
+                        "y": 53.783783783783775,
+                        "value": 20,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879836919,
+                        "x": 67.22972972972973,
+                        "y": 79.72972972972973,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879844878,
+                        "x": 56.86936936936937,
+                        "y": 63.153153153153156,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879854638,
+                        "x": 43.91891891891892,
+                        "y": 56.486486486486484,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879859479,
+                        "x": 43.80630630630631,
+                        "y": 74.50450450450451,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879865182,
+                        "x": 25.788288288288285,
+                        "y": 3.153153153153153,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879871238,
+                        "x": 41.55405405405405,
+                        "y": 4.234234234234234,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879874087,
+                        "x": 43.13063063063063,
+                        "y": 29.099099099099103,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775879879190,
+                        "x": 51.80180180180181,
+                        "y": 31.62162162162162,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775880006766,
+                        "x": 53.94144144144144,
+                        "y": 93.42342342342343,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775880023543,
+                        "x": 58.67117117117117,
+                        "y": 44.054054054054056,
+                        "value": 10,
+                        "isCompleted": false
+                    },
+                    {
+                        "id": 1775880062982,
+                        "x": 76.35135135135135,
+                        "y": 10.9009009009009,
+                        "value": 10,
+                        "isCompleted": false
+                    }
+                ],
+                "guideX": 46.95945945945946,
+                "guideY": 42.972972972972975,
+                "bonusStart": "D3",
+                "bonusDir": "E",
+                "bonusRules": "DESAFÍO FINAL. El robot inicia en D3 hacia el Este. Trayectoria libre (se permiten diagonales). Debe evitar B2, G3, I5 y E4. Debe realizar un giro de 360° en cada punto. Al final reproduce una melodía. El display muestra la distancia total en celdas. LEDs con efecto arcoíris continuo."
+            }
+        }
+    },
+    "timer": {
+        "timer": 1800,
+        "timerActive": false,
+        "updatedAt": 1776894459.9282799
+    }
+}
