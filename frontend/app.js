@@ -2020,28 +2020,53 @@ function EditTeamModal({ team, onClose, onSave, onDelete }) {
     );
 }
 
+// Mapa de palabras clave para encontrar el logo correcto según el nombre del colegio
+const SCHOOL_LOGO_MAP = [
+    { keywords: ['juan vicente', 'jvg'],              file: '1-Juan_Vicente_González.jpg' },
+    { keywords: ['menca'],                            file: '2-UE_Menca.png'              },
+    { keywords: ['la paz', 'paz'],                    file: '3-U.E_La Paz.png'            },
+    { keywords: ['ideal'],                            file: '4-Colegio Ideal.PNG'         },
+    { keywords: ['abajo cadenas', 'cadenas'],         file: '5-Abajo_Cadenas.png'         },
+    { keywords: ['raul leoni', 'raúl leoni'],         file: '6-Raul Leoni.png'            },
+    { keywords: ['eduardo blanco', 'blanco'],         file: '7-Colegio_Eduardo_Blanco.png'},
+    { keywords: ['cacica', 'urimare'],                file: '8-Cacica_Urimare.png'        },
+    { keywords: ['nueva barcelona', 'barcelona'],     file: '9-Nueva-Barcelona.jpg'       },
+    { keywords: ['don bosco', 'bosco'],               file: '10-Don-Bosco.png'            },
+];
+
+const getSchoolLogoFile = (name) => {
+    if (!name) return null;
+    const lower = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const match = SCHOOL_LOGO_MAP.find(entry =>
+        entry.keywords.some(kw => lower.includes(kw.normalize('NFD').replace(/[\u0300-\u036f]/g, '')))
+    );
+    return match ? `/logos/${match.file}` : null;
+};
+
 const SchoolLogo = ({ schoolName, size = "w-8 h-8" }) => {
     const initials = schoolName ? schoolName.split(' ').filter(w => w.length > 2).map(w => w[0]).join('').substring(0, 2).toUpperCase() : '??';
     const [hasError, setHasError] = useState(false);
     
-    // Colores estables basados en el nombre
+    // Colores estables basados en el nombre (solo para el fallback de iniciales)
     const colors = ['bg-blue-500', 'bg-purple-500', 'bg-emerald-500', 'bg-orange-500', 'bg-rose-500', 'bg-indigo-500'];
     const colorIdx = schoolName ? schoolName.length % colors.length : 0;
     const bgColor = colors[colorIdx] || 'bg-slate-700';
 
-    const logoPath = `/logos/${schoolName}.png`;
+    const logoPath = getSchoolLogoFile(schoolName);
 
     return (
-        <div className={`${size} rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center font-black text-[10px] text-white shadow-inner ${bgColor}`}>
-            {!hasError ? (
+        <div className={`${size} rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center bg-white border-2 border-slate-100 shadow-sm p-1`}>
+            {!hasError && logoPath ? (
                 <img 
                     src={logoPath} 
                     alt="" 
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                     onError={() => setHasError(true)}
                 />
             ) : (
-                <span>{initials}</span>
+                <div className={`w-full h-full ${bgColor} rounded-lg flex items-center justify-center text-white font-black text-[10px]`}>
+                    <span>{initials}</span>
+                </div>
             )}
         </div>
     );
