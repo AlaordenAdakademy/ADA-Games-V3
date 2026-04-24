@@ -2592,6 +2592,37 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
     const [selRondaView, setSelRondaView] = useState('global');
     const [shuffleSeed, setShuffleSeed] = useState(0);
     const [isShuffling, setIsShuffling] = useState(false);
+    
+    const questListRef = useRef(null);
+    const lineListRef = useRef(null);
+    const prevPositions = useRef({});
+
+    // Técnica FLIP para animaciones suaves
+    useLayoutEffect(() => {
+        const refs = [questListRef, lineListRef];
+        refs.forEach(ref => {
+            if (!ref.current) return;
+            const cards = ref.current.children;
+            for (let card of cards) {
+                const id = card.getAttribute('data-id');
+                const rect = card.getBoundingClientRect();
+                
+                if (prevPositions.current[id]) {
+                    const delta = prevPositions.current[id] - rect.top;
+                    if (delta !== 0) {
+                        card.style.transition = 'none';
+                        card.style.transform = `translateY(${delta}px) scale(1.02)`;
+                        
+                        requestAnimationFrame(() => {
+                            card.style.transition = 'transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease';
+                            card.style.transform = 'translateY(0) scale(1)';
+                        });
+                    }
+                }
+                prevPositions.current[id] = rect.top;
+            }
+        });
+    }); // Se ejecuta en cada renderizado para capturar cambios de posición
 
     // Efecto para barajar periódicamente con tiempo aleatorio (15s - 25s)
     useEffect(() => {
@@ -2703,7 +2734,10 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
         }
 
         return (
-            <div className={`flex items-center gap-3 p-3 rounded-2xl border transition-all duration-500 ${posBg} ${team.status === 'disqualified' ? 'opacity-30' : ''} ${isShuffling ? 'scale-95 opacity-50 blur-[2px]' : 'scale-100 opacity-100 blur-0'} hover:scale-[1.02]`}>
+            <div 
+                data-id={team.id}
+                className={`flex items-center gap-3 p-3 rounded-2xl border transition-all ${posBg} ${team.status === 'disqualified' ? 'opacity-30' : ''} ${isShuffling ? 'shadow-2xl border-orange-500/50' : 'shadow-md'} hover:scale-[1.02] active:scale-95`}
+            >
                 <div className="w-10 text-center flex-shrink-0">
                     <span className={`text-xl font-black italic ${posColorText}`}>{suspenseMode ? '??' : `#${index + 1}`}</span>
                     <div className="text-[10px]">{suspenseMode ? '🔒' : posBadge}</div>
@@ -2791,7 +2825,7 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
                         </div>
                         <p className="text-[10px] text-blue-400/50 uppercase tracking-widest mt-4 font-bold">{questTeams.length} equipos en ranking</p>
                     </div>
-                    <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
+                    <div ref={questListRef} className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
                         {questTeams.length === 0 ? (
                             <p className="text-slate-500 text-center mt-8 font-bold italic opacity-50 uppercase tracking-widest text-[10px]">Sin equipos en esta fase</p>
                         ) : questTeams.map((t, i) => <TeamRow key={t.id} team={t} index={i} cat="quest" />)}
@@ -2825,10 +2859,10 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
                         }
                     `}</style>
                     {/* ADA label */}
+                    <div className="w-0.5 h-full bg-gradient-to-b from-transparent via-purple-500 to-transparent"></div>
                     <div className="absolute bottom-4 text-[8px] font-black text-purple-400 tracking-widest" style={{writingMode:'vertical-rl'}}>ADA GAMES</div>
                 </div>
 
-                {/* Line Follower Panel */}
                 <div className="flex-1 flex flex-col overflow-hidden">
                     <div className="bg-emerald-900/40 border-b-4 border-emerald-600 p-6 flex flex-col items-center justify-center flex-shrink-0 relative overflow-hidden">
                         <div className="absolute top-0 inset-x-0 h-1 bg-emerald-500"></div>
@@ -2850,7 +2884,7 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
                         </div>
                         <p className="text-[10px] text-emerald-400/50 uppercase tracking-widest mt-4 font-bold">{followerTeams.length} equipos en ranking</p>
                     </div>
-                    <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
+                    <div ref={lineListRef} className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
                         {followerTeams.length === 0 ? (
                             <p className="text-slate-500 text-center mt-8 font-bold italic opacity-50 uppercase tracking-widest text-[10px]">Sin equipos en esta fase</p>
                         ) : followerTeams.map((t, i) => <TeamRow key={t.id} team={t} index={i} cat="line_follower" />)}
@@ -2868,6 +2902,33 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
     const [isAutoScrolling, setIsAutoScrolling] = useState(false);
     const [shuffleSeed, setShuffleSeed] = useState(0);
     const [isShuffling, setIsShuffling] = useState(false);
+    
+    const listRef = useRef(null);
+    const prevPositions = useRef({});
+
+    // Técnica FLIP para animaciones suaves
+    useLayoutEffect(() => {
+        if (!listRef.current) return;
+        const cards = listRef.current.children;
+        for (let card of cards) {
+            const id = card.getAttribute('data-id');
+            const rect = card.getBoundingClientRect();
+            
+            if (prevPositions.current[id]) {
+                const delta = prevPositions.current[id] - rect.top;
+                if (delta !== 0) {
+                    card.style.transition = 'none';
+                    card.style.transform = `translateY(${delta}px) scale(1.03)`;
+                    
+                    requestAnimationFrame(() => {
+                        card.style.transition = 'transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, opacity 0.4s ease';
+                        card.style.transform = 'translateY(0) scale(1)';
+                    });
+                }
+            }
+            prevPositions.current[id] = rect.top;
+        }
+    }); // Se ejecuta en cada renderizado para capturar cambios de posición
 
     // Efecto para barajar periódicamente con tiempo aleatorio (15s - 25s)
     useEffect(() => {
@@ -3118,7 +3179,11 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
                     }
 
                     return (
-                    <div key={t.id} className={`flex items-center gap-6 p-6 rounded-[2.5rem] border-2 transition-all duration-700 ${posBg} ${t.status === 'disqualified' ? 'opacity-30' : ''} ${isShuffling ? 'scale-95 opacity-40 blur-md translate-y-4' : 'scale-100 opacity-100 blur-0 translate-y-0'}`}>
+                    <div 
+                        key={t.id} 
+                        data-id={t.id}
+                        className={`flex items-center gap-6 p-6 rounded-[2.5rem] border-2 transition-all ${posBg} ${t.status === 'disqualified' ? 'opacity-30' : ''} ${isShuffling ? 'shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-orange-500/30' : 'shadow-xl'} hover:scale-[1.01]`}
+                    >
                         <div className="w-24 text-center flex flex-col items-center">
                             <span className={`text-5xl font-black italic ${posColorText}`}>{suspenseMode ? '??' : `#${i + 1}`}</span>
                             <span className={`text-[10px] font-bold mt-2 uppercase tracking-widest ${posColorText}`}>{suspenseMode ? 'BLOQUEADO' : posBadge}</span>
