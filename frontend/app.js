@@ -2594,14 +2594,21 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
 
     // Efecto para barajar periódicamente en modo suspenso
     useEffect(() => {
-        if (suspenseMode) {
-            const interval = setInterval(() => {
+        let timeoutId;
+        const programarSiguiente = () => {
+            if (!suspenseMode) return;
+            const delay = Math.floor(Math.random() * (25000 - 15000 + 1)) + 15000;
+            timeoutId = setTimeout(() => {
                 setShuffleSeed(s => s + 1);
-            }, 20000); // Cambia cada 20 segundos
-            return () => clearInterval(interval);
+                programarSiguiente();
+            }, delay);
+        };
+        if (suspenseMode) {
+            programarSiguiente();
         } else {
             setShuffleSeed(0);
         }
+        return () => clearTimeout(timeoutId);
     }, [suspenseMode]);
 
     useEffect(() => {
@@ -2713,6 +2720,12 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
                         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse inline-block"></span>
                             Sincronizado en tiempo real · ADAGAMES V4.5
+                            {suspenseMode && (
+                                <span className="ml-4 flex items-center gap-1.5 bg-orange-500/20 px-2 py-0.5 rounded-lg border border-orange-500/30 text-orange-400 animate-pulse">
+                                    <span className="w-1 h-1 rounded-full bg-orange-500"></span>
+                                    MODO SUSPENSO ACTIVO
+                                </span>
+                            )}
                         </p>
                     </div>
                 </div>
@@ -2843,14 +2856,21 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
 
     // Efecto para barajar periódicamente en modo suspenso
     useEffect(() => {
-        if (suspenseMode) {
-            const interval = setInterval(() => {
+        let timeoutId;
+        const programarSiguiente = () => {
+            if (!suspenseMode) return;
+            const delay = Math.floor(Math.random() * (25000 - 15000 + 1)) + 15000;
+            timeoutId = setTimeout(() => {
                 setShuffleSeed(s => s + 1);
-            }, 20000); // Cambia cada 20 segundos
-            return () => clearInterval(interval);
+                programarSiguiente();
+            }, delay);
+        };
+        if (suspenseMode) {
+            programarSiguiente();
         } else {
             setShuffleSeed(0);
         }
+        return () => clearTimeout(timeoutId);
     }, [suspenseMode]);
 
     // Sincronizar viewCategory si el prop initialCategory cambia (por el "slicer" de la sidebar)
@@ -2990,6 +3010,12 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
                             <p className="text-blue-400 font-bold uppercase tracking-widest text-[10px]">
                                 {viewCategory === 'line_follower' ? 'Seguidor de Línea' : 'Robotics Quest'}
                             </p>
+                            {suspenseMode && (
+                                <div className="flex items-center gap-2 bg-orange-500/20 px-3 py-1 rounded-full border border-orange-500/30 animate-pulse ml-2">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-orange-500"></div>
+                                    <span className="text-[8px] font-black text-orange-400 uppercase tracking-widest">Modo Suspenso Activo</span>
+                                </div>
+                            )}
                         </div>
                         <div className="mt-4 flex gap-2">
                             <button onClick={() => setSelRondaView('global')} className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase transition-all shadow-lg ${selRondaView === 'global' ? 'bg-blue-600 text-white shadow-blue-600/50' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>Global</button>
