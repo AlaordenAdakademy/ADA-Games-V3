@@ -41,7 +41,7 @@
                 "Mari Eugenia Ortiz Leon"
             ],
             "studentsCount": 3,
-            "status": "disqualified",
+            "status": "inspected",
             "score": 0,
             "history": [],
             "category": "line_follower",
@@ -57,7 +57,6 @@
                 "5": 1
             },
             "lastTime": 0,
-            "disqualifiedReason": "No cumple requisitos",
             "judgeId": "admin",
             "judgeName": "Administrador Central"
         },
@@ -160,7 +159,7 @@
                 "Roberto Monagas"
             ],
             "studentsCount": 3,
-            "status": "disqualified",
+            "status": "inspected",
             "score": 0,
             "history": [],
             "category": "line_follower",
@@ -176,7 +175,6 @@
                 "5": 1
             },
             "lastTime": 0,
-            "disqualifiedReason": "No cumple requisitos",
             "judgeId": "admin",
             "judgeName": "Administrador Central"
         },
@@ -222,7 +220,7 @@
                 "Marta Alexandra Calderón Girma"
             ],
             "studentsCount": 3,
-            "status": "disqualified",
+            "status": "inspected",
             "score": 0,
             "history": [],
             "category": "line_follower",
@@ -238,7 +236,6 @@
                 "5": 1
             },
             "lastTime": 0,
-            "disqualifiedReason": "No cumple requisitos",
             "judgeId": "admin",
             "judgeName": "Administrador Central"
         },
@@ -255,7 +252,7 @@
                 "Víctor Mauricio Jiménez Montiel"
             ],
             "studentsCount": 3,
-            "status": "disqualified",
+            "status": "inspected",
             "score": 0,
             "history": [],
             "category": "line_follower",
@@ -271,7 +268,6 @@
                 "5": 1
             },
             "lastTime": 0,
-            "disqualifiedReason": "No cumple requisitos",
             "judgeId": "admin",
             "judgeName": "Administrador Central"
         },
@@ -497,7 +493,7 @@
                 "Alejandro Cedeño"
             ],
             "studentsCount": 3,
-            "status": "disqualified",
+            "status": "inspected",
             "score": 0,
             "history": [],
             "category": "quest",
@@ -513,7 +509,6 @@
                 "5": 1
             },
             "lastTime": 0,
-            "disqualifiedReason": "No cumple requisitos",
             "judgeId": "admin",
             "judgeName": "Administrador Central"
         },
@@ -530,7 +525,7 @@
                 "Michell De Los Angeles Urbaneja Vasquez"
             ],
             "studentsCount": 3,
-            "status": "disqualified",
+            "status": "inspected",
             "score": 0,
             "history": [],
             "category": "quest",
@@ -546,7 +541,6 @@
                 "5": 1
             },
             "lastTime": 0,
-            "disqualifiedReason": "No cumple requisitos",
             "judgeId": "admin",
             "judgeName": "Administrador Central"
         }
