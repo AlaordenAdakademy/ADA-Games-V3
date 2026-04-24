@@ -600,8 +600,8 @@ function App() {
         lineTimer={lineTimer} lineTimerActive={lineTimerActive} toggleLineTimer={toggleLineTimer} resetLineTimer={resetLineTimer} lineDuration={lineDuration}
         formatTime={formatTime} onExit={() => setCompetitionMode(null)} />}
       {competitionMode === 'dual' && <CompetitionDualOverlay teams={teams} 
-        questTimer={questTimer} questTimerActive={questTimerActive} toggleQuestTimer={toggleQuestTimer} resetQuestTimer={resetQuestTimer}
-        lineTimer={lineTimer} lineTimerActive={lineTimerActive} toggleLineTimer={toggleLineTimer} resetLineTimer={resetLineTimer}
+        questTimer={questTimer} questTimerActive={questTimerActive} toggleQuestTimer={toggleQuestTimer} resetQuestTimer={resetQuestTimer} questDuration={questDuration}
+        lineTimer={lineTimer} lineTimerActive={lineTimerActive} toggleLineTimer={toggleLineTimer} resetLineTimer={resetLineTimer} lineDuration={lineDuration}
         formatTime={formatTime} onExit={() => setCompetitionMode(null)} />}
       {/* Toast Notification */}
       {toastMessage && (
@@ -2567,8 +2567,9 @@ function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam, 
   );
 }
 
-function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQuestTimer, resetQuestTimer, lineTimer, lineTimerActive, toggleLineTimer, resetLineTimer, formatTime, onExit }) {
+function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQuestTimer, resetQuestTimer, questDuration, lineTimer, lineTimerActive, toggleLineTimer, resetLineTimer, lineDuration, formatTime, onExit }) {
     const [allTeams, setAllTeams] = useState(teams);
+    const [selRondaView, setSelRondaView] = useState('global');
 
     useEffect(() => {
         const fetchAll = async () => {
@@ -2583,11 +2584,36 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
         return () => clearInterval(interval);
     }, []);
 
+    const getRoundStats = (team, roundFilter, cat) => {
+        if (roundFilter === 'global') return { score: team.score || 0, time: team.lastTime || 9999999 };
+        const rd = parseInt(roundFilter);
+        const rh = Array.isArray(team.history) ? team.history.filter(h => h.ronda === rd && h.practice !== true) : [];
+        if (rh.length === 0) return { score: 0, time: 9999999 };
+        
+        let totalScore = rh.reduce((sum, h) => sum + (h.points || h.percentage || 0), 0);
+        let totalTime = 0;
+        
+        if (cat === 'quest') {
+            const pista5 = rh.find(h => h.pista === 5);
+            totalTime = pista5 ? (pista5.finalTimeMs || 0) : (questDuration * 60 * 1000);
+        } else {
+            totalTime = rh.reduce((sum, h) => sum + (h.finalTimeMs || h.finalTime || 0), 0);
+            if (totalTime === 0) totalTime = (lineDuration * 60 * 1000);
+        }
+        return { score: totalScore, time: totalTime };
+    };
+
     const getSorted = (cat) => {
         const list = Array.isArray(allTeams) ? allTeams.filter(t => t.category === cat) : [];
-        return [...list].sort((a, b) => {
-            if ((b.score || 0) !== (a.score || 0)) return (b.score || 0) - (a.score || 0);
-            return (a.lastTime || 9999999) - (b.lastTime || 9999999);
+        
+        // Filtrar por calificados si no es global
+        const filtered = selRondaView === 'global' ? list : list.filter(t => (t.qualifiedRounds || [1]).includes(parseInt(selRondaView)));
+
+        return [...filtered].sort((a, b) => {
+            const sA = getRoundStats(a, selRondaView, cat);
+            const sB = getRoundStats(b, selRondaView, cat);
+            if (sB.score !== sA.score) return sB.score - sA.score;
+            return sA.time - sB.time;
         });
     };
 
@@ -2602,12 +2628,12 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
         return `${minutes}:${seconds.toString().padStart(2, '0')}.${msecs.toString().padStart(2, '0')}`;
     };
 
-    const TeamRow = ({ team, index }) => {
-        const score = team.score || 0;
+    const TeamRow = ({ team, index, cat }) => {
+        const stats = getRoundStats(team, selRondaView, cat);
         let posColorText = "text-blue-400", posBg = "bg-slate-900/40 border-slate-800/50", posBadge = "";
-        if (index === 0 && score > 0) { posColorText = "text-yellow-400"; posBg = "bg-yellow-600/10 border-yellow-500/30"; posBadge = "🏆"; }
-        else if (index === 1 && score > 0) { posColorText = "text-slate-300"; posBg = "bg-slate-400/10 border-slate-400/20"; posBadge = "🥈"; }
-        else if (index === 2 && score > 0) { posColorText = "text-orange-400"; posBg = "bg-orange-600/10 border-orange-500/20"; posBadge = "🥉"; }
+        if (index === 0 && stats.score > 0) { posColorText = "text-yellow-400"; posBg = "bg-yellow-600/10 border-yellow-500/30"; posBadge = "🏆"; }
+        else if (index === 1 && stats.score > 0) { posColorText = "text-slate-300"; posBg = "bg-slate-400/10 border-slate-400/20"; posBadge = "🥈"; }
+        else if (index === 2 && stats.score > 0) { posColorText = "text-orange-400"; posBg = "bg-orange-600/10 border-orange-500/20"; posBadge = "🥉"; }
 
         return (
             <div className={`flex items-center gap-3 p-3 rounded-2xl border transition-all ${posBg} ${team.status === 'disqualified' ? 'opacity-30' : ''} hover:scale-[1.02] duration-300`}>
@@ -2621,8 +2647,8 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
                     <p className="text-[9px] text-slate-400 truncate font-bold uppercase tracking-tight">{team.schoolName || 'Institución Independiente'}</p>
                 </div>
                 <div className="text-right flex-shrink-0 flex flex-col justify-center">
-                    <p className={`text-2xl font-black ${posColorText} leading-none`}>{score}</p>
-                    <p className="text-[10px] text-slate-500 font-bold uppercase mt-1 leading-none">{formatResultTime(team.lastTime)}</p>
+                    <p className={`text-2xl font-black ${posColorText} leading-none`}>{stats.score}</p>
+                    <p className="text-[10px] text-slate-500 font-bold uppercase mt-1 leading-none">{formatResultTime(stats.time)}</p>
                 </div>
             </div>
         );
@@ -2645,6 +2671,23 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
+                    <div className="flex bg-slate-900 p-1 rounded-2xl border border-slate-800">
+                        <button 
+                            onClick={() => setSelRondaView('global')} 
+                            className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase transition-all ${selRondaView === 'global' ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/20' : 'text-slate-500 hover:text-slate-300'}`}
+                        >
+                            Global
+                        </button>
+                        {[1,2,3,4,5].map(r => (
+                            <button 
+                                key={r}
+                                onClick={() => setSelRondaView(r.toString())} 
+                                className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase transition-all ${selRondaView === r.toString() ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/20' : 'text-slate-500 hover:text-slate-300'}`}
+                            >
+                                R{r}
+                            </button>
+                        ))}
+                    </div>
                     <button onClick={onExit} className="px-6 py-3 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-xl font-black text-[10px] uppercase transition-all flex items-center gap-2 border border-red-500/20">
                         <Icon name="log-out" className="w-4 h-4" /> Salir TV
                     </button>
@@ -2677,8 +2720,8 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
                     </div>
                     <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
                         {questTeams.length === 0 ? (
-                            <p className="text-slate-500 text-center mt-8 font-bold">Sin equipos registrados</p>
-                        ) : questTeams.map((t, i) => <TeamRow key={t.id} team={t} index={i} />)}
+                            <p className="text-slate-500 text-center mt-8 font-bold italic opacity-50 uppercase tracking-widest text-[10px]">Sin equipos en esta fase</p>
+                        ) : questTeams.map((t, i) => <TeamRow key={t.id} team={t} index={i} cat="quest" />)}
                     </div>
                 </div>
 
@@ -2736,8 +2779,8 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
                     </div>
                     <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
                         {followerTeams.length === 0 ? (
-                            <p className="text-slate-500 text-center mt-8 font-bold">Sin equipos registrados</p>
-                        ) : followerTeams.map((t, i) => <TeamRow key={t.id} team={t} index={i} />)}
+                            <p className="text-slate-500 text-center mt-8 font-bold italic opacity-50 uppercase tracking-widest text-[10px]">Sin equipos en esta fase</p>
+                        ) : followerTeams.map((t, i) => <TeamRow key={t.id} team={t} index={i} cat="line_follower" />)}
                     </div>
                 </div>
             </div>
