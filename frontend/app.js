@@ -1,4 +1,4 @@
-const { useState, useEffect, useMemo, useRef } = React;
+const { useState, useEffect, useMemo, useRef, useLayoutEffect } = React;
 
 // --- CONFIGURACIÓN DE ICONOS ---
 // Componente para manejar iconos de Lucide vía CDN
@@ -2956,7 +2956,6 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
     useEffect(() => {
         setViewCategory(initialCategory);
     }, [initialCategory]);
-    const listRef = useRef(null);
     const scrollDirection = useRef(1);
     const exactScroll = useRef(0);
 
