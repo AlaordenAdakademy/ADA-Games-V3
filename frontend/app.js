@@ -2591,23 +2591,31 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
     const [allTeams, setAllTeams] = useState(teams);
     const [selRondaView, setSelRondaView] = useState('global');
     const [shuffleSeed, setShuffleSeed] = useState(0);
+    const [isShuffling, setIsShuffling] = useState(false);
 
-    // Efecto para barajar periódicamente en modo suspenso
+    // Efecto para barajar periódicamente con tiempo aleatorio (15s - 25s)
     useEffect(() => {
         let timeoutId;
         const programarSiguiente = () => {
             if (!suspenseMode) return;
+            
             const delay = Math.floor(Math.random() * (25000 - 15000 + 1)) + 15000;
+            
             timeoutId = setTimeout(() => {
+                setIsShuffling(true);
                 setShuffleSeed(s => s + 1);
+                setTimeout(() => setIsShuffling(false), 800);
                 programarSiguiente();
             }, delay);
         };
+
         if (suspenseMode) {
             programarSiguiente();
         } else {
             setShuffleSeed(0);
+            setIsShuffling(false);
         }
+        
         return () => clearTimeout(timeoutId);
     }, [suspenseMode]);
 
@@ -2621,7 +2629,7 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
         };
         fetchAll();
         const interval = setInterval(fetchAll, 5000);
-        return () => clearInterval(interval);
+        return () => clearTimeout(interval);
     }, []);
 
     const getRoundStats = (team, roundFilter, cat) => {
@@ -2650,11 +2658,19 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
         const filtered = selRondaView === 'global' ? list : list.filter(t => (t.qualifiedRounds || [1]).includes(parseInt(selRondaView)));
 
         if (suspenseMode) {
-            // Orden aleatorio que cambia con el shuffleSeed
+            // Orden aleatorio que cambia con el shuffleSeed de forma más agresiva
             return [...filtered].sort((a, b) => {
-                const sA = (a.id + shuffleSeed).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-                const sB = (b.id + shuffleSeed).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-                return (sA % 100) - (sB % 100);
+                const hash = (str) => {
+                    let h = 0;
+                    for (let i = 0; i < str.length; i++) {
+                        h = ((h << 5) - h) + str.charCodeAt(i);
+                        h |= 0;
+                    }
+                    return h;
+                };
+                const valA = hash(a.id + shuffleSeed + cat);
+                const valB = hash(b.id + shuffleSeed + cat);
+                return valA - valB;
             });
         }
 
@@ -2689,7 +2705,7 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
         }
 
         return (
-            <div className={`flex items-center gap-3 p-3 rounded-2xl border transition-all ${posBg} ${team.status === 'disqualified' ? 'opacity-30' : ''} hover:scale-[1.02] duration-300`}>
+            <div className={`flex items-center gap-3 p-3 rounded-2xl border transition-all duration-500 ${posBg} ${team.status === 'disqualified' ? 'opacity-30' : ''} ${isShuffling ? 'scale-95 opacity-50 blur-[2px]' : 'scale-100 opacity-100 blur-0'} hover:scale-[1.02]`}>
                 <div className="w-10 text-center flex-shrink-0">
                     <span className={`text-xl font-black italic ${posColorText}`}>{suspenseMode ? '??' : `#${index + 1}`}</span>
                     <div className="text-[10px]">{suspenseMode ? '🔒' : posBadge}</div>
@@ -2853,15 +2869,18 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
     const [selRondaView, setSelRondaView] = useState('global');
     const [isAutoScrolling, setIsAutoScrolling] = useState(false);
     const [shuffleSeed, setShuffleSeed] = useState(0);
+    const [isShuffling, setIsShuffling] = useState(false);
 
-    // Efecto para barajar periódicamente en modo suspenso
+    // Efecto para barajar periódicamente con tiempo aleatorio (15s - 25s)
     useEffect(() => {
         let timeoutId;
         const programarSiguiente = () => {
             if (!suspenseMode) return;
             const delay = Math.floor(Math.random() * (25000 - 15000 + 1)) + 15000;
             timeoutId = setTimeout(() => {
+                setIsShuffling(true);
                 setShuffleSeed(s => s + 1);
+                setTimeout(() => setIsShuffling(false), 800);
                 programarSiguiente();
             }, delay);
         };
@@ -2869,6 +2888,7 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
             programarSiguiente();
         } else {
             setShuffleSeed(0);
+            setIsShuffling(false);
         }
         return () => clearTimeout(timeoutId);
     }, [suspenseMode]);
@@ -2960,9 +2980,15 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
         if (suspenseMode) {
             // Orden aleatorio que cambia con el shuffleSeed
             return [...list].sort((a, b) => {
-                const sA = (a.id + shuffleSeed).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-                const sB = (b.id + shuffleSeed).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-                return (sA % 100) - (sB % 100);
+                const hash = (s) => {
+                    let h = 0;
+                    for (let i = 0; i < s.length; i++) {
+                        h = ((h << 5) - h) + s.charCodeAt(i);
+                        h |= 0;
+                    }
+                    return h;
+                };
+                return hash(a.id + shuffleSeed + viewCategory) - hash(b.id + shuffleSeed + viewCategory);
             });
         }
 
@@ -3094,7 +3120,7 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
                     }
 
                     return (
-                    <div key={t.id} className={`flex items-center gap-6 p-6 rounded-[2.5rem] border-2 transition-all ${posBg} ${t.status === 'disqualified' ? 'opacity-30' : ''}`}>
+                    <div key={t.id} className={`flex items-center gap-6 p-6 rounded-[2.5rem] border-2 transition-all duration-700 ${posBg} ${t.status === 'disqualified' ? 'opacity-30' : ''} ${isShuffling ? 'scale-95 opacity-40 blur-md translate-y-4' : 'scale-100 opacity-100 blur-0 translate-y-0'}`}>
                         <div className="w-24 text-center flex flex-col items-center">
                             <span className={`text-5xl font-black italic ${posColorText}`}>{suspenseMode ? '??' : `#${i + 1}`}</span>
                             <span className={`text-[10px] font-bold mt-2 uppercase tracking-widest ${posColorText}`}>{suspenseMode ? 'BLOQUEADO' : posBadge}</span>
