@@ -2658,20 +2658,18 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
         const filtered = selRondaView === 'global' ? list : list.filter(t => (t.qualifiedRounds || [1]).includes(parseInt(selRondaView)));
 
         if (suspenseMode) {
-            // Orden aleatorio que cambia con el shuffleSeed de forma más agresiva
-            return [...filtered].sort((a, b) => {
-                const hash = (str) => {
-                    let h = 0;
-                    for (let i = 0; i < str.length; i++) {
-                        h = ((h << 5) - h) + str.charCodeAt(i);
-                        h |= 0;
-                    }
-                    return h;
-                };
-                const valA = hash(a.id + shuffleSeed + cat);
-                const valB = hash(b.id + shuffleSeed + cat);
-                return valA - valB;
-            });
+            // Fisher-Yates Shuffle con generador pseudo-aleatorio basado en seed
+            let result = [...filtered];
+            const pseudoRandom = (s) => {
+                let x = Math.sin(s + shuffleSeed) * 10000;
+                return x - Math.floor(x);
+            };
+            
+            for (let i = result.length - 1; i > 0; i--) {
+                const j = Math.floor(pseudoRandom(i + (cat === 'quest' ? 100 : 200)) * (i + 1));
+                [result[i], result[j]] = [result[j], result[i]];
+            }
+            return result;
         }
 
         return [...filtered].sort((a, b) => {
@@ -2978,18 +2976,18 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
         const list = Array.isArray(vTeams) ? vTeams : [];
         
         if (suspenseMode) {
-            // Orden aleatorio que cambia con el shuffleSeed
-            return [...list].sort((a, b) => {
-                const hash = (s) => {
-                    let h = 0;
-                    for (let i = 0; i < s.length; i++) {
-                        h = ((h << 5) - h) + s.charCodeAt(i);
-                        h |= 0;
-                    }
-                    return h;
-                };
-                return hash(a.id + shuffleSeed + viewCategory) - hash(b.id + shuffleSeed + viewCategory);
-            });
+            // Fisher-Yates Shuffle con generador pseudo-aleatorio basado en seed
+            let result = [...list];
+            const pseudoRandom = (s) => {
+                let x = Math.sin(s + shuffleSeed + (viewCategory === 'quest' ? 500 : 600)) * 10000;
+                return x - Math.floor(x);
+            };
+            
+            for (let i = result.length - 1; i > 0; i--) {
+                const j = Math.floor(pseudoRandom(i) * (i + 1));
+                [result[i], result[j]] = [result[j], result[i]];
+            }
+            return result;
         }
 
         return [...list].sort((a, b) => {
