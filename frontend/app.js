@@ -2590,6 +2590,19 @@ function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam, 
 function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQuestTimer, resetQuestTimer, questDuration, lineTimer, lineTimerActive, toggleLineTimer, resetLineTimer, lineDuration, formatTime, onExit, suspenseMode }) {
     const [allTeams, setAllTeams] = useState(teams);
     const [selRondaView, setSelRondaView] = useState('global');
+    const [shuffleSeed, setShuffleSeed] = useState(0);
+
+    // Efecto para barajar periódicamente en modo suspenso
+    useEffect(() => {
+        if (suspenseMode) {
+            const interval = setInterval(() => {
+                setShuffleSeed(s => s + 1);
+            }, 20000); // Cambia cada 20 segundos
+            return () => clearInterval(interval);
+        } else {
+            setShuffleSeed(0);
+        }
+    }, [suspenseMode]);
 
     useEffect(() => {
         const fetchAll = async () => {
@@ -2630,8 +2643,12 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
         const filtered = selRondaView === 'global' ? list : list.filter(t => (t.qualifiedRounds || [1]).includes(parseInt(selRondaView)));
 
         if (suspenseMode) {
-            // Orden aleatorio estable para esta sesión de carga
-            return [...filtered].sort((a, b) => a.id.localeCompare(b.id));
+            // Orden aleatorio que cambia con el shuffleSeed
+            return [...filtered].sort((a, b) => {
+                const sA = (a.id + shuffleSeed).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                const sB = (b.id + shuffleSeed).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                return (sA % 100) - (sB % 100);
+            });
         }
 
         return [...filtered].sort((a, b) => {
@@ -2656,9 +2673,13 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
     const TeamRow = ({ team, index, cat }) => {
         const stats = getRoundStats(team, selRondaView, cat);
         let posColorText = "text-blue-400", posBg = "bg-slate-900/40 border-slate-800/50", posBadge = "";
-        if (index === 0 && stats.score > 0) { posColorText = "text-yellow-400"; posBg = "bg-yellow-600/10 border-yellow-500/30"; posBadge = "🏆"; }
-        else if (index === 1 && stats.score > 0) { posColorText = "text-slate-300"; posBg = "bg-slate-400/10 border-slate-400/20"; posBadge = "🥈"; }
-        else if (index === 2 && stats.score > 0) { posColorText = "text-orange-400"; posBg = "bg-orange-600/10 border-orange-500/20"; posBadge = "🥉"; }
+        
+        // Solo resaltar si NO estamos en modo suspenso
+        if (!suspenseMode) {
+            if (index === 0 && stats.score > 0) { posColorText = "text-yellow-400"; posBg = "bg-yellow-600/10 border-yellow-500/30"; posBadge = "🏆"; }
+            else if (index === 1 && stats.score > 0) { posColorText = "text-slate-300"; posBg = "bg-slate-400/10 border-slate-400/20"; posBadge = "🥈"; }
+            else if (index === 2 && stats.score > 0) { posColorText = "text-orange-400"; posBg = "bg-orange-600/10 border-orange-500/20"; posBadge = "🥉"; }
+        }
 
         return (
             <div className={`flex items-center gap-3 p-3 rounded-2xl border transition-all ${posBg} ${team.status === 'disqualified' ? 'opacity-30' : ''} hover:scale-[1.02] duration-300`}>
@@ -2818,6 +2839,19 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
     const [vTeams, setVTeams] = useState(teams);
     const [selRondaView, setSelRondaView] = useState('global');
     const [isAutoScrolling, setIsAutoScrolling] = useState(false);
+    const [shuffleSeed, setShuffleSeed] = useState(0);
+
+    // Efecto para barajar periódicamente en modo suspenso
+    useEffect(() => {
+        if (suspenseMode) {
+            const interval = setInterval(() => {
+                setShuffleSeed(s => s + 1);
+            }, 20000); // Cambia cada 20 segundos
+            return () => clearInterval(interval);
+        } else {
+            setShuffleSeed(0);
+        }
+    }, [suspenseMode]);
 
     // Sincronizar viewCategory si el prop initialCategory cambia (por el "slicer" de la sidebar)
     useEffect(() => {
@@ -2904,8 +2938,12 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
         const list = Array.isArray(vTeams) ? vTeams : [];
         
         if (suspenseMode) {
-            // Orden aleatorio estable basado en ID para evitar saltos bruscos
-            return [...list].sort((a, b) => a.id.localeCompare(b.id));
+            // Orden aleatorio que cambia con el shuffleSeed
+            return [...list].sort((a, b) => {
+                const sA = (a.id + shuffleSeed).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                const sB = (b.id + shuffleSeed).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                return (sA % 100) - (sB % 100);
+            });
         }
 
         return [...list].sort((a, b) => {
@@ -2914,7 +2952,7 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
             if (statsB.score !== statsA.score) return statsB.score - statsA.score;
             return statsA.time - statsB.time;
         });
-    }, [vTeams, selRondaView, viewCategory, suspenseMode]);
+    }, [vTeams, selRondaView, viewCategory, suspenseMode, shuffleSeed]);
 
     const formatResultTime = (ms) => {
         if (!ms || ms === 999999) return "--:--.--";
@@ -3009,20 +3047,24 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
                     let posColorText = "text-blue-400";
                     let posBg = "bg-slate-900/50 border-slate-800";
                     let posBadge = "";
-                    if (i === 0 && stats.score > 0) { 
-                        posColorText = "text-yellow-400"; 
-                        posBg = "bg-yellow-600/20 border-yellow-500/50 shadow-[0_0_30px_rgba(202,138,4,0.15)] transform scale-[1.02] z-10"; 
-                        posBadge = "🏆 LÍDER ORO"; 
-                    }
-                    else if (i === 1 && stats.score > 0) { 
-                        posColorText = "text-slate-300"; 
-                        posBg = "bg-slate-400/10 border-slate-400/30 transform scale-[1.01]"; 
-                        posBadge = "🥈 PLATA"; 
-                    }
-                    else if (i === 2 && stats.score > 0) { 
-                        posColorText = "text-orange-400"; 
-                        posBg = "bg-orange-600/10 border-orange-500/30 transform scale-[1.01]"; 
-                        posBadge = "🥉 BRONCE"; 
+                    
+                    // Solo aplicar resaltado si NO estamos en modo suspenso
+                    if (!suspenseMode) {
+                        if (i === 0 && stats.score > 0) { 
+                            posColorText = "text-yellow-400"; 
+                            posBg = "bg-yellow-600/20 border-yellow-500/50 shadow-[0_0_30px_rgba(202,138,4,0.15)] transform scale-[1.02] z-10"; 
+                            posBadge = "🏆 LÍDER ORO"; 
+                        }
+                        else if (i === 1 && stats.score > 0) { 
+                            posColorText = "text-slate-300"; 
+                            posBg = "bg-slate-400/10 border-slate-400/30 transform scale-[1.01]"; 
+                            posBadge = "🥈 PLATA"; 
+                        }
+                        else if (i === 2 && stats.score > 0) { 
+                            posColorText = "text-orange-400"; 
+                            posBg = "bg-orange-600/10 border-orange-500/30 transform scale-[1.01]"; 
+                            posBadge = "🥉 BRONCE"; 
+                        }
                     }
 
                     return (
