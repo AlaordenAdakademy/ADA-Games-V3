@@ -1,0 +1,38 @@
+# Independencia de Tiempos Globales por Categoría
+
+Este plan detalla los cambios estructurales necesarios en el backend y frontend para soportar tiempos globales y duraciones de competencia independientes para **Robotics Quest** y **Seguidor de Línea**. 
+
+Dado que la plataforma maneja eventos duales simultáneos, esto permitirá configurar, por ejemplo, que Quest dure 25 minutos y Sigue Línea dure 30 minutos, con cronómetros separados en la base de datos y en la interfaz.
+
+## Cambios Propuestos
+
+### 1. Modificaciones en el Backend (`backend/main.py`)
+- **Estructura de Datos (`data.json`)**: Migrar el campo único `timer` a un diccionario `timers` que contenga dos objetos independientes: `quest` y `line_follower`.
+- **Lógica de Migración**: Al cargar `data.json`, el backend automáticamente convertirá el `timer` antiguo al nuevo formato `timers` para no perder la configuración actual.
+- **Rutas de API**: 
+  - Actualizar `GET /api/timer` para que devuelva el objeto `timers` con ambas categorías.
+  - Actualizar `POST /api/timer` para aceptar la categoría en el cuerpo de la petición (`category: str`) y actualizar solo el cronómetro correspondiente.
+
+### 2. Modificaciones en el Frontend (`frontend/app.js`)
+- **Estado Global (`App` component)**:
+  - Reemplazar `competitionDuration`, `timer` y `timerActive` por pares independientes: `questDuration`, `lineDuration`, `questTimer`, `lineTimer`, etc.
+  - Actualizar la lógica del `setInterval` principal para manejar el conteo de ambos cronómetros simultáneamente.
+  - Sincronizar independientemente con el `localStorage` (`ada_quest_timer`, `ada_line_timer`, etc.).
+- **Pestaña de Sistemas (`SistemasTab`)**:
+  - Dividir la sección de "Cronómetro Global" en dos paneles paralelos: "Cronómetro Quest" y "Cronómetro Seguidor de Línea", permitiendo configurar duraciones distintas y lanzar los tiempos independientemente.
+- **TV de Ranking Dual (`CompetitionDualOverlay`)**:
+  - En la parte superior derecha, mostrar **ambos** cronómetros (Quest y Seguidor de Línea) en paralelo, ya que ambas competencias están corriendo.
+- **TV de Ranking Individual (`CompetitionOverlay`)**:
+  - Mostrar el cronómetro que corresponda a la categoría actual que se está visualizando.
+- **Pestaña de Evaluación de Quest**:
+  - Utilizar el `questTimer` y `questDuration` para calcular el tiempo transcurrido exacto al finalizar la Pista 5.
+
+## Verificación Planificada
+- **Pruebas de Frontend**: Verificar que al pausar el cronómetro de Quest, el cronómetro de Sigue Líneas sigue corriendo.
+- **Sincronización TV**: Asegurar que ambas pantallas de TV actualicen correctamente los tiempos sin interferir entre sí.
+- **Evaluación**: Validar que el tiempo transcurrido de Quest utiliza exclusivamente `questDuration` y `questTimer`.
+
+> [!IMPORTANT]
+> **Revisión del Usuario Requerida**
+> 
+> En la vista **Ranking Dual en Vivo (TV)** (donde se ven ambas tablas a la vez), el cronómetro actual se muestra en la parte superior derecha. Al separarlos, mi propuesta es mostrar ambos relojes pequeños uno al lado del otro en esa misma esquina, indicando claramente cuál es de Quest y cuál de Sigue Línea. ¿Estás de acuerdo con este enfoque visual para la TV Dual?

@@ -52,6 +52,12 @@ def generate_initial_tracks():
 def generate_initial_timer():
     return {"timer": 1800, "timerActive": False, "updatedAt": time.time()}
 
+def generate_initial_timers():
+    return {
+        "quest": generate_initial_timer(),
+        "line_follower": generate_initial_timer()
+    }
+
 def get_calculated_timer(timer_data):
     """Calcula el tiempo restante real basado en el momento en que se activó."""
     if not timer_data.get("timerActive", False):
@@ -72,18 +78,33 @@ def get_calculated_timer(timer_data):
 def load_data():
     with _data_lock:
         if not os.path.exists(DATA_FILE):
-            return {"teams": [], "tracks": generate_initial_tracks(), "timer": generate_initial_timer()}
+            return {"teams": [], "tracks": generate_initial_tracks(), "timers": generate_initial_timers()}
         with open(DATA_FILE, "r", encoding='utf-8') as f:
             data = json.load(f)
     
     # Migración: Asegurar campos necesarios
     changed = False
-    if "timer" not in data:
-        data["timer"] = generate_initial_timer()
+    # Migración: Convertir timer antiguo a nuevo sistema dual
+    if "timers" not in data:
+        if "timer" in data:
+            old_timer = data.pop("timer")
+            if "updatedAt" not in old_timer:
+                old_timer["updatedAt"] = time.time()
+            data["timers"] = {
+                "quest": old_timer,
+                "line_follower": {"timer": 1800, "timerActive": False, "updatedAt": time.time()}
+            }
+        else:
+            data["timers"] = generate_initial_timers()
         changed = True
-    elif "updatedAt" not in data["timer"]:
-        data["timer"]["updatedAt"] = time.time()
-        changed = True
+    else:
+        for cat in ["quest", "line_follower"]:
+            if cat not in data["timers"]:
+                data["timers"][cat] = generate_initial_timer()
+                changed = True
+            elif "updatedAt" not in data["timers"][cat]:
+                data["timers"][cat]["updatedAt"] = time.time()
+                changed = True
     
     # Migración: Asegurar que todos los equipos tengan categoría, rondas y tickets
     for team in data.get("teams", []):
@@ -139,8 +160,12 @@ def save_data(data):
 @app.get("/api/data")
 def get_all_data(category: Optional[str] = None):
     data = load_data()
-    # Calcular tiempo real antes de enviar
-    data["timer"] = get_calculated_timer(data.get("timer", {}))
+    # Calcular tiempo real antes de enviar para todos los timers
+    timers_data = data.get("timers", generate_initial_timers())
+    data["timers"] = {
+        "quest": get_calculated_timer(timers_data.get("quest", generate_initial_timer())),
+        "line_follower": get_calculated_timer(timers_data.get("line_follower", generate_initial_timer()))
+    }
     
     if category:
         # Filtrar equipos por categoría
@@ -230,7 +255,7 @@ def reset_competition(auth: ResetAuth):
         backup_path = os.path.join(backups_dir, f"data_backup_{timestamp}.json")
         shutil.copy2(DATA_FILE, backup_path)
         
-    initial_data = {"teams": [], "tracks": generate_initial_tracks(), "timer": generate_initial_timer()}
+    initial_data = {"teams": [], "tracks": generate_initial_tracks(), "timers": generate_initial_timers()}
     save_data(initial_data)
     return {"status": "ok"}
 
@@ -266,20 +291,39 @@ def reset_scores(auth: ResetAuth):
 @app.get("/api/timer")
 def get_timer():
     data = load_data()
-    return get_calculated_timer(data.get("timer", generate_initial_timer()))
+    timers_data = data.get("timers", generate_initial_timers())
+    return {
+        "quest": get_calculated_timer(timers_data.get("quest", generate_initial_timer())),
+        "line_follower": get_calculated_timer(timers_data.get("line_follower", generate_initial_timer()))
+    }
 
-class TimerSync(BaseModel):
+class TimerData(BaseModel):
     timer: int
     timerActive: bool
 
+class TimersSync(BaseModel):
+    quest: Optional[TimerData] = None
+    line_follower: Optional[TimerData] = None
+
 @app.post("/api/timer")
-def update_timer(sync: TimerSync):
+def update_timer(sync: TimersSync):
     data = load_data()
-    data["timer"] = {
-        "timer": sync.timer, 
-        "timerActive": sync.timerActive, 
-        "updatedAt": time.time()
-    }
+    if "timers" not in data:
+        data["timers"] = generate_initial_timers()
+        
+    if sync.quest is not None:
+        data["timers"]["quest"] = {
+            "timer": sync.quest.timer, 
+            "timerActive": sync.quest.timerActive, 
+            "updatedAt": time.time()
+        }
+    if sync.line_follower is not None:
+        data["timers"]["line_follower"] = {
+            "timer": sync.line_follower.timer, 
+            "timerActive": sync.line_follower.timerActive, 
+            "updatedAt": time.time()
+        }
+        
     save_data(data)
     return {"status": "ok"}
 

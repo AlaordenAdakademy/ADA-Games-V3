@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Ing. Jose Gabriel Rojas">
     <title>Manual del Juez - ADAGAMES v4.0</title>
     <!-- Fuentes -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -22,17 +23,96 @@
         }
     </script>
     <style>
-        /* Estilos para impresión */
+        /* Estilos para impresión mejorados */
         @media print {
-            body { background-color: white; }
-            .no-print { display: none; }
+            @page {
+                margin: 1.5cm;
+                size: portrait;
+            }
+            body { 
+                background-color: white !important; 
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .no-print { display: none !important; }
+            
+            main {
+                max-width: 100% !important;
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            main > * {
+                margin-top: 1.5rem !important;
+                margin-bottom: 1.5rem !important;
+            }
+            
+            /* Control de saltos de página */
+            h1, h2, h3, h4 { break-after: avoid; }
+            section { 
+                break-inside: auto; 
+                margin-bottom: 2rem !important;
+                page-break-after: auto;
+            }
             .print-break-inside-avoid { break-inside: avoid; }
+            
+            /* Forzar salto de página antes de secciones grandes */
+            #evaluacion, #ranking { break-before: page; }
+            
+            /* Evitar cortes dentro de las categorías de evaluación */
+            #evaluacion > div {
+                break-inside: auto;
+                page-break-inside: auto;
+            }
+            #evaluacion h3 {
+                break-before: page;
+            }
+            #evaluacion h3:first-of-type {
+                break-before: avoid;
+            }
+            
+            /* Ajustes para la categoría Line Follower (que es oscura) en impresión */
+            .bg-\[\#0f111a\], .bg-\[\#161925\], .bg-\[\#0a0c12\] {
+                background-color: #f1f5f9 !important;
+                color: #0f172a !important;
+                border-color: #e2e8f0 !important;
+            }
+            .text-slate-200, .text-slate-400, .text-white {
+                color: #1e293b !important;
+            }
+            .bg-\[\#1c1f2e\] {
+                background-color: white !important;
+                border: 1px solid #e2e8f0 !important;
+            }
+            svg path { stroke: #000 !important; }
+
+            /* Ajustar mockups para que no se corten */
+            .bg-slate-100, .bg-\[\#161925\] {
+                break-inside: avoid;
+                margin: 1rem 0;
+            }
+            
+            /* Quitar sombras en impresión para ahorrar tinta y mejorar claridad */
+            .shadow-xl, .shadow-2xl, .shadow-lg, .shadow-md {
+                shadow: none !important;
+                box-shadow: none !important;
+                border: 1px solid #e2e8f0 !important;
+            }
         }
+
         html { scroll-behavior: smooth; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .custom-scrollbar-dark::-webkit-scrollbar-thumb { background: #475569; }
+
+        /* Animación para el botón PDF */
+        .pdf-button {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .pdf-button:hover {
+            transform: translateY(-5px) scale(1.05);
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased selection:bg-blue-200 selection:text-blue-900">
@@ -46,7 +126,7 @@
                 </div>
                 <h1 class="text-xl font-black italic tracking-tighter">ADAGAMES<span class="text-blue-300 text-sm ml-2 font-bold not-italic">JUEZ</span></h1>
             </div>
-            <div class="flex flex-wrap justify-center gap-2 text-xs font-bold uppercase tracking-wider">
+            <div class="flex flex-wrap justify-center gap-2 text-xs font-bold uppercase tracking-wider items-center">
                 <a href="#indicaciones" class="hover:bg-blue-800 px-3 py-2 rounded-lg transition-colors text-yellow-300">Indicaciones</a>
                 <a href="#flujo" class="hover:bg-blue-800 px-3 py-2 rounded-lg transition-colors">Flujo</a>
                 <a href="#acceso" class="hover:bg-blue-800 px-3 py-2 rounded-lg transition-colors">Acceso</a>
@@ -181,84 +261,101 @@
                         <p class="text-center text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Vista Interactiva (Quest)</p>
                         
                         <!-- INTERFAZ REPLICA EXACTA QUEST -->
-                        <div class="flex flex-col sm:flex-row gap-4 w-full h-full max-h-[600px] bg-slate-50 p-2 md:p-4 rounded-3xl">
-                            <!-- Sidebar -->
-                            <div class="w-full sm:w-[35%] bg-white rounded-2xl shadow-sm border border-slate-200 p-4 flex flex-col font-sans overflow-y-auto custom-scrollbar">
-                                <h2 class="text-sm font-black text-blue-900 mb-4 flex items-center gap-2 uppercase tracking-tighter">
-                                    <i data-lucide="play-circle" class="w-5 h-5 text-blue-600"></i> MESA DE JUEZ
+                        <div class="flex flex-col sm:flex-row gap-3 w-full h-full min-h-[500px] md:min-h-[600px] bg-slate-50 p-2 md:p-4 rounded-3xl overflow-hidden">
+                            <!-- Sidebar (Replicando app.js) -->
+                            <div class="w-full sm:w-80 shrink-0 bg-white rounded-[2rem] shadow-xl border border-slate-200 p-4 md:p-6 flex flex-col font-sans overflow-y-auto custom-scrollbar">
+                                <h2 class="text-xl font-black text-blue-900 mb-6 flex items-center gap-2 uppercase italic leading-tight">
+                                    <i data-lucide="play-circle" class="w-6 h-6 text-blue-600"></i> Mesa de Juez
                                 </h2>
                                 
                                 <div class="mb-4">
-                                    <label class="text-[8px] font-black text-blue-500 uppercase tracking-widest block mb-1">EQUIPO EN PISTA</label>
-                                    <div class="w-full p-2.5 rounded-lg bg-blue-50/30 border border-blue-200 font-bold text-blue-900 flex justify-between items-center text-xs">
-                                        IDEAL N 1 (UE IDEAL) <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
-                                    </div>
+                                    <label class="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Equipo en Pista</label>
+                                    <select id="quest-team-select" class="w-full p-4 rounded-2xl bg-blue-50/50 border-2 border-blue-100 font-bold text-blue-900 text-sm outline-none focus:border-blue-500 transition-all">
+                                        <option>IDEAL N 1 (UE IDEAL)</option>
+                                        <option>ROBOTIC MASTERS</option>
+                                        <option>TECHNO-QUEST</option>
+                                    </select>
                                 </div>
                                 
-                                <div class="grid grid-cols-2 gap-3 mb-4">
+                                <div class="grid grid-cols-2 gap-3 mb-6">
                                     <div>
-                                        <label class="text-[8px] font-black text-blue-500 uppercase tracking-widest block mb-1">RONDA</label>
-                                        <div class="w-full p-2 rounded-lg bg-white border border-slate-200 font-bold text-slate-700 flex justify-between items-center text-[10px]">
-                                            Ronda 1 <i data-lucide="chevron-down" class="w-3 h-3 text-slate-400"></i>
-                                        </div>
+                                        <label class="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Ronda</label>
+                                        <select class="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs outline-none focus:border-blue-500 transition-all">
+                                            <option>Ronda 1</option>
+                                            <option>Ronda 2</option>
+                                        </select>
                                     </div>
                                     <div>
-                                        <label class="text-[8px] font-black text-blue-500 uppercase tracking-widest block mb-1">PISTA</label>
-                                        <div class="w-full p-2 rounded-lg bg-white border border-slate-200 font-bold text-slate-700 flex justify-between items-center text-[10px]">
-                                            Pista 1 <i data-lucide="chevron-down" class="w-3 h-3 text-slate-400"></i>
-                                        </div>
+                                        <label class="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Pista</label>
+                                        <select class="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs outline-none focus:border-blue-500 transition-all">
+                                            <option>Pista 1</option>
+                                            <option>Pista 2</option>
+                                            <option>Pista 3</option>
+                                        </select>
                                     </div>
                                 </div>
 
-                                <div class="p-3 bg-orange-50 rounded-xl border border-orange-100 space-y-3 mb-4">
+                                <div class="p-4 bg-orange-50/50 rounded-2xl border border-orange-100 space-y-3 mb-6">
                                     <div class="flex justify-between items-center">
-                                        <span class="text-[8px] font-black text-orange-600 uppercase tracking-widest">TICKETS DE PRÁCTICA</span>
+                                        <span class="text-[9px] font-black text-orange-600 uppercase tracking-widest">Tickets de Práctica</span>
                                         <div class="flex gap-1">
-                                            <div class="w-2.5 h-4 bg-orange-500 rounded-sm"></div>
-                                            <div class="w-2.5 h-4 bg-orange-500 rounded-sm"></div>
-                                            <div class="w-2.5 h-4 bg-orange-500 rounded-sm"></div>
-                                            <div class="w-2.5 h-4 bg-orange-500 rounded-sm"></div>
-                                            <div class="w-2.5 h-4 bg-orange-500 rounded-sm"></div>
+                                            <div class="w-3 h-5 bg-orange-500 rounded-sm border border-orange-400 shadow-[0_0_8px_rgba(249,115,22,0.4)]"></div>
+                                            <div class="w-3 h-5 bg-orange-500 rounded-sm border border-orange-400 shadow-[0_0_8px_rgba(249,115,22,0.4)]"></div>
+                                            <div class="w-3 h-5 bg-orange-500 rounded-sm border border-orange-400 shadow-[0_0_8px_rgba(249,115,22,0.4)]"></div>
+                                            <div class="w-3 h-5 bg-slate-200 border border-slate-300 opacity-30 rounded-sm"></div>
+                                            <div class="w-3 h-5 bg-slate-200 border border-slate-300 opacity-30 rounded-sm"></div>
                                         </div>
                                     </div>
-                                    <div class="flex justify-between items-center border-t border-orange-200/50 pt-2">
-                                        <span class="text-[8px] font-black text-slate-600 uppercase tracking-widest">EVALUACIÓN P1</span>
-                                        <span class="bg-green-100 text-green-600 px-2 py-0.5 rounded-full flex items-center gap-1 text-[7px] font-black"><div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div> DISP.</span>
+                                    <div class="flex justify-between items-center pt-2 border-t border-orange-100/50">
+                                        <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Evaluación P1</span>
+                                        <div class="w-12 h-5 rounded-full flex items-center px-1 bg-green-100 text-green-600">
+                                            <div class="w-2 h-2 rounded-full mr-1 bg-green-500 animate-pulse"></div>
+                                            <span class="text-[8px] font-black">DISP.</span>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="mb-4">
-                                    <label class="text-[8px] font-black text-blue-500 uppercase tracking-widest block mb-2 text-center">TIPO DE INTENTO</label>
-                                    <div class="flex gap-2 mb-2">
-                                        <div class="flex-1 py-2.5 bg-orange-600 border border-orange-500 text-white rounded-lg text-[8px] font-black uppercase shadow-md shadow-orange-600/30 flex justify-center items-center gap-1">PRÁCTICA LIBRE</div>
-                                        <div class="flex-1 py-2.5 bg-white border border-slate-200 text-slate-500 rounded-lg text-[8px] font-black uppercase text-center flex justify-center items-center gap-1">EVALUACIÓN</div>
+                                <div class="mb-6">
+                                    <label class="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2 text-center">Tipo de Intento</label>
+                                    <div class="flex flex-col gap-2">
+                                        <div class="flex gap-2">
+                                            <div onclick="setQuestType(this)" data-type="practica" class="quest-type-btn flex-1 py-3 bg-orange-600 border-2 border-orange-500 text-white rounded-xl text-[10px] font-black uppercase shadow-lg shadow-orange-600/30 flex justify-center items-center gap-1 cursor-pointer transition-all">🎟️ Práctica Libre</div>
+                                            <div onclick="setQuestType(this)" data-type="evaluacion" class="quest-type-btn flex-1 py-3 bg-white border-2 border-slate-100 text-slate-400 rounded-xl text-[10px] font-black uppercase text-center flex justify-center items-center gap-1 cursor-pointer transition-all hover:bg-slate-50">🎯 Evaluación</div>
+                                        </div>
+                                        <div onclick="setQuestType(this)" data-type="mixta" class="quest-type-btn w-full py-3 bg-white border-2 border-slate-100 text-slate-400 rounded-xl text-[10px] font-black uppercase text-center flex justify-center items-center gap-1 cursor-pointer transition-all hover:bg-slate-50">⭐ Práctica + Evaluación</div>
                                     </div>
-                                    <div class="w-full py-2.5 bg-white border border-slate-200 text-slate-500 rounded-lg text-[8px] font-black uppercase text-center flex justify-center items-center gap-1"><i data-lucide="star" class="w-3 h-3 mb-0.5"></i> PRÁCTICA + EVALUACIÓN</div>
                                 </div>
 
-                                <div class="mb-4">
-                                    <label class="text-[8px] font-black text-slate-500 uppercase tracking-widest block mb-2 text-center">¿EL EQUIPO REALIZARÁ EL INTENTO DE BONUS?</label>
-                                    <div class="flex gap-2 mb-3">
-                                        <div class="flex-1 py-2.5 bg-yellow-400 border border-yellow-400 text-white rounded-lg text-[9px] font-black uppercase shadow-md shadow-yellow-400/30 text-center">SÍ, VA POR BONUS</div>
-                                        <div class="flex-1 py-2.5 bg-white border border-slate-200 text-slate-400 rounded-lg text-[9px] font-black uppercase text-center">NO</div>
+                                <div class="mb-6 pt-4 border-t border-slate-100">
+                                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-3 text-center">¿El equipo realizará el intento de Bonus?</label>
+                                    <div class="flex gap-2 mb-4">
+                                        <div id="quest-bonus-yes" onclick="setQuestBonusIntent(true)" class="flex-1 py-3 bg-white border-2 border-slate-100 text-slate-400 rounded-xl text-[11px] font-black uppercase text-center cursor-pointer transition-all hover:bg-slate-50">SÍ, VA POR BONUS</div>
+                                        <div id="quest-bonus-no" onclick="setQuestBonusIntent(false)" class="flex-1 py-3 bg-slate-800 border-2 border-slate-800 text-white rounded-xl text-[11px] font-black shadow-lg shadow-slate-800/30 uppercase text-center cursor-pointer transition-all">NO</div>
                                     </div>
-                                    <div class="bg-yellow-50/50 border border-yellow-200 p-3 rounded-xl mb-3 text-left">
-                                        <h4 class="text-[8px] font-black text-yellow-600 uppercase tracking-widest flex items-center gap-1 mb-2"><i data-lucide="star" class="w-3 h-3"></i> REGLAS DEL BONUS</h4>
-                                        <div class="flex gap-1.5 mb-2">
-                                            <span class="bg-yellow-200 px-1.5 py-0.5 rounded text-yellow-900 shadow-sm text-[9px] font-bold flex items-center gap-1"><i data-lucide="star" class="w-2.5 h-2.5"></i> D6</span>
-                                            <span class="bg-yellow-200 px-1.5 py-0.5 rounded text-yellow-900 shadow-sm text-[9px] font-bold bg-yellow-300">S <span class="bg-blue-600 text-white px-1 rounded ml-1 text-[8px]">⬇</span></span>
+                                    
+                                    <!-- Bonus Content (Oculto por defecto) -->
+                                    <div id="quest-bonus-content" class="hidden animate-in fade-in slide-in-from-top-2 duration-300">
+                                        <div class="bg-yellow-50/50 border border-yellow-200 p-4 rounded-xl mb-4 text-left relative overflow-hidden">
+                                            <h4 class="text-[10px] font-black text-yellow-600 uppercase tracking-widest flex items-center gap-1 mb-2">
+                                                <i data-lucide="star" class="w-3 h-3"></i> Reglas del Bonus
+                                            </h4>
+                                            <div class="flex gap-1.5 mb-2">
+                                                <span class="bg-yellow-200 px-2 py-0.5 rounded text-yellow-900 shadow-sm text-[10px] font-black flex items-center gap-1">⭐ D6</span>
+                                                <span class="bg-yellow-200 px-2 py-0.5 rounded text-yellow-900 shadow-sm text-[10px] font-black">S ⬇</span>
+                                            </div>
+                                            <p class="text-[10px] font-medium text-yellow-700 italic leading-tight pt-2 border-t border-yellow-200/50">El robot inicia en D6 y debe encender los LEDs en color azul al llegar a C2.</p>
                                         </div>
-                                        <p class="text-[9px] font-medium text-yellow-800 italic leading-tight">El robot inicia en D6 y debe encender los LEDs en color azul al llegar a C2. Al alcanzar el punto final (E1), debe emitir un sonido de celebración y apagar todos los LEDs.</p>
+                                        <div id="quest-bonus-btn" onclick="toggleQuestBonus()" class="w-full py-4 bg-white border-2 border-yellow-200 text-yellow-600 rounded-2xl text-[11px] font-black uppercase flex items-center justify-center gap-2 transition-all hover:bg-yellow-50 cursor-pointer"><i data-lucide="star" class="w-4 h-4"></i> LO LOGRARON (+3 PTS)</div>
                                     </div>
-                                    <div class="w-full py-3 bg-white border border-yellow-300 text-yellow-600 rounded-xl text-[10px] font-black uppercase flex items-center justify-center gap-2 shadow-sm">LO LOGRARON (+3 PTS)</div>
                                 </div>
 
                                 <div class="mt-auto pt-2">
-                                    <div class="bg-blue-600 rounded-2xl p-4 text-center shadow-xl shadow-blue-600/30 mb-3">
-                                        <p class="text-blue-100 text-[9px] font-black uppercase tracking-widest opacity-90 mb-1">TOTAL A SUMAR</p>
-                                        <div class="text-5xl font-black text-white leading-none">5</div>
+                                    <div class="bg-blue-600 rounded-[2rem] p-6 text-center shadow-2xl shadow-blue-600/30 mb-4">
+                                        <p class="text-blue-100 text-[10px] font-black uppercase tracking-[0.2em] mb-1 opacity-80">TOTAL A SUMAR</p>
+                                        <div id="quest-total" class="text-7xl font-black text-white leading-none">0</div>
                                     </div>
-                                    <div class="w-full bg-green-500 text-white font-black py-4 rounded-xl shadow-lg uppercase tracking-widest text-[11px] text-center">GUARDAR RESULTADO</div>
+                                    <button onclick="resetQuestSimulation()" class="w-full bg-slate-100 text-slate-500 font-bold py-3 rounded-2xl border border-slate-200 uppercase tracking-widest text-[10px] text-center mb-2 hover:bg-slate-200 transition-colors flex items-center justify-center gap-2"><i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reiniciar Simulación</button>
+                                    <button onclick="showSummary('quest')" class="w-full bg-green-500 text-white font-black py-5 rounded-2xl shadow-xl uppercase tracking-widest text-xs text-center hover:bg-green-600 transition-colors">Guardar Resultado</button>
                                 </div>
                             </div>
                             
@@ -269,11 +366,11 @@
                                     <h3 class="text-2xl font-black text-blue-900 mt-2 uppercase italic leading-tight">PISTA 1 - RONDA 1</h3>
                                 </div>
 
-                                <!-- Grid -->
-                                <div class="w-full h-full min-h-[400px] bg-white border-[8px] border-blue-600 rounded-2xl shadow-xl flex flex-col relative select-none overflow-hidden">
+                                <!-- Grid (Replicando app.js) -->
+                                <div class="w-full h-full min-h-[420px] bg-white border-[10px] border-blue-600 rounded-[2rem] shadow-2xl flex flex-col relative select-none overflow-hidden">
                                     <!-- Top Row (A-J) -->
-                                    <div class="flex bg-blue-600 text-white font-black text-[10px] h-8 shrink-0">
-                                        <div class="w-8 border-r border-blue-500/50 bg-blue-700 flex items-center justify-center">#</div>
+                                    <div class="flex bg-blue-600 text-white font-black text-[11px] h-10 shrink-0">
+                                        <div class="w-10 border-r border-blue-500/50 bg-blue-700 flex items-center justify-center">#</div>
                                         <div class="flex-1 grid grid-cols-10 text-center items-center">
                                             <div>A</div><div>B</div><div>C</div><div>D</div><div>E</div><div>F</div><div>G</div><div>H</div><div>I</div><div>J</div>
                                         </div>
@@ -281,7 +378,7 @@
                                     <!-- Grid Body -->
                                     <div class="flex-1 flex bg-white relative">
                                         <!-- Left Col (6-1) -->
-                                        <div class="w-8 bg-blue-600 border-r border-blue-500/50 flex flex-col text-white font-black text-[10px] shrink-0">
+                                        <div class="w-10 bg-blue-600 border-r border-blue-500/50 flex flex-col text-white font-black text-[11px] shrink-0">
                                             <div class="flex-1 flex items-center justify-center border-b border-blue-500/30">6</div>
                                             <div class="flex-1 flex items-center justify-center border-b border-blue-500/30">5</div>
                                             <div class="flex-1 flex items-center justify-center border-b border-blue-500/30">4</div>
@@ -289,32 +386,19 @@
                                             <div class="flex-1 flex items-center justify-center border-b border-blue-500/30">2</div>
                                             <div class="flex-1 flex items-center justify-center">1</div>
                                         </div>
-                                        <!-- Lines -->
-                                        <div class="flex-1 grid grid-cols-10 grid-rows-6 divide-x divide-y divide-slate-100/50 relative">
-                                            <!-- Empty cells for background -->
-                                            <div class="border-t border-slate-100/50"></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
-                                            <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
-                                            <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
-                                            <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
-                                            <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
-                                            <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                                        <!-- Lines (Grilla técnica) -->
+                                        <div class="flex-1 relative bg-white" style="background-image: linear-gradient(#202124 1px, transparent 1px), linear-gradient(90deg, #202124 1px, transparent 1px); background-size: 10% 16.666%;">
+                                            <!-- Green Circles -->
+                                            <div onclick="toggleQuestCircle(this)" class="quest-circle absolute top-[10%] left-[35%] w-10 h-10 bg-white border-2 border-blue-500 text-blue-600 rounded-full flex items-center justify-center text-xs font-black cursor-pointer hover:scale-110 transition-all transform -translate-x-1/2 -translate-y-1/2 z-10 shadow-sm" data-points="1">1</div>
+                                            <div class="absolute top-[5%] left-[37%] w-6 h-6 bg-yellow-400 border-2 border-yellow-200 rounded-full flex items-center justify-center shadow-md z-20 text-[10px]">⭐</div>
                                             
-                                            <!-- Green Circles matching image_35cdc1.png exactly -->
-                                            <!-- 1 at D6 -->
-                                            <div class="absolute top-[8%] left-[35%] w-8 h-8 bg-green-500 rounded-full text-white flex items-center justify-center text-[10px] font-black shadow-[0_0_12px_#22c55e] transform -translate-x-1/2 -translate-y-1/2 z-10">1</div>
-                                            <div class="absolute top-[3%] left-[37%] w-5 h-5 bg-yellow-400 border-2 border-yellow-200 rounded-full flex items-center justify-center shadow-md z-20"><i data-lucide="star" class="w-3 h-3 text-white fill-white"></i></div>
-                                            
-                                            <!-- 4 at A5 -->
-                                            <div class="absolute top-[25%] left-[5%] w-8 h-8 bg-green-500 rounded-full text-white flex items-center justify-center text-[10px] font-black shadow-[0_0_12px_#22c55e] transform -translate-x-1/2 -translate-y-1/2 z-10">4</div>
+                                            <div onclick="toggleQuestCircle(this)" class="quest-circle absolute top-[25%] left-[5%] w-10 h-10 bg-white border-2 border-blue-500 text-blue-600 rounded-full flex items-center justify-center text-xs font-black cursor-pointer hover:scale-110 transition-all transform -translate-x-1/2 -translate-y-1/2 z-10 shadow-sm" data-points="1">4</div>
 
-                                            <!-- 2 at G4 -->
-                                            <div class="absolute top-[58%] left-[65%] w-8 h-8 bg-green-500 rounded-full text-white flex items-center justify-center text-[10px] font-black shadow-[0_0_12px_#22c55e] transform -translate-x-1/2 -translate-y-1/2 z-10">2</div>
+                                            <div onclick="toggleQuestCircle(this)" class="quest-circle absolute top-[58%] left-[65%] w-10 h-10 bg-white border-2 border-blue-500 text-blue-600 rounded-full flex items-center justify-center text-xs font-black cursor-pointer hover:scale-110 transition-all transform -translate-x-1/2 -translate-y-1/2 z-10 shadow-sm" data-points="1">2</div>
 
-                                            <!-- 3 at C2 -->
-                                            <div class="absolute top-[75%] left-[25%] w-8 h-8 bg-green-500 rounded-full text-white flex items-center justify-center text-[10px] font-black shadow-[0_0_12px_#22c55e] transform -translate-x-1/2 -translate-y-1/2 z-10">3</div>
+                                            <div onclick="toggleQuestCircle(this)" class="quest-circle absolute top-[75%] left-[25%] w-10 h-10 bg-white border-2 border-blue-500 text-blue-600 rounded-full flex items-center justify-center text-xs font-black cursor-pointer hover:scale-110 transition-all transform -translate-x-1/2 -translate-y-1/2 z-10 shadow-sm" data-points="1">3</div>
 
-                                            <!-- 5 at E1 -->
-                                            <div class="absolute top-[91%] left-[45%] w-8 h-8 bg-green-500 rounded-full text-white flex items-center justify-center text-[10px] font-black shadow-[0_0_12px_#22c55e] transform -translate-x-1/2 -translate-y-1/2 z-10">5</div>
+                                            <div onclick="toggleQuestCircle(this)" class="quest-circle absolute top-[91%] left-[45%] w-10 h-10 bg-white border-2 border-blue-500 text-blue-600 rounded-full flex items-center justify-center text-xs font-black cursor-pointer hover:scale-110 transition-all transform -translate-x-1/2 -translate-y-1/2 z-10 shadow-sm" data-points="1">5</div>
                                         </div>
                                     </div>
                                 </div>
@@ -338,7 +422,6 @@
                 </div>
 
                 <div class="flex flex-col gap-12 p-8 md:p-12">
-                    <!-- Textos Line Follower -->
                     <div class="space-y-6">
                         <div class="border-l-2 border-blue-500 pl-4">
                             <h4 class="font-bold text-lg mb-2 text-white">1. Preparación e Intentos</h4>
@@ -349,9 +432,9 @@
                             <h4 class="font-bold text-lg mb-2 text-white">2. Cronómetro y Tablero</h4>
                             <ul class="list-disc ml-4 space-y-2 text-sm text-slate-400">
                                 <li>Haz clic en el botón con borde verde <strong class="text-green-500">Iniciar</strong> para arrancar el cronómetro en retroceso.</li>
-                                <li>Observa el <em>Tablero de Evaluación (Derecha)</em>. La pista está dividida en cuadrantes (Q1, Q2, Q3, Q4) y tiene rectángulos de puntaje.</li>
+                                <li>Observe el <em>Tablero de Evaluación (Derecha)</em>. La pista está dividida en cuadrantes (Q1, Q2, Q3, Q4) y tiene rectángulos de puntaje.</li>
                                 <li><strong>¡Importante!</strong> A medida que el robot supera físicamente cada tramo, <strong>toca los rectángulos numerados (color gris)</strong> en tu pantalla. Se volverán azules y el recuadro de <em>PUNTOS ACTUALES</em> subirá.</li>
-                                <li>Haz clic en <strong class="text-orange-500">Pausar</strong> si el robot completa todo el circuito (ya que no hay una meta única, sino bifurcaciones) o si se sale de la pista por más de 10 segundos.</li>
+                                <li>Haz clic en <strong class="text-orange-500">Pausar</strong> si el robot completa todo el circuito o si se sale de la pista.</li>
                             </ul>
                         </div>
 
@@ -360,18 +443,13 @@
                             <div class="space-y-2 mt-2">
                                 <div class="bg-[#1c1f2e] p-3 rounded-xl border border-orange-500/30 text-xs">
                                     <strong class="text-orange-500 flex items-center gap-1 mb-1"><i data-lucide="alert-triangle" class="w-4 h-4"></i> Penalización (+5s)</strong>
-                                    Si el participante toca/acomoda el robot (tienen 10 segs para hacerlo). Suma 5s al tiempo neto.
+                                    Si el participante toca/acomoda el robot.
                                 </div>
                                 <div class="bg-[#1c1f2e] p-3 rounded-xl border border-red-500/30 text-xs">
                                     <strong class="text-red-400 flex items-center gap-1 mb-1"><i data-lucide="ban" class="w-4 h-4"></i> Intento Nulo</strong>
-                                    Si el robot se descarrila y no es acomodado a tiempo. Anula el intento actual para que usen el siguiente.
+                                    Si el robot se descarrila definitivamente.
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="border-l-2 border-blue-500 pl-4">
-                            <h4 class="font-bold text-lg mb-2 text-white">4. Guardar</h4>
-                            <p class="text-sm text-slate-400">Al terminar, presiona <strong class="text-green-500">REGISTRAR INTENTO VÁLIDO</strong> para congelar el tiempo. Luego presiona <strong class="text-slate-400">GUARDAR RESULTADO FINAL</strong> para enviar el intento exitoso a la tabla general.</p>
                         </div>
                     </div>
 
@@ -379,124 +457,127 @@
                     <div class="bg-[#161925] rounded-[2rem] p-6 border border-[#2a2e3f] flex flex-col items-center shadow-inner">
                         <p class="text-center text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Vista Interactiva (Seguidor de Línea)</p>
                         
-                        <!-- INTERFAZ REPLICA EXACTA LINE FOLLOWER -->
-                        <div class="flex flex-col sm:flex-row w-full h-full max-h-[600px] bg-[#0a0c12] rounded-2xl overflow-hidden border border-[#2a2e3f] shadow-2xl">
+                        <div class="flex flex-col sm:flex-row w-full h-full min-h-[500px] md:min-h-[600px] bg-[#0a0c12] rounded-2xl overflow-hidden border border-[#2a2e3f] shadow-2xl">
                             <!-- Sidebar Dark -->
-                            <div class="w-full sm:w-[35%] bg-[#161925] border-r border-[#2a2e3f] p-4 flex flex-col font-sans overflow-y-auto custom-scrollbar-dark">
-                                <h2 class="text-xs font-black text-white flex items-center gap-2 mb-4 uppercase tracking-tighter">
+                            <div class="w-full sm:w-80 shrink-0 bg-[#161925] border-r border-[#2a2e3f] p-4 flex flex-col font-sans overflow-y-auto custom-scrollbar-dark">
+                                <h2 class="text-[10px] font-black text-white flex items-center gap-2 mb-4 uppercase tracking-widest opacity-80">
                                     <div class="w-3 h-3 rounded-full bg-blue-500"></div> Mesa del Juez
                                 </h2>
                                 
-                                <div class="mb-3">
-                                    <label class="text-[7px] font-black text-slate-500 uppercase tracking-widest block mb-1">Equipo en Pista</label>
-                                    <div class="bg-[#0f111a] border border-[#2a2e3f] rounded-lg text-[9px] p-2 font-bold text-slate-300 flex justify-between items-center shadow-inner">
-                                        IDEAL N 2 (U.E. IDEAL) <i data-lucide="chevron-down" class="w-3 h-3 text-slate-500"></i>
-                                    </div>
+                                <div class="mb-4">
+                                    <p class="text-xs text-slate-500 mt-1 uppercase tracking-wider font-semibold">Robot en Pista</p>
+                                    <select id="line-team-select" class="mt-2 w-full bg-[#0f111a] border border-[#2a2e3f] text-sm rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors text-slate-200">
+                                        <option>IDEAL N 2 (U.E. IDEAL)</option>
+                                        <option>ROBOTIC MASTERS JR</option>
+                                    </select>
                                 </div>
                                 
-                                <div class="grid grid-cols-2 gap-2 mb-4">
-                                    <div>
-                                        <label class="text-[7px] font-black text-slate-500 uppercase tracking-widest block mb-1">Ronda</label>
-                                        <div class="bg-[#0f111a] border border-[#2a2e3f] rounded-lg p-2 flex justify-between items-center text-[8px] text-slate-300 font-bold">Ronda 1 <i data-lucide="chevron-down" class="w-3 h-3 text-slate-500"></i></div>
+                                <div class="flex gap-3 mb-6">
+                                    <div class="flex-1">
+                                        <p class="text-xs text-slate-500 mb-1 uppercase tracking-wider font-semibold">Ronda</p>
+                                        <select class="w-full bg-[#0f111a] border border-[#2a2e3f] text-sm rounded-lg p-2.5 outline-none text-slate-300">
+                                            <option>Ronda 1</option>
+                                            <option>Ronda 2</option>
+                                        </select>
                                     </div>
-                                    <div>
-                                        <label class="text-[7px] font-black text-slate-500 uppercase tracking-widest block mb-1">Pista</label>
-                                        <div class="bg-[#0f111a] border border-[#2a2e3f] rounded-lg p-2 flex justify-between items-center text-[8px] text-slate-300 font-bold">Pista 1 <i data-lucide="chevron-down" class="w-3 h-3 text-slate-500"></i></div>
+                                    <div class="flex-1">
+                                        <p class="text-xs text-slate-500 mb-1 uppercase tracking-wider font-semibold">Pista</p>
+                                        <select class="w-full bg-[#0f111a] border border-[#2a2e3f] text-sm rounded-lg p-2.5 outline-none text-slate-300">
+                                            <option>Pista 1</option>
+                                            <option>Pista 2</option>
+                                        </select>
                                     </div>
                                 </div>
 
                                 <div class="mb-4 text-center">
                                     <span class="text-[7px] text-slate-500 uppercase tracking-widest font-black block mb-2">Intentos (Máx 3)</span>
-                                    <div class="flex gap-2 justify-center">
-                                        <div class="w-4 h-4 rounded-full border-2 bg-yellow-500/20 border-yellow-500 shadow-[0_0_8px_#eab308]"></div>
+                                    <div id="line-attempts-container" class="flex gap-2 justify-center">
+                                        <div class="w-4 h-4 rounded-full border-2 bg-yellow-500/20 border-yellow-500 shadow-[0_0_8px_#eab308] animate-pulse"></div>
                                         <div class="w-4 h-4 rounded-full border-2 bg-[#1c1f2e] border-[#2a2e3f]"></div>
                                         <div class="w-4 h-4 rounded-full border-2 bg-[#1c1f2e] border-[#2a2e3f]"></div>
                                     </div>
                                 </div>
 
-                                <div class="bg-[#1c1f2e] border border-[#2a2e3f] rounded-2xl p-4 text-center shadow-inner mb-4 flex-shrink-0">
-                                    <div class="text-[8px] font-bold text-slate-400 mb-1 flex items-center justify-center gap-1 uppercase tracking-widest"><i data-lucide="timer" class="w-3 h-3"></i> Tiempo Restante</div>
-                                    <div class="text-4xl font-mono font-black text-white leading-none mb-3">01:46</div>
-                                    <div class="bg-green-800/40 text-green-500 border border-green-500/50 text-[10px] font-black py-2.5 rounded-lg flex items-center justify-center gap-1 uppercase tracking-wider"><i data-lucide="play" class="w-3 h-3 fill-green-500"></i> Iniciar</div>
-                                </div>
-
-                                <div class="bg-blue-600 rounded-2xl p-4 text-center text-white mb-4 shadow-lg shadow-blue-600/20 flex-shrink-0">
-                                    <div class="text-[8px] font-black uppercase tracking-widest opacity-80 mb-1">Puntos Actuales</div>
-                                    <div class="text-5xl font-black leading-none tracking-tighter">85</div>
-                                    <div class="text-[7px] font-medium bg-black/30 rounded-full inline-block px-2 py-0.5 mt-2">120 MAX <span class="border-l border-white/20 pl-1 ml-1 font-bold">70.8%</span></div>
-                                </div>
-
-                                <div class="flex gap-2 mb-4 flex-shrink-0">
-                                    <div class="flex-1 bg-[#1c1f2e] border border-orange-500/30 rounded-xl p-2 text-center flex flex-col items-center justify-center gap-1">
-                                        <i data-lucide="alert-triangle" class="w-4 h-4 text-orange-500"></i>
-                                        <div class="text-[7px] font-black text-orange-500 uppercase leading-tight">Penalización<br/>(+5s)</div>
-                                        <div class="bg-orange-500/20 text-orange-500 text-[8px] font-bold px-2 rounded-full">0</div>
+                                <div class="bg-[#1c1f2e] border border-[#2a2e3f] rounded-2xl p-5 mb-6 flex flex-col items-center shadow-inner">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <i data-lucide="timer" class="w-4 h-4 text-slate-400"></i>
+                                        <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Tiempo Restante</span>
                                     </div>
-                                    <div class="flex-1 bg-[#1c1f2e] border border-red-500/30 rounded-xl p-2 text-center flex flex-col items-center justify-center gap-1">
-                                        <i data-lucide="ban" class="w-4 h-4 text-red-500"></i>
-                                        <div class="text-[7px] font-black text-red-500 uppercase leading-tight">Intento<br/>Nulo</div>
-                                    </div>
+                                    <div id="line-timer" class="text-5xl font-mono font-bold tracking-widest mb-4 text-white">02:00</div>
+                                    <button id="line-timer-btn" onclick="toggleLineTimer()" class="w-full bg-green-600 hover:bg-green-500 text-white py-2.5 rounded-lg font-bold flex items-center justify-center gap-2 transition-colors uppercase tracking-wider text-xs"><i data-lucide="play" class="w-4 h-4 fill-current"></i> Iniciar</button>
                                 </div>
 
-                                <div class="mt-auto space-y-2 flex-shrink-0">
-                                    <div class="w-full bg-green-600 text-white font-black py-3 rounded-xl shadow-lg uppercase tracking-widest text-[8px] text-center flex justify-center items-center gap-1.5"><i data-lucide="check-circle" class="w-3 h-3"></i> Registrar Intento Válido</div>
-                                    <div class="w-full bg-transparent border border-slate-700 text-slate-500 font-black py-3 rounded-xl uppercase tracking-widest text-[8px] text-center flex justify-center items-center gap-1.5"><i data-lucide="save" class="w-3 h-3"></i> Guardar Resultado Final</div>
+                                <div class="bg-blue-600 border border-blue-500 p-5 rounded-2xl flex flex-col items-center justify-center transition-all duration-300 shadow-lg mb-6">
+                                    <span class="text-sm font-semibold uppercase tracking-wider opacity-80 mb-1 text-white">Puntos Actuales</span>
+                                    <div id="line-total" class="text-6xl font-bold tracking-tighter mb-1 text-white leading-none">0</div>
+                                    <span class="text-[10px] font-medium bg-black/30 px-3 py-1 rounded-full text-white mt-1">120 MAX</span>
+                                </div>
+
+                                <div class="flex gap-3 mb-6">
+                                    <button onclick="addLinePenalty()" class="flex-1 bg-[#1c1f2e] border border-orange-500/30 hover:border-orange-500/60 transition-colors p-3 rounded-xl flex flex-col items-center justify-center gap-1 group cursor-pointer">
+                                        <i data-lucide="alert-triangle" class="w-5 h-5 text-orange-500 group-hover:scale-110 transition-transform"></i>
+                                        <span class="text-[10px] font-bold text-orange-400 uppercase text-center leading-tight">Penalización<br/>(+5s)</span>
+                                        <span id="line-penalty-count" class="bg-orange-500/20 text-orange-400 font-bold px-2 py-0.5 rounded-full text-xs mt-1">0</span>
+                                    </button>
+                                    <button onclick="handleLineNull()" class="flex-1 bg-[#1c1f2e] border border-red-500/30 hover:bg-red-500/10 hover:border-red-500/60 transition-all p-3 rounded-xl flex flex-col items-center justify-center gap-1 group cursor-pointer">
+                                        <i data-lucide="ban" class="w-5 h-5 text-red-400 group-hover:text-red-500 group-hover:scale-110 transition-all"></i>
+                                        <span class="text-[10px] font-bold text-red-400 uppercase text-center leading-tight">Intento<br/>Nulo</span>
+                                    </button>
+                                </div>
+
+                                <div class="mt-auto space-y-3">
+                                    <button onclick="resetLineSimulation()" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2 text-[10px] uppercase tracking-wider"><i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reiniciar Ronda</button>
+                                    <button onclick="showSummary('line')" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg uppercase tracking-widest text-[10px] text-center flex justify-center items-center gap-2 hover:bg-blue-500 transition-colors"><i data-lucide="save" class="w-4 h-4"></i> Guardar Resultado Final</button>
                                 </div>
                             </div>
 
-                            <!-- Main Area Dark -->
-                            <div class="w-full sm:w-[65%] flex flex-col relative bg-[#0a0c12]">
-                                <div class="h-12 border-b border-[#2a2e3f] bg-[#161925] flex items-center px-4 justify-between shrink-0">
-                                    <span class="text-[10px] font-black text-white flex items-center gap-1.5 uppercase tracking-widest"><i data-lucide="play-circle" class="w-4 h-4 text-blue-500"></i> Tablero de Evaluación</span>
-                                    <div class="flex gap-3 text-[7px] text-slate-500 font-black">
-                                        <div class="text-center">Q1<br><span class="text-green-500 text-[8px]">35/35</span></div>
-                                        <div class="text-center">Q2<br><span class="text-slate-300 text-[8px]">10/40</span></div>
-                                        <div class="text-center">Q3<br><span class="text-green-500 text-[8px]">20/20</span></div>
-                                        <div class="text-center">Q4<br><span class="text-slate-300 text-[8px]">20/25</span></div>
+                            <!-- Main Area (Replicando app.jsx) -->
+                            <div class="flex-1 flex flex-col relative bg-[#0a0c12]">
+                                <div class="h-14 border-b border-[#2a2e3f] bg-[#161925] flex items-center px-6 justify-between shrink-0">
+                                    <span class="text-xs font-bold tracking-wide text-white uppercase">Mapa de Evaluación</span>
+                                    <div class="flex gap-4 text-[10px] font-medium bg-[#0f111a] py-2 px-3 rounded-lg border border-[#2a2e3f]">
+                                        <div class="text-center"><span class="text-slate-500">Q1</span><br/><span class="text-slate-300">0/30</span></div>
+                                        <div class="text-center"><span class="text-slate-500">Q2</span><br/><span class="text-slate-300">0/30</span></div>
+                                        <div class="text-center"><span class="text-slate-500">Q3</span><br/><span class="text-slate-300">0/30</span></div>
+                                        <div class="text-center"><span class="text-slate-500">Q4</span><br/><span class="text-slate-300">0/30</span></div>
                                     </div>
                                 </div>
-                                <div class="flex-1 p-4 flex items-center justify-center relative">
-                                    <!-- Canvas Wrapper -->
-                                    <div class="w-full aspect-[16/10] bg-white rounded-xl relative overflow-hidden border-2 border-white shadow-2xl flex flex-col">
+                                <div class="flex-1 overflow-x-auto custom-scrollbar-dark p-2 md:p-6 relative flex items-center justify-center">
+                                    <div class="relative w-full min-w-[600px] sm:min-w-0 aspect-[10/7] bg-white rounded-2xl overflow-hidden shadow-2xl border-2 md:border-4 border-[#2a2e3f] mx-auto">
+                                        <!-- Canvas Track -->
+                                        <canvas id="lienzoPista" width="1000" height="700" class="absolute inset-0 w-full h-full object-contain"></canvas>
                                         
-                                        <!-- Labels -->
-                                        <div class="absolute top-1 left-2 text-[7px] font-black text-slate-800 z-20">Q1 Sup Izq</div>
-                                        <div class="absolute top-1 right-2 text-[7px] font-black text-slate-800 z-20">Q2 Sup Der</div>
-                                        <div class="absolute bottom-1 left-2 text-[7px] font-black text-slate-800 z-20">Q3 Inf Izq</div>
-                                        <div class="absolute bottom-1 right-2 text-[7px] font-black text-slate-800 z-20">Q4 Inf Der</div>
-
-                                        <!-- Track Mock (SVG SVG Graphic) -->
-                                        <svg class="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
-                                            <!-- Solid Black Lines -->
-                                            <path d="M 15 25 L 40 25 C 45 25, 45 15, 50 15 C 55 15, 55 30, 45 30 C 40 30, 40 45, 40 45 L 40 60 L 60 60 C 65 60, 65 80, 80 80 L 90 80 C 95 80, 95 70, 90 70 L 85 70 L 85 30 L 70 30" fill="none" stroke="#1e293b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M 60 60 L 60 70 L 75 70" fill="none" stroke="#1e293b" stroke-width="2" stroke-linejoin="round"/>
-                                            <!-- Dashed Black Lines -->
-                                            <path d="M 15 25 L 15 65 L 40 65" fill="none" stroke="#1e293b" stroke-width="2" stroke-dasharray="3 3" />
-                                            <path d="M 40 45 C 50 45, 50 30, 60 30 L 70 30" fill="none" stroke="#1e293b" stroke-width="2" stroke-dasharray="3 3" />
-                                        </svg>
-
-                                        <!-- Points (Blue/Grey Rectangles) -->
-                                        <!-- Completed (Blue) -->
-                                        <div class="absolute top-[25%] left-[10%] w-6 h-4 bg-blue-600 rounded text-white text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 shadow-sm z-10">10</div>
-                                        <div class="absolute top-[18%] left-[48%] w-5 h-4 bg-blue-600 rounded text-white text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 shadow-sm z-10">5</div>
-                                        <div class="absolute top-[45%] left-[45%] w-6 h-4 bg-blue-600 rounded text-white text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 shadow-sm z-10">10</div>
-                                        <div class="absolute top-[50%] left-[18%] w-6 h-4 bg-blue-600 rounded text-white text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 shadow-sm z-10">10</div>
-                                        <div class="absolute top-[65%] left-[20%] w-6 h-4 bg-blue-600 rounded text-white text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 shadow-sm z-10">10</div>
-                                        <div class="absolute top-[65%] left-[40%] w-6 h-4 bg-blue-600 rounded text-white text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 shadow-sm z-10">10</div>
-                                        <div class="absolute top-[65%] left-[55%] w-6 h-4 bg-blue-600 rounded text-white text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 shadow-sm z-10">10</div>
-                                        <div class="absolute top-[75%] left-[70%] w-6 h-4 bg-blue-600 rounded text-white text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 shadow-sm z-10">10</div>
-                                        <div class="absolute top-[45%] left-[62%] w-6 h-4 bg-blue-600 rounded text-white text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 shadow-sm z-10">10</div>
+                                        <!-- Interactive Points Overlay -->
+                                        <!-- Coordenadas calculadas según el script del canvas: % left = x/10, % top = y/7 -->
                                         
-                                        <!-- Pending (Dark Grey) -->
-                                        <div class="absolute top-[30%] left-[55%] w-5 h-4 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 z-10">5</div>
-                                        <div class="absolute top-[25%] left-[70%] w-6 h-4 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 z-10">10</div>
-                                        <div class="absolute top-[25%] left-[88%] w-6 h-4 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 z-10">10</div>
-                                        <div class="absolute top-[50%] left-[88%] w-5 h-4 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 z-10">5</div>
-                                        <div class="absolute top-[78%] left-[90%] w-5 h-4 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 z-10">5</div>
+                                        <!-- Superior Izquierda -->
+                                        <div onclick="toggleLinePoint(this)" class="line-point absolute top-[14.28%] left-[10%] -translate-x-1/2 -translate-y-1/2 w-9 h-6 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded-lg shadow-lg flex items-center justify-center font-bold text-[11px] cursor-pointer hover:scale-105" data-points="10">10</div>
+                                        <div onclick="toggleLinePoint(this)" class="line-point absolute top-[7.85%] left-[33.5%] -translate-x-1/2 -translate-y-1/2 w-9 h-6 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded-lg shadow-lg flex items-center justify-center font-bold text-[11px] cursor-pointer hover:scale-105" data-points="5">5</div>
+                                        <div onclick="toggleLinePoint(this)" class="line-point absolute top-[51.42%] left-[11.5%] -translate-x-1/2 -translate-y-1/2 w-9 h-6 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded-lg shadow-lg flex items-center justify-center font-bold text-[11px] cursor-pointer hover:scale-105" data-points="10">10</div>
+                                        <div onclick="toggleLinePoint(this)" class="line-point absolute top-[44.28%] left-[32%] -translate-x-1/2 -translate-y-1/2 w-9 h-6 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded-lg shadow-lg flex items-center justify-center font-bold text-[11px] cursor-pointer hover:scale-105" data-points="10">10</div>
 
-                                        <!-- Red Quadrant Guides -->
-                                        <div class="absolute top-0 bottom-0 left-[50%] border-l-2 border-dashed border-red-500/70 z-0"></div>
-                                        <div class="absolute left-0 right-0 top-[60%] border-t-2 border-dashed border-red-500/70 z-0"></div>
+                                        <!-- Inferior Izquierda -->
+                                        <div onclick="toggleLinePoint(this)" class="line-point absolute top-[84.28%] left-[13.5%] -translate-x-1/2 -translate-y-1/2 w-9 h-6 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded-lg shadow-lg flex items-center justify-center font-bold text-[11px] cursor-pointer hover:scale-105" data-points="10">10</div>
+                                        <div onclick="toggleLinePoint(this)" class="line-point absolute top-[84.28%] left-[28%] -translate-x-1/2 -translate-y-1/2 w-9 h-6 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded-lg shadow-lg flex items-center justify-center font-bold text-[11px] cursor-pointer hover:scale-105" data-points="10">10</div>
+
+                                        <!-- Centro / Intersección -->
+                                        <div onclick="toggleLinePoint(this)" class="line-point absolute top-[47.85%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-9 h-6 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded-lg shadow-lg flex items-center justify-center font-bold text-[11px] cursor-pointer hover:scale-105" data-points="10">10</div>
+                                        <div onclick="toggleLinePoint(this)" class="line-point absolute top-[22.85%] left-[45%] -translate-x-1/2 -translate-y-1/2 w-9 h-6 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded-lg shadow-lg flex items-center justify-center font-bold text-[11px] cursor-pointer hover:scale-105" data-points="5">5</div>
+                                        <div onclick="toggleLinePoint(this)" class="line-point absolute top-[84.28%] left-[46%] -translate-x-1/2 -translate-y-1/2 w-9 h-6 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded-lg shadow-lg flex items-center justify-center font-bold text-[11px] cursor-pointer hover:scale-105" data-points="10">10</div>
+
+                                        <!-- Derecha -->
+                                        <div onclick="toggleLinePoint(this)" class="line-point absolute top-[14.28%] left-[65%] -translate-x-1/2 -translate-y-1/2 w-9 h-6 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded-lg shadow-lg flex items-center justify-center font-bold text-[11px] cursor-pointer hover:scale-105" data-points="10">10</div>
+                                        <div onclick="toggleLinePoint(this)" class="line-point absolute top-[15.71%] left-[88.5%] -translate-x-1/2 -translate-y-1/2 w-9 h-6 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded-lg shadow-lg flex items-center justify-center font-bold text-[11px] cursor-pointer hover:scale-105" data-points="10">10</div>
+                                        <div onclick="toggleLinePoint(this)" class="line-point absolute top-[42.85%] left-[88%] -translate-x-1/2 -translate-y-1/2 w-9 h-6 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded-lg shadow-lg flex items-center justify-center font-bold text-[11px] cursor-pointer hover:scale-105" data-points="5">5</div>
+                                        
+                                        <!-- Inferior Derecha -->
+                                        <div onclick="toggleLinePoint(this)" class="line-point absolute top-[87.85%] left-[66%] -translate-x-1/2 -translate-y-1/2 w-9 h-6 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded-lg shadow-lg flex items-center justify-center font-bold text-[11px] cursor-pointer hover:scale-105" data-points="10">10</div>
+                                        <div onclick="toggleLinePoint(this)" class="line-point absolute top-[91.42%] left-[93%] -translate-x-1/2 -translate-y-1/2 w-9 h-6 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded-lg shadow-lg flex items-center justify-center font-bold text-[11px] cursor-pointer hover:scale-105" data-points="5">5</div>
+                                    </div>
+                                    
+                                    <!-- Hint móvil para scroll horizontal -->
+                                    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-slate-400 bg-slate-900/90 px-4 py-2 rounded-full lg:hidden flex items-center gap-2 pointer-events-none z-[100] font-bold shadow-2xl">
+                                        <i data-lucide="arrow-left-right" class="w-4 h-4"></i> Desliza para ver la pista
                                     </div>
                                 </div>
                             </div>
@@ -523,14 +604,637 @@
             </ul>
         </section>
 
+        <footer class="mt-20 pt-8 border-t border-slate-100 text-center pb-8">
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">Elaborado por Ing. Jose Gabriel Rojas</p>
+            <p class="text-[8px] font-bold text-slate-300 uppercase tracking-widest mt-2">ADAGAMES V4.0 Engine &bull; 2026</p>
+        </footer>
     </main>
 
-    <footer class="text-center py-8 text-slate-400 text-xs font-bold uppercase tracking-widest no-print">
+    <!-- Modal de Resumen (Simulado) -->
+    <!-- Modal de Resumen (Simulado) -->
+    <div id="summary-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+        <div class="bg-white rounded-[2.5rem] w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+            <div class="bg-blue-600 p-8 text-white text-center relative">
+                <div class="absolute top-4 right-4 text-white/50 text-[10px] font-black uppercase tracking-widest">Resumen de Evaluación</div>
+                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/30">
+                    <i data-lucide="clipboard-check" class="w-8 h-8"></i>
+                </div>
+                <h4 id="summary-team" class="text-xl font-black uppercase leading-tight">EQUIPO EJEMPLO</h4>
+                <p id="summary-category" class="text-blue-100 text-[10px] font-bold uppercase tracking-widest mt-1">Robotics Quest</p>
+            </div>
+            <div class="p-8 pb-6">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <span id="summary-label-1" class="text-[8px] font-black text-slate-400 uppercase block mb-1">Puntos Base</span>
+                        <span id="summary-points" class="text-2xl font-black text-slate-800">0</span>
+                    </div>
+                    <div id="summary-block-2" class="bg-yellow-50 p-4 rounded-2xl border border-yellow-100">
+                        <span id="summary-label-2" class="text-[8px] font-black text-yellow-600 uppercase block mb-1">Bonus Logrado</span>
+                        <span id="summary-value-2" class="text-2xl font-black text-yellow-700">NO</span>
+                    </div>
+                </div>
+
+                <!-- Bloque de Datos Extra (Dinámico) -->
+                <div id="summary-extra-block" class="hidden mt-4 grid-cols-2 gap-4">
+                    <div class="bg-orange-50 p-4 rounded-2xl border border-orange-100">
+                        <span id="summary-extra-label-1" class="text-[8px] font-black text-orange-600 uppercase block mb-1">Dato 1</span>
+                        <span id="summary-extra-value-1" class="text-2xl font-black text-orange-700">0</span>
+                    </div>
+                    <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700">
+                        <span id="summary-extra-label-2" class="text-[8px] font-black text-slate-400 uppercase block mb-1">Dato 2</span>
+                        <span id="summary-extra-value-2" class="text-2xl font-black text-white">0</span>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 p-6 rounded-[2rem] text-center border-2 border-blue-100 mt-6 mb-6">
+                    <span id="summary-total-label" class="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-1">Puntaje Total a Registrar</span>
+                    <span id="summary-total" class="text-5xl font-black text-blue-600 leading-none">0</span>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="closeSummary()" class="flex-1 py-4 bg-slate-100 text-slate-500 font-black rounded-2xl uppercase tracking-widest text-[10px] hover:bg-slate-200 transition-colors">Corregir</button>
+                    <button onclick="confirmSave()" class="flex-1 py-4 bg-green-500 text-white font-black rounded-2xl uppercase tracking-widest text-[10px] shadow-lg shadow-green-500/30 hover:bg-green-600 transition-all">Confirmar Envío</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center py-12 text-slate-400 text-xs font-bold uppercase tracking-widest no-print">
+        <div class="flex justify-center mb-8">
+            <button onclick="window.print()" class="pdf-button no-print bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-2xl shadow-xl flex items-center gap-3 font-black uppercase tracking-tighter group transition-all">
+                <div class="bg-white/20 p-2 rounded-xl group-hover:rotate-12 transition-transform">
+                    <i data-lucide="file-text" class="w-6 h-6"></i>
+                </div>
+                <span>Exportar Guía (PDF)</span>
+            </button>
+        </div>
         ADAGAMES Engine v4.0 &copy; 2026 - Documentación Exclusiva para Jueces
     </footer>
 
-    <!-- Inicializar Iconos -->
+    <!-- Lógica de Simulación -->
     <script>
+        // --- SIMULACIÓN QUEST ---
+        let questPoints = 0;
+        let bonusActive = false;
+        let questTimer;
+        let questTimeLeft = 120;
+        let isRunningQuest = false;
+
+        function toggleQuestTimer() {
+            const btn = document.getElementById('quest-timer-btn');
+            if (isRunningQuest) {
+                clearInterval(questTimer);
+                btn.innerHTML = '<i data-lucide="play" class="w-3 h-3 fill-current"></i> Iniciar';
+                btn.classList.replace('bg-yellow-600', 'bg-blue-600');
+            } else {
+                questTimer = setInterval(() => {
+                    if (questTimeLeft > 0) {
+                        questTimeLeft--;
+                        updateQuestTimerDisplay();
+                        if (questTimeLeft <= 30) {
+                            document.getElementById('quest-timer').classList.add('text-red-500', 'animate-pulse');
+                        }
+                    } else {
+                        clearInterval(questTimer);
+                        isRunningQuest = false;
+                        btn.innerHTML = '<i data-lucide="play" class="w-3 h-3 fill-current"></i> Iniciar';
+                        lucide.createIcons();
+                    }
+                }, 1000);
+                btn.innerHTML = '<i data-lucide="pause" class="w-3 h-3 fill-current"></i> Pausar';
+                btn.classList.replace('bg-blue-600', 'bg-yellow-600');
+            }
+            isRunningQuest = !isRunningQuest;
+            lucide.createIcons();
+        }
+
+        function updateQuestTimerDisplay() {
+            const minutes = Math.floor(questTimeLeft / 60);
+            const seconds = questTimeLeft % 60;
+            document.getElementById('quest-timer').innerText = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function resetQuestSimulation() {
+            clearInterval(questTimer);
+            questTimeLeft = 120;
+            isRunningQuest = false;
+            updateQuestTimerDisplay();
+            document.getElementById('quest-timer').classList.remove('text-red-500', 'animate-pulse');
+            document.getElementById('quest-timer-btn').innerHTML = '<i data-lucide="play" class="w-3 h-3 fill-current"></i> Iniciar';
+            document.getElementById('quest-timer-btn').classList.remove('bg-yellow-600');
+            document.getElementById('quest-timer-btn').classList.add('bg-blue-600');
+
+            questPoints = 0;
+            bonusActive = false;
+            document.getElementById('quest-total').innerText = '0';
+            document.querySelectorAll('.quest-circle').forEach(c => {
+                c.classList.replace('bg-blue-600', 'bg-white');
+                c.classList.replace('text-white', 'text-blue-600');
+            });
+            document.getElementById('quest-bonus-content').classList.add('hidden');
+            document.getElementById('quest-bonus-btn').classList.replace('bg-yellow-400', 'bg-white');
+            document.getElementById('quest-bonus-btn').classList.replace('text-white', 'text-yellow-600');
+            lucide.createIcons();
+        }
+
+        function updateQuestTotal() {
+            let total = 0;
+            document.querySelectorAll('.quest-circle').forEach(circle => {
+                if (circle.classList.contains('bg-green-500')) {
+                    total += parseInt(circle.dataset.points);
+                }
+            });
+            if (bonusActive) total += 3;
+            document.getElementById('quest-total').innerText = total;
+        }
+
+        function toggleQuestCircle(el) {
+            if (el.classList.contains('bg-white')) {
+                el.classList.remove('bg-white', 'text-blue-600', 'border-blue-500');
+                el.classList.add('bg-green-500', 'text-white', 'border-green-200', 'shadow-[0_0_12px_#22c55e]');
+            } else {
+                el.classList.add('bg-white', 'text-blue-600', 'border-blue-500');
+                el.classList.remove('bg-green-500', 'text-white', 'border-green-200', 'shadow-[0_0_12px_#22c55e]');
+            }
+            updateQuestTotal();
+        }
+
+        function toggleQuestBonus() {
+            const btn = document.getElementById('quest-bonus-btn');
+            bonusActive = !bonusActive;
+            if (bonusActive) {
+                btn.classList.remove('bg-white', 'text-yellow-600', 'border-yellow-300');
+                btn.classList.add('bg-yellow-400', 'text-white', 'border-yellow-400');
+            } else {
+                btn.classList.add('bg-white', 'text-yellow-600', 'border-yellow-300');
+                btn.classList.remove('bg-yellow-400', 'text-white', 'border-yellow-400');
+            }
+            updateQuestTotal();
+        }
+
+        function setQuestType(el) {
+            document.querySelectorAll('.quest-type-btn').forEach(btn => {
+                btn.classList.add('bg-white', 'text-slate-400', 'border-slate-100');
+                btn.classList.remove('bg-orange-600', 'text-white', 'border-orange-500', 'shadow-orange-600/30', 'bg-green-600', 'border-green-500', 'shadow-green-600/30', 'bg-blue-600', 'border-blue-500', 'shadow-blue-600/30');
+            });
+            el.classList.remove('bg-white', 'text-slate-400', 'border-slate-100');
+            
+            const type = el.dataset.type;
+            if (type === 'practica') {
+                el.classList.add('bg-orange-600', 'text-white', 'border-orange-500', 'shadow-lg', 'shadow-orange-600/30');
+            } else if (type === 'evaluacion') {
+                el.classList.add('bg-green-600', 'text-white', 'border-green-500', 'shadow-lg', 'shadow-green-600/30');
+            } else {
+                el.classList.add('bg-blue-600', 'text-white', 'border-blue-500', 'shadow-lg', 'shadow-blue-600/30');
+            }
+        }
+
+        function setQuestBonusIntent(intent) {
+            const yes = document.getElementById('quest-bonus-yes');
+            const no = document.getElementById('quest-bonus-no');
+            const content = document.getElementById('quest-bonus-content');
+            
+            if (intent) {
+                yes.classList.add('bg-yellow-400', 'text-white', 'border-yellow-400', 'shadow-yellow-400/30');
+                yes.classList.remove('bg-white', 'text-slate-400', 'border-slate-100');
+                no.classList.add('bg-white', 'text-slate-400', 'border-slate-100');
+                no.classList.remove('bg-slate-800', 'text-white', 'border-slate-800', 'shadow-slate-800/30');
+                content.classList.remove('hidden');
+            } else {
+                no.classList.add('bg-slate-800', 'text-white', 'border-slate-800', 'shadow-slate-800/30');
+                no.classList.remove('bg-white', 'text-slate-400', 'border-slate-100');
+                yes.classList.add('bg-white', 'text-slate-400', 'border-slate-100');
+                yes.classList.remove('bg-yellow-400', 'text-white', 'border-yellow-400', 'shadow-yellow-400/30');
+                content.classList.add('hidden');
+            }
+        }
+
+        function resetQuestSimulation() {
+            document.querySelectorAll('.quest-circle').forEach(circle => {
+                circle.classList.add('bg-white', 'text-blue-600', 'border-blue-500');
+                circle.classList.remove('bg-green-500', 'text-white', 'border-green-200', 'shadow-[0_0_12px_#22c55e]');
+            });
+            bonusActive = false;
+            const btn = document.getElementById('quest-bonus-btn');
+            btn.classList.add('bg-white', 'text-yellow-600', 'border-yellow-200');
+            btn.classList.remove('bg-yellow-400', 'text-white', 'border-yellow-400');
+            setQuestBonusIntent(false);
+            updateQuestTotal();
+        }
+
+        // --- SIMULACIÓN LINE FOLLOWER ---
+        let lineTimer;
+        let timeLeft = 120;
+        let isRunning = false;
+        let linePenalties = 0;
+        let lineAttemptCount = 0;
+        let lineAttempts = ['pending', 'pending', 'pending'];
+
+        function updateLineAttemptsUI() {
+            const container = document.getElementById('line-attempts-container');
+            container.innerHTML = '';
+            lineAttempts.forEach((status, i) => {
+                let colorClass = 'bg-[#1c1f2e] border-[#2a2e3f]';
+                if (status === 'valid') colorClass = 'bg-green-500 border-green-400 shadow-[0_0_12px_#22c55e]';
+                else if (status === 'nulled') colorClass = 'bg-red-500 border-red-400 shadow-[0_0_12px_#ef4444]';
+                else if (i === lineAttemptCount) colorClass = 'bg-yellow-500/20 border-yellow-500 shadow-[0_0_8px_#eab308] animate-pulse';
+                
+                container.innerHTML += `<div class="w-4 h-4 rounded-full border-2 ${colorClass}"></div>`;
+            });
+        }
+
+        function addLinePenalty() {
+            if (lineAttemptCount > 2 || lineAttempts[lineAttemptCount] === 'valid') return;
+            linePenalties++;
+            document.getElementById('line-penalty-count').innerText = linePenalties;
+        }
+
+        function handleLineNull() {
+            if (lineAttemptCount > 2 || lineAttempts[lineAttemptCount] === 'valid') return;
+            lineAttempts[lineAttemptCount] = 'nulled';
+            if (lineAttemptCount < 2) lineAttemptCount++;
+            updateLineAttemptsUI();
+            resetLineSimulation(false); // Resetea puntos y tiempo, pero conserva los intentos previos
+        }
+
+        function updateLineTotal() {
+            let total = 0;
+            document.querySelectorAll('.line-point').forEach(point => {
+                if (point.classList.contains('bg-blue-600')) {
+                    total += parseInt(point.dataset.points);
+                }
+            });
+            document.getElementById('line-total').innerText = total;
+        }
+
+        function toggleLinePoint(el) {
+            if (el.classList.contains('bg-[#2a2e3f]')) {
+                el.classList.remove('bg-[#2a2e3f]', 'border-slate-600', 'text-slate-300');
+                el.classList.add('bg-blue-600', 'border-blue-400', 'text-white');
+            } else {
+                el.classList.add('bg-[#2a2e3f]', 'border-slate-600', 'text-slate-300');
+                el.classList.remove('bg-blue-600', 'border-blue-400', 'text-white');
+            }
+            updateLineTotal();
+        }
+
+        function toggleLineTimer() {
+            if (lineAttemptCount > 2 || lineAttempts[lineAttemptCount] === 'valid') return;
+            const btn = document.getElementById('line-timer-btn');
+            if (isRunning) {
+                clearInterval(lineTimer);
+                btn.innerHTML = '<i data-lucide="play" class="w-4 h-4 fill-current"></i> Iniciar';
+                btn.classList.replace('bg-yellow-600', 'bg-green-600');
+                btn.classList.replace('hover:bg-yellow-500', 'hover:bg-green-500');
+            } else {
+                lineTimer = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateTimerDisplay();
+                        if (timeLeft <= 30) {
+                            document.getElementById('line-timer').classList.add('text-red-400', 'animate-pulse');
+                        }
+                    } else {
+                        clearInterval(lineTimer);
+                        isRunning = false;
+                        btn.innerHTML = '<i data-lucide="play" class="w-4 h-4 fill-current"></i> Iniciar';
+                        btn.classList.replace('bg-yellow-600', 'bg-green-600');
+                        btn.classList.replace('hover:bg-yellow-500', 'hover:bg-green-500');
+                        lucide.createIcons();
+                    }
+                }, 1000);
+                btn.innerHTML = '<i data-lucide="pause" class="w-4 h-4 fill-current"></i> Pausar';
+                btn.classList.replace('bg-green-600', 'bg-yellow-600');
+                btn.classList.replace('hover:bg-green-500', 'hover:bg-yellow-500');
+            }
+            isRunning = !isRunning;
+            lucide.createIcons();
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('line-timer').innerText = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function resetLineSimulation(fullReset = true) {
+            clearInterval(lineTimer);
+            timeLeft = 120;
+            isRunning = false;
+            updateTimerDisplay();
+            document.getElementById('line-timer').classList.remove('text-red-400', 'animate-pulse');
+            
+            const btn = document.getElementById('line-timer-btn');
+            btn.innerHTML = '<i data-lucide="play" class="w-4 h-4 fill-current"></i> Iniciar';
+            btn.classList.remove('bg-yellow-600');
+            btn.classList.add('bg-green-600');
+            
+            document.querySelectorAll('.line-point').forEach(point => {
+                point.classList.add('bg-[#2a2e3f]', 'border-slate-600', 'text-slate-300');
+                point.classList.remove('bg-blue-600', 'border-blue-400', 'text-white');
+            });
+            updateLineTotal();
+            
+            linePenalties = 0;
+            document.getElementById('line-penalty-count').innerText = '0';
+            
+            if (fullReset) {
+                lineAttemptCount = 0;
+                lineAttempts = ['pending', 'pending', 'pending'];
+                updateLineAttemptsUI();
+            }
+            
+            lucide.createIcons();
+        }
+
+        function showSummary(type) {
+            const modal = document.getElementById('summary-modal');
+            
+            // Obtener equipo seleccionado
+            const questSelect = document.getElementById('quest-team-select');
+            const lineSelect = document.getElementById('line-team-select');
+            const team = type === 'quest' ? (questSelect ? questSelect.value : 'EQUIPO MUESTRA') : (lineSelect ? lineSelect.value : 'EQUIPO MUESTRA');
+            
+            const category = type === 'quest' ? 'Robotics Quest' : 'Seguidor de Línea';
+            const basePoints = type === 'quest' ? document.getElementById('quest-total').innerText : document.getElementById('line-total').innerText;
+            
+            document.getElementById('summary-team').innerText = team;
+            document.getElementById('summary-category').innerText = category;
+            
+            if (type === 'quest') {
+                // Detener timer si está corriendo
+                if (isRunningQuest) {
+                    toggleQuestTimer();
+                }
+
+                document.getElementById('summary-label-1').innerText = 'Puntos Base';
+                const baseVal = bonusActive ? parseInt(basePoints) - 3 : basePoints;
+                document.getElementById('summary-points').innerText = baseVal;
+                
+                document.getElementById('summary-label-2').innerText = 'Bonus Logrado';
+                document.getElementById('summary-label-2').className = 'text-[8px] font-black text-yellow-600 uppercase block mb-1';
+                document.getElementById('summary-value-2').innerText = bonusActive ? 'SÍ (+3)' : 'NO';
+                document.getElementById('summary-value-2').className = 'text-2xl font-black text-yellow-700';
+                
+                document.getElementById('summary-block-2').className = 'bg-yellow-50 p-4 rounded-2xl border border-yellow-100';
+                document.getElementById('summary-block-2').classList.remove('hidden');
+                
+                // Mostrar tiempo para Quest
+                document.getElementById('summary-extra-block').classList.remove('hidden');
+                document.getElementById('summary-extra-block').classList.add('grid');
+                document.getElementById('summary-extra-label-1').innerText = 'Puntos Extra';
+                document.getElementById('summary-extra-value-1').innerText = bonusActive ? '3' : '0';
+                
+                const timeTaken = 120 - questTimeLeft;
+                const m = Math.floor(timeTaken / 60).toString().padStart(2, '0');
+                const s = (timeTaken % 60).toString().padStart(2, '0');
+                document.getElementById('summary-extra-label-2').innerText = 'Tiempo Registrado';
+                document.getElementById('summary-extra-value-2').innerText = `${m}:${s}`;
+                
+                document.getElementById('summary-total-label').innerText = 'Puntaje Final a Enviar';
+            } else {
+                // Si es un intento válido, se detiene el reloj y se marca
+                if (lineAttemptCount <= 2 && lineAttempts[lineAttemptCount] !== 'valid') {
+                    lineAttempts[lineAttemptCount] = 'valid';
+                    updateLineAttemptsUI();
+                    clearInterval(lineTimer);
+                    isRunning = false;
+                    document.getElementById('line-timer-btn').innerHTML = '<i data-lucide="play" class="w-4 h-4 fill-current"></i> Iniciar';
+                    document.getElementById('line-timer-btn').classList.replace('bg-yellow-600', 'bg-green-600');
+                }
+
+                document.getElementById('summary-label-1').innerText = 'Puntos Totales';
+                document.getElementById('summary-points').innerText = basePoints;
+                
+                const timeElapsed = 120 - timeLeft;
+                const m = Math.floor(timeElapsed / 60).toString().padStart(2, '0');
+                const s = (timeElapsed % 60).toString().padStart(2, '0');
+                
+                document.getElementById('summary-label-2').innerText = 'Tiempo Neto';
+                document.getElementById('summary-label-2').className = 'text-[8px] font-black text-blue-600 uppercase block mb-1';
+                document.getElementById('summary-value-2').innerText = `${m}:${s}`;
+                document.getElementById('summary-value-2').className = 'text-2xl font-black text-blue-700';
+                
+                document.getElementById('summary-block-2').className = 'bg-blue-50 p-4 rounded-2xl border border-blue-100';
+                document.getElementById('summary-block-2').classList.remove('hidden');
+                
+                const finalSeconds = timeElapsed + (linePenalties * 5);
+                const fm = Math.floor(finalSeconds / 60).toString().padStart(2, '0');
+                const fs = (finalSeconds % 60).toString().padStart(2, '0');
+                
+                document.getElementById('summary-extra-block').classList.remove('hidden');
+                document.getElementById('summary-extra-block').classList.add('grid');
+                document.getElementById('summary-extra-label-1').innerText = 'Penalizaciones';
+                document.getElementById('summary-extra-value-1').innerText = `+${linePenalties * 5}s`;
+                document.getElementById('summary-extra-label-2').innerText = 'Tiempo Oficial';
+                document.getElementById('summary-extra-value-2').innerText = `${fm}:${fs}`;
+                
+                document.getElementById('summary-total-label').innerText = 'Total de Puntos';
+            }
+            
+            document.getElementById('summary-total').innerText = basePoints;
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeSummary() {
+            document.getElementById('summary-modal').classList.add('hidden');
+        }
+
+        function confirmSave() {
+            alert('¡Simulación completada! En el sistema real, los datos se enviarían a la base de datos ahora.');
+            closeSummary();
+        }
+
+        // Lógica de Canvas para la Pista Line Follower
+        document.addEventListener("DOMContentLoaded", () => {
+            const canvas = document.getElementById('lienzoPista');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            function dibujarPista() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // 1. Dibujar el marco exterior
+                ctx.lineWidth = 6;
+                ctx.strokeStyle = '#1a1a1a';
+                ctx.strokeRect(10, 10, 980, 680);
+                
+                // Línea interna delgada (efecto de borde doble)
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = '#666';
+                ctx.strokeRect(15, 15, 970, 670);
+
+                // 2. Dibujar cuadrícula roja (líneas punteadas)
+                ctx.beginPath();
+                ctx.setLineDash([8, 8]);
+                ctx.strokeStyle = 'rgba(200, 50, 50, 0.6)';
+                ctx.lineWidth = 3;
+                
+                // Línea vertical roja
+                ctx.moveTo(380, 10);
+                ctx.lineTo(380, 690);
+                
+                // Línea horizontal roja
+                ctx.moveTo(10, 460);
+                ctx.lineTo(990, 460);
+                ctx.stroke();
+
+                // 3. Configuración principal de la pista (línea negra gruesa)
+                ctx.lineWidth = 12;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.strokeStyle = '#111111';
+
+                // --- SEGMENTOS PUNTEADOS ---
+                ctx.setLineDash([25, 20]);
+                
+                // Punteado izquierdo vertical (medio)
+                ctx.beginPath();
+                ctx.moveTo(70, 240);
+                ctx.lineTo(70, 460);
+                ctx.stroke();
+
+                // Punteado inferior izquierdo (horizontal)
+                ctx.beginPath();
+                ctx.moveTo(180, 550);
+                ctx.lineTo(380, 550);
+                ctx.stroke();
+
+                // Punteado superior derecho (horizontal)
+                ctx.beginPath();
+                ctx.moveTo(600, 140);
+                ctx.lineTo(780, 140);
+                ctx.stroke();
+
+                // --- SEGMENTOS SÓLIDOS ---
+                ctx.setLineDash([]); // Restablecer a línea sólida
+
+                // Grupo 1: Bucle superior izquierdo al centro
+                ctx.beginPath();
+                ctx.moveTo(70, 240);
+                ctx.lineTo(70, 140); // Sube vertical
+                ctx.lineTo(200, 140); // Recta horizontal
+                // Curva irregular tipo bombilla/burbuja superior
+                ctx.bezierCurveTo(240, 140, 250, 40, 310, 50); 
+                ctx.bezierCurveTo(370, 60, 360, 160, 270, 180);
+                // Baja hacia la intersección central
+                ctx.bezierCurveTo(270, 210, 270, 280, 270, 340);
+                ctx.lineTo(380, 340); // Llega al centro
+                ctx.stroke();
+
+                // Grupo 2: Inferior izquierdo
+                ctx.beginPath();
+                ctx.moveTo(70, 460);
+                ctx.lineTo(70, 550); // Baja vertical
+                ctx.lineTo(180, 550); // Va a la derecha hasta el punteado
+                ctx.stroke();
+
+                // Grupo 3: Bifurcación superior central (Up-Fork) y esquina derecha
+                ctx.beginPath();
+                ctx.moveTo(380, 340);
+                // Curva hacia arriba y la derecha
+                ctx.bezierCurveTo(450, 340, 460, 250, 460, 180);
+                ctx.quadraticCurveTo(460, 140, 500, 140);
+                ctx.lineTo(600, 140); // Conecta con el punteado superior derecho
+                ctx.stroke();
+
+                // Grupo 4: Circuito derecho y curva inferior ondulada
+                ctx.beginPath();
+                ctx.moveTo(780, 140); // Después del punteado
+                ctx.lineTo(850, 140); // Esquina superior derecha
+                ctx.lineTo(850, 480); // Baja verticalmente por la derecha
+                // Bulbo inferior derecho
+                ctx.bezierCurveTo(850, 530, 930, 540, 900, 620);
+                ctx.bezierCurveTo(870, 670, 780, 600, 780, 550);
+                // Baches ondulados inferiores
+                ctx.lineTo(680, 550);
+                ctx.bezierCurveTo(660, 550, 650, 600, 610, 600); // Bache abajo
+                ctx.bezierCurveTo(570, 600, 560, 550, 540, 550); // Sube
+                ctx.lineTo(380, 550); // Recta hasta la cruz central inferior
+                ctx.stroke();
+
+                // Grupo 5: Bifurcación inferior central (Down-Fork)
+                ctx.beginPath();
+                ctx.moveTo(380, 340);
+                // Curva que baja y se une con la línea horizontal inferior
+                ctx.bezierCurveTo(450, 340, 460, 450, 460, 550);
+                ctx.stroke();
+
+                dibujarLogos();
+            }
+
+            function dibujarLogos() {
+                // Estrella dorada (Inicio)
+                ctx.save();
+                ctx.translate(140, 50);
+                ctx.beginPath();
+                for (let i = 0; i < 5; i++) {
+                    ctx.lineTo(Math.cos((18 + i * 72) / 180 * Math.PI) * 12, -Math.sin((18 + i * 72) / 180 * Math.PI) * 12);
+                    ctx.lineTo(Math.cos((54 + i * 72) / 180 * Math.PI) * 5, -Math.sin((54 + i * 72) / 180 * Math.PI) * 5);
+                }
+                ctx.closePath();
+                ctx.fillStyle = '#c59b27';
+                ctx.fill();
+                ctx.restore();
+
+                // Logo adakademy
+                ctx.save();
+                ctx.fillStyle = '#00adef';
+                ctx.font = 'bold 18px "Trebuchet MS", sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('adakademy', 25, 670);
+                
+                ctx.beginPath();
+                ctx.strokeStyle = '#00adef';
+                ctx.lineWidth = 2;
+                ctx.arc(40, 645, 6, Math.PI*1.1, Math.PI*1.9);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(40, 645, 11, Math.PI*1.1, Math.PI*1.9);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(40, 645, 16, Math.PI*1.1, Math.PI*1.9);
+                ctx.stroke();
+                ctx.fillStyle = '#00adef';
+                ctx.beginPath();
+                ctx.arc(40, 645, 2.5, 0, Math.PI*2);
+                ctx.fill();
+                ctx.restore();
+
+                // Logo UGMA
+                ctx.save();
+                ctx.fillStyle = '#111';
+                ctx.font = 'bold 16px Georgia, serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('UGMA', 950, 75);
+
+                ctx.translate(950, 45);
+                ctx.strokeStyle = '#8c7322';
+                ctx.lineWidth = 1.5;
+                for(let i=0; i<16; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(0,0);
+                    ctx.lineTo(Math.cos(i * Math.PI/8) * 15, Math.sin(i * Math.PI/8) * 15);
+                    ctx.stroke();
+                }
+                ctx.beginPath();
+                ctx.fillStyle = '#fff';
+                ctx.arc(0, 0, 7, 0, Math.PI*2);
+                ctx.fill();
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.fillStyle = '#111';
+                ctx.arc(0, 0, 3, 0, Math.PI*2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            dibujarPista();
+        });
+
+        // Inicializar Iconos
         lucide.createIcons();
     </script>
 </body>

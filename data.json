@@ -12,33 +12,21 @@
             ],
             "studentsCount": 1,
             "status": "inspected",
-            "score": 85,
-            "history": [
-                {
-                    "ronda": 1,
-                    "pista": 1,
-                    "points": 85,
-                    "finalTimeMs": 15000,
-                    "practice": false,
-                    "convertedFromPractice": false,
-                    "date": "10:08:27 p. m.",
-                    "judgeId": "admin",
-                    "judgeName": "Administrador Central"
-                }
-            ],
+            "score": 0,
+            "history": [],
             "category": "line_follower",
             "qualifiedRounds": [
                 1
             ],
             "practiceTickets": 5,
             "evaluationTickets": {
-                "1": 0,
+                "1": 1,
                 "2": 1,
                 "3": 1,
                 "4": 1,
                 "5": 1
             },
-            "lastTime": 15000
+            "lastTime": 0
         },
         {
             "id": "177689253971614",
@@ -305,62 +293,6 @@
             "lastTime": 0
         },
         {
-            "id": "17768923484205",
-            "teamName": "(Pendiente) Don Bosco",
-            "schoolName": "U.E. Colegio Don Bosco",
-            "school": "(Pendiente) Don Bosco — U.E. Colegio Don Bosco",
-            "captainName": "(Pendiente)",
-            "coachName": "",
-            "members": [
-                "(Pendiente)"
-            ],
-            "studentsCount": 1,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "17768923484316",
-            "teamName": "(Pendiente) La Paz",
-            "schoolName": "U.E. Nuestra Señora de La Paz",
-            "school": "(Pendiente) La Paz — U.E. Nuestra Señora de La Paz",
-            "captainName": "(Pendiente)",
-            "coachName": "",
-            "members": [
-                "(Pendiente)"
-            ],
-            "studentsCount": 1,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
             "id": "17768923483993",
             "teamName": "Doragons",
             "schoolName": "U.E. Raúl Leoni",
@@ -374,49 +306,16 @@
             ],
             "studentsCount": 3,
             "status": "inspected",
-            "score": 16,
-            "history": [
-                {
-                    "ronda": 1,
-                    "pista": 2,
-                    "points": 8,
-                    "finalTimeMs": 0,
-                    "practice": false,
-                    "convertedFromPractice": true,
-                    "date": "10:10:12 p. m.",
-                    "judgeId": "admin",
-                    "judgeName": "Administrador Central"
-                },
-                {
-                    "ronda": 1,
-                    "pista": 1,
-                    "points": 3,
-                    "finalTimeMs": 0,
-                    "practice": true,
-                    "date": "10:11:07 p. m.",
-                    "judgeId": "admin",
-                    "judgeName": "Administrador Central"
-                },
-                {
-                    "ronda": 1,
-                    "pista": 1,
-                    "points": 8,
-                    "finalTimeMs": 0,
-                    "practice": false,
-                    "convertedFromPractice": false,
-                    "date": "10:11:26 p. m.",
-                    "judgeId": "admin",
-                    "judgeName": "Administrador Central"
-                }
-            ],
+            "score": 0,
+            "history": [],
             "category": "quest",
             "qualifiedRounds": [
                 1
             ],
-            "practiceTickets": 3,
+            "practiceTickets": 5,
             "evaluationTickets": {
-                "1": 0,
-                "2": 0,
+                "1": 1,
+                "2": 1,
                 "3": 1,
                 "4": 1,
                 "5": 1
@@ -1685,8 +1584,8 @@
         }
     },
     "timer": {
-        "timer": 1800,
-        "timerActive": false,
-        "updatedAt": 1776955904.790719
+        "timer": 1500,
+        "timerActive": true,
+        "updatedAt": 1777047829.1826847
     }
 }

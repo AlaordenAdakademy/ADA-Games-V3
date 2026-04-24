@@ -45,16 +45,30 @@ function App() {
   
   // Estados para Competencia (v3.2)
   const [competitionMode, setCompetitionMode] = useState(null); // null | 'individual' | 'dual'
-  const [competitionDuration, setCompetitionDuration] = useState(() => {
-    const saved = localStorage.getItem('ada_competition_duration');
+  
+  const [questDuration, setQuestDuration] = useState(() => {
+    const saved = localStorage.getItem('ada_quest_duration');
+    return saved ? parseInt(saved) : 25; // 25 min por defecto
+  });
+  const [questTimer, setQuestTimer] = useState(() => {
+    const saved = localStorage.getItem('ada_quest_timer');
+    return saved ? parseInt(saved) : 1500;
+  });
+  const [questTimerActive, setQuestTimerActive] = useState(() => {
+    const saved = localStorage.getItem('ada_quest_timer_active');
+    return saved === 'true';
+  });
+
+  const [lineDuration, setLineDuration] = useState(() => {
+    const saved = localStorage.getItem('ada_line_duration');
     return saved ? parseInt(saved) : 30; // 30 min por defecto
   });
-  const [timer, setTimer] = useState(() => {
-    const saved = localStorage.getItem('ada_timer');
+  const [lineTimer, setLineTimer] = useState(() => {
+    const saved = localStorage.getItem('ada_line_timer');
     return saved ? parseInt(saved) : 1800;
   });
-  const [timerActive, setTimerActive] = useState(() => {
-    const saved = localStorage.getItem('ada_timer_active');
+  const [lineTimerActive, setLineTimerActive] = useState(() => {
+    const saved = localStorage.getItem('ada_line_timer_active');
     return saved === 'true';
   });
   
@@ -74,15 +88,21 @@ function App() {
         setTeams(data.teams || []);
         setTracks(data.tracks || {});
         
-        // Sincronizar temporizador desde el servidor
-        if (data.timer) {
-            // Sincronizar si el estado de pausa/play cambió o si la diferencia es mayor a 10s (desfase crítico)
-            const serverTimer = data.timer.timer;
-            const serverActive = data.timer.timerActive;
-            
-            if (serverActive !== timerActive || Math.abs(serverTimer - timer) > 10) {
-                setTimer(serverTimer);
-                setTimerActive(serverActive);
+        // Sincronizar temporizadores desde el servidor
+        if (data.timers) {
+            // Quest
+            const qServer = data.timers.quest.timer;
+            const qActive = data.timers.quest.timerActive;
+            if (qActive !== questTimerActive || Math.abs(qServer - questTimer) > 10) {
+                setQuestTimer(qServer);
+                setQuestTimerActive(qActive);
+            }
+            // Line
+            const lServer = data.timers.line_follower.timer;
+            const lActive = data.timers.line_follower.timerActive;
+            if (lActive !== lineTimerActive || Math.abs(lServer - lineTimer) > 10) {
+                setLineTimer(lServer);
+                setLineTimerActive(lActive);
             }
         }
         
@@ -129,12 +149,10 @@ function App() {
       if (e.key === 'ada_user') {
         setCurrentUser(e.newValue ? JSON.parse(e.newValue) : null);
       }
-      if (e.key === 'ada_timer') {
-        setTimer(parseInt(e.newValue));
-      }
-      if (e.key === 'ada_timer_active') {
-        setTimerActive(e.newValue === 'true');
-      }
+      if (e.key === 'ada_quest_timer') setQuestTimer(parseInt(e.newValue));
+      if (e.key === 'ada_quest_timer_active') setQuestTimerActive(e.newValue === 'true');
+      if (e.key === 'ada_line_timer') setLineTimer(parseInt(e.newValue));
+      if (e.key === 'ada_line_timer_active') setLineTimerActive(e.newValue === 'true');
     };
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);
@@ -162,65 +180,106 @@ function App() {
     showToast(`Cambiado a ${newCat === 'quest' ? 'Robotics Quest' : 'Seguidor de Línea'}`);
   };
 
-  // Lógica del Cronómetro
+  // Lógica del Cronómetro Quest
   useEffect(() => {
-    let interval = null;
-    if (timerActive && timer > 0) {
-      interval = setInterval(() => {
-        setTimer(prev => {
+    let intervalQuest = null;
+    if (questTimerActive && questTimer > 0) {
+      intervalQuest = setInterval(() => {
+        setQuestTimer(prev => {
             const next = prev - 1;
-            
-            // Sincronizar localmente cada 5s
-            if (next % 5 === 0) localStorage.setItem('ada_timer', next.toString()); 
-            
-            // Si el tiempo se agota, informar al servidor y detener
+            if (next % 5 === 0) localStorage.setItem('ada_quest_timer', next.toString()); 
             if (next <= 0) {
                 fetch(`${API_BASE}/timer`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ timer: 0, timerActive: false })
+                    body: JSON.stringify({ quest: { timer: 0, timerActive: false } })
                 }).catch(() => {});
-                setTimerActive(false);
+                setQuestTimerActive(false);
                 return 0;
             }
-            
             return next;
         });
       }, 1000);
-    } else {
-      clearInterval(interval);
     }
-    return () => clearInterval(interval);
-  }, [timerActive, timer]);
+    return () => clearInterval(intervalQuest);
+  }, [questTimerActive, questTimer]);
 
-  const toggleTimer = async () => {
-    const nextState = !timerActive;
-    setTimerActive(nextState);
-    localStorage.setItem('ada_timer_active', nextState.toString());
-    
-    // Sincronizar con el servidor
+  // Lógica del Cronómetro Line Follower
+  useEffect(() => {
+    let intervalLine = null;
+    if (lineTimerActive && lineTimer > 0) {
+      intervalLine = setInterval(() => {
+        setLineTimer(prev => {
+            const next = prev - 1;
+            if (next % 5 === 0) localStorage.setItem('ada_line_timer', next.toString()); 
+            if (next <= 0) {
+                fetch(`${API_BASE}/timer`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ line_follower: { timer: 0, timerActive: false } })
+                }).catch(() => {});
+                setLineTimerActive(false);
+                return 0;
+            }
+            return next;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(intervalLine);
+  }, [lineTimerActive, lineTimer]);
+
+  const toggleQuestTimer = async () => {
+    const nextState = !questTimerActive;
+    setQuestTimerActive(nextState);
+    localStorage.setItem('ada_quest_timer_active', nextState.toString());
     try {
         await fetch(`${API_BASE}/timer`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ timer, timerActive: nextState })
+            body: JSON.stringify({ quest: { timer: questTimer, timerActive: nextState } })
         });
     } catch(e) {}
   };
 
-  const resetTimer = async () => {
-    const durationSeconds = competitionDuration * 60;
-    setTimer(durationSeconds);
-    setTimerActive(false);
-    localStorage.setItem('ada_timer', durationSeconds.toString());
-    localStorage.setItem('ada_timer_active', 'false');
-    
-    // Sincronizar con el servidor
+  const resetQuestTimer = async () => {
+    const durationSeconds = questDuration * 60;
+    setQuestTimer(durationSeconds);
+    setQuestTimerActive(false);
+    localStorage.setItem('ada_quest_timer', durationSeconds.toString());
+    localStorage.setItem('ada_quest_timer_active', 'false');
     try {
         await fetch(`${API_BASE}/timer`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ timer: durationSeconds, timerActive: false })
+            body: JSON.stringify({ quest: { timer: durationSeconds, timerActive: false } })
+        });
+    } catch(e) {}
+  };
+
+  const toggleLineTimer = async () => {
+    const nextState = !lineTimerActive;
+    setLineTimerActive(nextState);
+    localStorage.setItem('ada_line_timer_active', nextState.toString());
+    try {
+        await fetch(`${API_BASE}/timer`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ line_follower: { timer: lineTimer, timerActive: nextState } })
+        });
+    } catch(e) {}
+  };
+
+  const resetLineTimer = async () => {
+    const durationSeconds = lineDuration * 60;
+    setLineTimer(durationSeconds);
+    setLineTimerActive(false);
+    localStorage.setItem('ada_line_timer', durationSeconds.toString());
+    localStorage.setItem('ada_line_timer_active', 'false');
+    try {
+        await fetch(`${API_BASE}/timer`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ line_follower: { timer: durationSeconds, timerActive: false } })
         });
     } catch(e) {}
   };
@@ -504,7 +563,9 @@ function App() {
             localStorage.setItem('ada_teams', JSON.stringify(updated));
             postTeams(updated);
             showToast('🗑️ Equipo eliminado permanentemente');
-        }
+            setConfirmDialog(null);
+        },
+        onCancel: () => setConfirmDialog(null)
     });
   };
 
@@ -531,8 +592,17 @@ function App() {
         onUpdateEvaluation={(idx, newData) => updateEvaluation(selectedTeamHistory, idx, newData)}
         currentUser={currentUser} 
       />
-      {competitionMode === 'individual' && <CompetitionOverlay teams={teams} timer={timer} timerActive={timerActive} toggleTimer={toggleTimer} resetTimer={resetTimer} formatTime={formatTime} onExit={() => setCompetitionMode(null)} category={currentUser.category} />}
-      {competitionMode === 'dual' && <CompetitionDualOverlay teams={teams} timer={timer} timerActive={timerActive} toggleTimer={toggleTimer} resetTimer={resetTimer} formatTime={formatTime} onExit={() => setCompetitionMode(null)} />}
+      {competitionMode === 'individual' && <CompetitionOverlay 
+        key={`individual-${currentUser.category}`}
+        teams={teams} 
+        initialCategory={currentUser.category === 'quest' ? 'quest' : 'line_follower'} 
+        questTimer={questTimer} questTimerActive={questTimerActive} toggleQuestTimer={toggleQuestTimer} resetQuestTimer={resetQuestTimer} questDuration={questDuration}
+        lineTimer={lineTimer} lineTimerActive={lineTimerActive} toggleLineTimer={toggleLineTimer} resetLineTimer={resetLineTimer} lineDuration={lineDuration}
+        formatTime={formatTime} onExit={() => setCompetitionMode(null)} />}
+      {competitionMode === 'dual' && <CompetitionDualOverlay teams={teams} 
+        questTimer={questTimer} questTimerActive={questTimerActive} toggleQuestTimer={toggleQuestTimer} resetQuestTimer={resetQuestTimer}
+        lineTimer={lineTimer} lineTimerActive={lineTimerActive} toggleLineTimer={toggleLineTimer} resetLineTimer={resetLineTimer}
+        formatTime={formatTime} onExit={() => setCompetitionMode(null)} />}
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-4 right-4 z-50 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl font-bold text-sm flex items-center gap-3 animate-fadeIn">
@@ -700,7 +770,7 @@ function App() {
         )}
         {activeTab === 'evaluacion' && (
             currentUser.category === 'quest' ? 
-            <EvaluacionTab teams={teams} tracks={tracks} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} timer={timer} onUpdateTeamBase={handleUpdateTeamBase} onDeleteTeam={handleDeleteTeam} /> : 
+            <EvaluacionTab teams={teams} tracks={tracks} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} timer={questTimer} competitionDuration={questDuration} onUpdateTeamBase={handleUpdateTeamBase} onDeleteTeam={handleDeleteTeam} /> : 
             <EvaluadorDePistas 
               initialMode="evaluate" 
               tracks={tracks} 
@@ -720,14 +790,9 @@ function App() {
         {activeTab === 'resultados' && <ResultadosTab teams={teams} currentUser={currentUser} onShowHistory={setSelectedTeamHistory} />}
         {activeTab === 'sistema' && currentUser.role === 'admin' && (
             <SistemasTab 
-                competitionDuration={competitionDuration}
-                setCompetitionDuration={setCompetitionDuration}
-                timerActive={timerActive}
-                setTimer={setTimer}
-                setShowReset={setShowReset}
-                setShowResetScores={setShowResetScores}
-                teams={teams}
-                currentUser={currentUser}
+                questDuration={questDuration} setQuestDuration={setQuestDuration} questTimerActive={questTimerActive} setQuestTimer={setQuestTimer} toggleQuestTimer={toggleQuestTimer} resetQuestTimer={resetQuestTimer}
+                lineDuration={lineDuration} setLineDuration={setLineDuration} lineTimerActive={lineTimerActive} setLineTimer={setLineTimer} toggleLineTimer={toggleLineTimer} resetLineTimer={resetLineTimer}
+                setShowReset={setShowReset} setShowResetScores={setShowResetScores} teams={teams} currentUser={currentUser} formatTime={formatTime}
             />
         )}
         {activeTab === 'fases' && currentUser.role === 'admin' && (
@@ -1021,7 +1086,7 @@ function HistorialModal({ teams, selectedId, onClose, onDeleteEvaluation, onUpda
     );
 }
 
-function SistemasTab({ competitionDuration, setCompetitionDuration, timerActive, setTimer, setShowReset, setShowResetScores, teams, currentUser }) {
+function SistemasTab({ questDuration, setQuestDuration, questTimerActive, setQuestTimer, toggleQuestTimer, resetQuestTimer, lineDuration, setLineDuration, lineTimerActive, setLineTimer, toggleLineTimer, resetLineTimer, setShowReset, setShowResetScores, teams, currentUser, formatTime }) {
     const totalTeams = teams.length;
     const inspectedTeams = teams.filter(t => t.status === 'inspected').length;
     
@@ -1034,12 +1099,11 @@ function SistemasTab({ competitionDuration, setCompetitionDuration, timerActive,
                     </h2>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                        {/* Configuración de Tiempo */}
-                        <div className="space-y-4 md:space-y-6 bg-slate-50 p-5 md:p-6 rounded-3xl border border-slate-100">
+                        {/* Configuración de Tiempo Quest */}
+                        <div className="space-y-4 md:space-y-6 bg-blue-50/50 p-5 md:p-6 rounded-3xl border border-blue-100">
                             <div>
-                                <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-1">Cronómetro Global</p>
-                                <h4 className="text-base md:text-lg font-black text-slate-800 uppercase italic leading-tight">Duración de Competencia</h4>
-                                <p className="text-[10px] md:text-xs text-slate-400 font-bold mt-1 uppercase tracking-tight">Tiempo para el ranking en TV.</p>
+                                <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-1">Robotics Quest</p>
+                                <h4 className="text-base md:text-lg font-black text-blue-900 uppercase italic leading-tight">Duración de Competencia</h4>
                             </div>
                             
                             <div className="flex items-center gap-4 md:gap-6">
@@ -1048,31 +1112,81 @@ function SistemasTab({ competitionDuration, setCompetitionDuration, timerActive,
                                         type="range" 
                                         min="1" 
                                         max="120" 
-                                        value={competitionDuration} 
+                                        value={questDuration} 
                                         onChange={(e) => {
                                             const val = parseInt(e.target.value);
-                                            setCompetitionDuration(val);
-                                            localStorage.setItem('ada_competition_duration', val);
-                                            if (!timerActive) {
-                                                setTimer(val * 60);
-                                                localStorage.setItem('ada_timer', val * 60);
+                                            setQuestDuration(val);
+                                            localStorage.setItem('ada_quest_duration', val);
+                                            if (!questTimerActive) {
+                                                const newTime = val * 60;
+                                                setQuestTimer(newTime);
+                                                localStorage.setItem('ada_quest_timer', newTime);
+                                                // Sync to server
+                                                fetch(`${API_BASE}/timer`, {
+                                                    method: "POST",
+                                                    headers: { "Content-Type": "application/json" },
+                                                    body: JSON.stringify({ quest: { timer: newTime, timerActive: false } })
+                                                }).catch(e => console.error("Sync quest duration error:", e));
                                             }
                                         }}
-                                        className="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                                        className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                                     />
-                                    <div className="flex justify-between mt-2 text-[9px] font-bold text-slate-300">
+                                    <div className="flex justify-between mt-2 text-[9px] font-bold text-blue-300">
                                         <span>1 MIN</span><span>120 MIN</span>
                                     </div>
                                 </div>
                                 <div className="bg-white border-2 border-blue-500 px-3 md:px-4 py-1.5 md:py-2 rounded-2xl shadow-lg">
-                                    <span className="text-xl md:text-2xl font-black text-blue-600 font-mono">{competitionDuration}</span>
+                                    <span className="text-xl md:text-2xl font-black text-blue-600 font-mono">{questDuration}</span>
                                     <span className="text-[9px] md:text-[10px] font-black text-blue-400 ml-1 uppercase">min</span>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Dashboard Rápido */}
-                        <div className="grid grid-cols-2 gap-3 md:gap-4">
+                        {/* Configuración de Tiempo Line Follower */}
+                        <div className="space-y-4 md:space-y-6 bg-purple-50/50 p-5 md:p-6 rounded-3xl border border-purple-100">
+                            <div>
+                                <p className="text-[10px] font-black text-purple-500 uppercase tracking-widest mb-1">Sigue Líneas</p>
+                                <h4 className="text-base md:text-lg font-black text-purple-900 uppercase italic leading-tight">Duración de Competencia</h4>
+                            </div>
+                            
+                            <div className="flex items-center gap-4 md:gap-6">
+                                <div className="flex-1">
+                                    <input 
+                                        type="range" 
+                                        min="1" 
+                                        max="120" 
+                                        value={lineDuration} 
+                                        onChange={(e) => {
+                                            const val = parseInt(e.target.value);
+                                            setLineDuration(val);
+                                            localStorage.setItem('ada_line_duration', val);
+                                            if (!lineTimerActive) {
+                                                const newTime = val * 60;
+                                                setLineTimer(newTime);
+                                                localStorage.setItem('ada_line_timer', newTime);
+                                                // Sync to server
+                                                fetch(`${API_BASE}/timer`, {
+                                                    method: "POST",
+                                                    headers: { "Content-Type": "application/json" },
+                                                    body: JSON.stringify({ line_follower: { timer: newTime, timerActive: false } })
+                                                }).catch(e => console.error("Sync line duration error:", e));
+                                            }
+                                        }}
+                                        className="w-full h-2 bg-purple-200 rounded-lg appearance-none cursor-pointer accent-purple-600"
+                                    />
+                                    <div className="flex justify-between mt-2 text-[9px] font-bold text-purple-300">
+                                        <span>1 MIN</span><span>120 MIN</span>
+                                    </div>
+                                </div>
+                                <div className="bg-white border-2 border-purple-500 px-3 md:px-4 py-1.5 md:py-2 rounded-2xl shadow-lg">
+                                    <span className="text-xl md:text-2xl font-black text-purple-600 font-mono">{lineDuration}</span>
+                                    <span className="text-[9px] md:text-[10px] font-black text-purple-400 ml-1 uppercase">min</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-6 md:mt-8 grid grid-cols-2 gap-3 md:gap-4">
                             <div className="bg-blue-600 p-5 md:p-6 rounded-3xl shadow-xl shadow-blue-500/20 text-white flex flex-col justify-center">
                                 <Icon name="users" className="mb-2 opacity-50 w-5 h-5 md:w-6 md:h-6" />
                                 <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest opacity-80">Registrados</p>
@@ -1121,10 +1235,9 @@ function SistemasTab({ competitionDuration, setCompetitionDuration, timerActive,
                 <div className="text-center">
                     <p className="text-[9px] md:text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] md:tracking-[0.3em]">Adagames V4.0 Engine &bull; Admin Mode</p>
                 </div>
-            </div>
-        </>
-    );
-}
+            </>
+        );
+    }
 
 function NavButton({ active, onClick, icon, label }) {
   return (
@@ -1302,13 +1415,14 @@ function ConfigTab({ tracks, updateTrackData }) {
     </div>
   );
 }
-function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, postTeams, showToast, timer, onUpdateTeamBase, onDeleteTeam }) {
+function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, postTeams, showToast, timer, competitionDuration, onUpdateTeamBase, onDeleteTeam }) {
+  const [selRonda, setSelRonda] = useState(1);
+  
   if (currentUser.category === 'line_follower') {
     return <LineFollowerEvaluacion teams={teams} addScore={addScore} currentUser={currentUser} disqualifyTeam={disqualifyTeam} postTeams={postTeams} showToast={showToast} selRonda={selRonda} />;
   }
 
   const [selTeam, setSelTeam] = useState('');
-  const [selRonda, setSelRonda] = useState(1);
   const [selPista, setSelPista] = useState(1);
   const [attemptType, setAttemptType] = useState('practice'); // 'practice' | 'evaluation'
   const [progressIdx, setProgressIdx] = useState(-1);
@@ -1369,7 +1483,10 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
     
     let finalTimeMs = 0;
     if (selPista === 5) {
-        finalTimeMs = (1800 - timer) * 1000;
+        // Tiempo transcurrido = duración_competencia - timer_actual
+        let timeTakenSeconds = (competitionDuration * 60) - timer;
+        if (timeTakenSeconds < 0) timeTakenSeconds = 0;
+        finalTimeMs = timeTakenSeconds * 1000;
     }
     
     addScore(selTeam, selRonda, selPista, total, finalTimeMs, attemptType);
@@ -1648,6 +1765,39 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
                               {attemptType === 'practice' ? '🎟️ Práctica Libre' : attemptType === 'evaluation' ? '🎯 Evaluación Oficial' : '⭐ Práctica + Evaluación'}
                           </p>
                       </div>
+
+                      <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col gap-3 shadow-lg transform transition-all hover:scale-[1.02]">
+                          <div className="flex justify-between items-center px-2">
+                              <div>
+                                  <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest">Puntos Base</p>
+                                  <p className="text-2xl font-black text-white">{progressIdx + 1} <span className="text-xs text-slate-500">PTS</span></p>
+                              </div>
+                              <div className="text-right">
+                                  <p className="text-[10px] text-yellow-500 uppercase font-black tracking-widest">Bonus</p>
+                                  <p className="text-2xl font-black text-yellow-400">{bonus ? '+3' : '+0'} <span className="text-xs text-yellow-600/50">PTS</span></p>
+                              </div>
+                          </div>
+                          <div className="bg-blue-600 p-3 rounded-xl border border-blue-500 text-center shadow-[0_0_20px_rgba(37,99,235,0.3)]">
+                              <p className="text-[10px] text-blue-200 uppercase font-black tracking-widest mb-1">Puntaje Final a Registrar</p>
+                              <p className="text-4xl font-black text-white">{((progressIdx + 1) + (bonus ? 3 : 0))}</p>
+                          </div>
+                      </div>
+
+                      {selPista === 5 && (
+                          <div className="bg-blue-50 border border-blue-200 p-4 rounded-xl shadow-sm text-center">
+                              <p className="text-[10px] text-blue-600 uppercase font-black tracking-widest mb-1">Tiempo de Ronda Capturado</p>
+                              <p className="text-3xl font-mono font-black text-blue-600">
+                                  {(() => {
+                                      let ts = (competitionDuration * 60) - timer;
+                                      if (ts < 0) ts = 0;
+                                      const m = Math.floor(ts / 60).toString().padStart(2, '0');
+                                      const s = (ts % 60).toString().padStart(2, '0');
+                                      return `${m}:${s}`;
+                                  })()}
+                              </p>
+                              <p className="text-[9px] text-blue-500 font-bold mt-1">Sincronizado con el Reloj Global de TV.</p>
+                          </div>
+                      )}
 
                       <div className="pt-2 flex gap-3">
                           <button onClick={() => setShowConfirmSave(false)} className="flex-1 py-4 bg-white border border-slate-200 hover:bg-slate-100 text-slate-600 font-bold rounded-xl transition-all">
@@ -2417,7 +2567,7 @@ function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam, 
   );
 }
 
-function CompetitionDualOverlay({ teams, timer, timerActive, toggleTimer, resetTimer, formatTime, onExit }) {
+function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQuestTimer, resetQuestTimer, lineTimer, lineTimerActive, toggleLineTimer, resetLineTimer, formatTime, onExit }) {
     const [allTeams, setAllTeams] = useState(teams);
 
     useEffect(() => {
@@ -2444,6 +2594,14 @@ function CompetitionDualOverlay({ teams, timer, timerActive, toggleTimer, resetT
     const questTeams = getSorted('quest');
     const followerTeams = getSorted('line_follower');
 
+    const formatResultTime = (ms) => {
+        if (!ms || ms === 999999) return "--:--.--";
+        const minutes = Math.floor(ms / 60000);
+        const seconds = Math.floor((ms % 60000) / 1000);
+        const msecs = Math.floor((ms % 1000) / 10);
+        return `${minutes}:${seconds.toString().padStart(2, '0')}.${msecs.toString().padStart(2, '0')}`;
+    };
+
     const TeamRow = ({ team, index }) => {
         const score = team.score || 0;
         let posColorText = "text-blue-400", posBg = "bg-slate-900/40 border-slate-800/50", posBadge = "";
@@ -2462,9 +2620,9 @@ function CompetitionDualOverlay({ teams, timer, timerActive, toggleTimer, resetT
                     <p className="text-sm font-black truncate text-white leading-tight uppercase italic">{team.teamName}</p>
                     <p className="text-[9px] text-slate-400 truncate font-bold uppercase tracking-tight">{team.schoolName || 'Institución Independiente'}</p>
                 </div>
-                <div className="text-right flex-shrink-0">
+                <div className="text-right flex-shrink-0 flex flex-col justify-center">
                     <p className={`text-2xl font-black ${posColorText} leading-none`}>{score}</p>
-                    <p className="text-[8px] text-slate-500 font-bold uppercase">Puntos</p>
+                    <p className="text-[10px] text-slate-500 font-bold uppercase mt-1 leading-none">{formatResultTime(team.lastTime)}</p>
                 </div>
             </div>
         );
@@ -2487,17 +2645,9 @@ function CompetitionDualOverlay({ teams, timer, timerActive, toggleTimer, resetT
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
-                    <div className={`px-6 py-3 rounded-2xl border-2 text-center transition-all ${timer < 300 ? 'bg-red-500/20 border-red-500 animate-pulse' : 'bg-slate-900 border-blue-500/30'}`}>
-                        <p className="text-[9px] text-slate-400 uppercase tracking-widest">Tiempo</p>
-                        <p className="text-3xl font-black font-mono">{formatTime(timer)}</p>
-                    </div>
-                    <div className="flex gap-2">
-                        <button onClick={toggleTimer} className={`px-4 py-2 rounded-xl font-black text-[10px] uppercase ${timerActive ? 'bg-orange-500 hover:bg-orange-600' : 'bg-green-600 hover:bg-green-700'}`}>
-                            {timerActive ? 'Pausar' : 'Iniciar'}
-                        </button>
-                        <button onClick={resetTimer} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl font-black text-[10px] uppercase">Reset</button>
-                        <button onClick={onExit} className="px-4 py-2 bg-slate-100/10 hover:bg-white hover:text-slate-900 rounded-xl font-black text-[10px] uppercase transition-all">Salir TV</button>
-                    </div>
+                    <button onClick={onExit} className="px-6 py-3 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-xl font-black text-[10px] uppercase transition-all flex items-center gap-2 border border-red-500/20">
+                        <Icon name="log-out" className="w-4 h-4" /> Salir TV
+                    </button>
                 </div>
             </div>
 
@@ -2505,11 +2655,25 @@ function CompetitionDualOverlay({ teams, timer, timerActive, toggleTimer, resetT
             <div className="flex flex-1 overflow-hidden">
                 {/* Quest Panel */}
                 <div className="flex-1 flex flex-col overflow-hidden">
-                    <div className="bg-blue-600/20 border-b border-blue-500/40 px-6 py-3 flex-shrink-0">
-                        <h2 className="text-xl font-black uppercase tracking-widest text-blue-300 flex items-center gap-2">
-                            <Icon name="trophy" className="w-5 h-5" /> Robotics Quest
+                    <div className="bg-blue-900/40 border-b-4 border-blue-600 p-6 flex flex-col items-center justify-center flex-shrink-0 relative overflow-hidden">
+                        <div className="absolute top-0 inset-x-0 h-1 bg-blue-500"></div>
+                        <h2 className="text-2xl md:text-3xl font-black uppercase tracking-widest text-blue-400 flex items-center gap-3 mb-4 drop-shadow-md">
+                            <Icon name="trophy" className="w-8 h-8" /> Robotics Quest
                         </h2>
-                        <p className="text-[10px] text-blue-400 uppercase tracking-widest">{questTeams.length} equipos</p>
+                        
+                        <div className={`px-12 py-3 rounded-[2rem] border-4 transition-all duration-500 shadow-2xl flex flex-col items-center justify-center bg-slate-950 ${questTimer < 300 ? 'border-red-500 bg-red-950/30 animate-pulse' : 'border-blue-500/30'}`}>
+                            <p className={`text-6xl md:text-7xl font-black font-mono tracking-widest drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] ${questTimer < 300 ? 'text-red-500' : 'text-white'}`}>
+                                {formatTime(questTimer)}
+                            </p>
+                        </div>
+                        
+                        <div className="flex gap-3 mt-5">
+                            <button onClick={toggleQuestTimer} className={`px-6 py-2 rounded-xl font-black text-xs uppercase shadow-xl transition-all ${questTimerActive ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-orange-500/30' : 'bg-green-500 hover:bg-green-600 text-white shadow-green-500/30'}`}>
+                                {questTimerActive ? 'Pausar' : 'Iniciar'}
+                            </button>
+                            <button onClick={resetQuestTimer} className="px-6 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl font-black text-xs uppercase text-slate-300 transition-all">Reset</button>
+                        </div>
+                        <p className="text-[10px] text-blue-400/50 uppercase tracking-widest mt-4 font-bold">{questTeams.length} equipos en ranking</p>
                     </div>
                     <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
                         {questTeams.length === 0 ? (
@@ -2550,11 +2714,25 @@ function CompetitionDualOverlay({ teams, timer, timerActive, toggleTimer, resetT
 
                 {/* Line Follower Panel */}
                 <div className="flex-1 flex flex-col overflow-hidden">
-                    <div className="bg-green-600/20 border-b border-green-500/40 px-6 py-3 flex-shrink-0">
-                        <h2 className="text-xl font-black uppercase tracking-widest text-green-300 flex items-center gap-2">
-                            <Icon name="zap" className="w-5 h-5" /> Sigue Línea
+                    <div className="bg-emerald-900/40 border-b-4 border-emerald-600 p-6 flex flex-col items-center justify-center flex-shrink-0 relative overflow-hidden">
+                        <div className="absolute top-0 inset-x-0 h-1 bg-emerald-500"></div>
+                        <h2 className="text-2xl md:text-3xl font-black uppercase tracking-widest text-emerald-400 flex items-center gap-3 mb-4 drop-shadow-md">
+                            <Icon name="zap" className="w-8 h-8" /> Sigue Líneas
                         </h2>
-                        <p className="text-[10px] text-green-400 uppercase tracking-widest">{followerTeams.length} equipos</p>
+                        
+                        <div className={`px-12 py-3 rounded-[2rem] border-4 transition-all duration-500 shadow-2xl flex flex-col items-center justify-center bg-slate-950 ${lineTimer < 300 ? 'border-red-500 bg-red-950/30 animate-pulse' : 'border-emerald-500/30'}`}>
+                            <p className={`text-6xl md:text-7xl font-black font-mono tracking-widest drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] ${lineTimer < 300 ? 'text-red-500' : 'text-white'}`}>
+                                {formatTime(lineTimer)}
+                            </p>
+                        </div>
+                        
+                        <div className="flex gap-3 mt-5">
+                            <button onClick={toggleLineTimer} className={`px-6 py-2 rounded-xl font-black text-xs uppercase shadow-xl transition-all ${lineTimerActive ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-orange-500/30' : 'bg-green-500 hover:bg-green-600 text-white shadow-green-500/30'}`}>
+                                {lineTimerActive ? 'Pausar' : 'Iniciar'}
+                            </button>
+                            <button onClick={resetLineTimer} className="px-6 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl font-black text-xs uppercase text-slate-300 transition-all">Reset</button>
+                        </div>
+                        <p className="text-[10px] text-emerald-400/50 uppercase tracking-widest mt-4 font-bold">{followerTeams.length} equipos en ranking</p>
                     </div>
                     <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
                         {followerTeams.length === 0 ? (
@@ -2567,11 +2745,16 @@ function CompetitionDualOverlay({ teams, timer, timerActive, toggleTimer, resetT
     );
 }
 
-function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer, formatTime, onExit, category }) {
-    const [viewCategory, setViewCategory] = useState(category);
+function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTimer, resetQuestTimer, questDuration, lineTimer, lineTimerActive, toggleLineTimer, resetLineTimer, lineDuration, formatTime, onExit, initialCategory }) {
+    const [viewCategory, setViewCategory] = useState(initialCategory);
     const [vTeams, setVTeams] = useState(teams);
     const [selRondaView, setSelRondaView] = useState('global');
     const [isAutoScrolling, setIsAutoScrolling] = useState(false);
+
+    // Sincronizar viewCategory si el prop initialCategory cambia (por el "slicer" de la sidebar)
+    useEffect(() => {
+        setViewCategory(initialCategory);
+    }, [initialCategory]);
     const listRef = useRef(null);
     const scrollDirection = useRef(1);
     const exactScroll = useRef(0);
@@ -2639,9 +2822,11 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
         
         if (viewCategory === 'quest') {
             const pista5 = rh.find(h => h.pista === 5);
-            totalTime = pista5 ? (pista5.finalTimeMs || 0) : 1800000;
+            // Si no ha terminado la ronda, el tiempo de fallback es la duración total de la ronda
+            totalTime = pista5 ? (pista5.finalTimeMs || 0) : (questDuration * 60 * 1000);
         } else {
             totalTime = rh.reduce((sum, h) => sum + (h.finalTimeMs || h.finalTime || 0), 0);
+            if (totalTime === 0) totalTime = (lineDuration * 60 * 1000);
         }
 
         return { score: totalScore, time: totalTime };
@@ -2704,15 +2889,36 @@ function CompetitionOverlay({ teams, timer, timerActive, toggleTimer, resetTimer
                 </div>
 
                 <div className="flex flex-col items-end gap-4">
-                    <div className={`p-8 rounded-[2.5rem] border-4 transition-all duration-500 shadow-2xl ${timer < 300 ? 'bg-red-500/20 border-red-500 animate-pulse' : 'bg-slate-900 border-blue-500/30'}`}>
-                        <p className="text-[10px] font-black text-center uppercase tracking-widest mb-1 text-slate-400">Tiempo de Competencia</p>
-                        <p className="text-7xl font-black font-mono tracking-widest text-white">{formatTime(timer)}</p>
+                    {/* Timer dinámico según categoría seleccionada */}
+                    <div className={`p-8 rounded-[2.5rem] border-4 transition-all duration-500 shadow-2xl ${
+                        (viewCategory === 'quest' ? questTimer : lineTimer) < 300 
+                        ? 'bg-red-500/20 border-red-500 animate-pulse' 
+                        : 'bg-slate-900 border-blue-500/30'
+                    }`}>
+                        <p className="text-[10px] font-black text-center uppercase tracking-widest mb-1 text-slate-400">
+                            Tiempo: {viewCategory === 'quest' ? 'Robotics Quest' : 'Sigue Líneas'}
+                        </p>
+                        <p className="text-7xl font-black font-mono tracking-widest text-white">
+                            {formatTime(viewCategory === 'quest' ? questTimer : lineTimer)}
+                        </p>
                     </div>
                     <div className="flex gap-2">
-                        <button onClick={toggleTimer} className={`px-6 py-3 rounded-xl font-black text-[10px] uppercase transition-all ${timerActive ? 'bg-orange-500 hover:bg-orange-600' : 'bg-green-600 hover:bg-green-700'}`}>
-                            {timerActive ? 'Pausar' : 'Iniciar'}
+                        <button 
+                            onClick={viewCategory === 'quest' ? toggleQuestTimer : toggleLineTimer} 
+                            className={`px-6 py-3 rounded-xl font-black text-[10px] uppercase transition-all ${
+                                (viewCategory === 'quest' ? questTimerActive : lineTimerActive) 
+                                ? 'bg-orange-500 hover:bg-orange-600' 
+                                : 'bg-green-600 hover:bg-green-700'
+                            }`}
+                        >
+                            {(viewCategory === 'quest' ? questTimerActive : lineTimerActive) ? 'Pausar' : 'Iniciar'}
                         </button>
-                        <button onClick={resetTimer} className="px-6 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-black text-[10px] uppercase">Reiniciar</button>
+                        <button 
+                            onClick={viewCategory === 'quest' ? resetQuestTimer : resetLineTimer} 
+                            className="px-6 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-black text-[10px] uppercase"
+                        >
+                            Reiniciar
+                        </button>
                         <button onClick={() => setIsAutoScrolling(!isAutoScrolling)} className={`px-6 py-3 rounded-xl font-black text-[10px] uppercase transition-all flex items-center gap-2 ${isAutoScrolling ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>
                             <Icon name="chevron-down" className={`w-3 h-3 ${isAutoScrolling ? 'animate-bounce' : ''}`} /> {isAutoScrolling ? 'Detener Scroll' : 'Auto Scroll'}
                         </button>
@@ -3715,4 +3921,10 @@ function FasesTab({ teams, onUpdateQualified, onUpdateManyQualified, showToast, 
       </div>
     </div>
   );
+}
+
+const rootElement = document.getElementById('root');
+if (rootElement) {
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(<App />);
 }
