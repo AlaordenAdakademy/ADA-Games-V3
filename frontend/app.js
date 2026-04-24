@@ -2629,6 +2629,11 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
         // Filtrar por calificados si no es global
         const filtered = selRondaView === 'global' ? list : list.filter(t => (t.qualifiedRounds || [1]).includes(parseInt(selRondaView)));
 
+        if (suspenseMode) {
+            // Orden aleatorio estable para esta sesión de carga
+            return [...filtered].sort((a, b) => a.id.localeCompare(b.id));
+        }
+
         return [...filtered].sort((a, b) => {
             const sA = getRoundStats(a, selRondaView, cat);
             const sB = getRoundStats(b, selRondaView, cat);
@@ -2897,13 +2902,19 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
 
     const sorted = useMemo(() => {
         const list = Array.isArray(vTeams) ? vTeams : [];
+        
+        if (suspenseMode) {
+            // Orden aleatorio estable basado en ID para evitar saltos bruscos
+            return [...list].sort((a, b) => a.id.localeCompare(b.id));
+        }
+
         return [...list].sort((a, b) => {
             const statsA = getRoundStats(a, selRondaView);
             const statsB = getRoundStats(b, selRondaView);
             if (statsB.score !== statsA.score) return statsB.score - statsA.score;
             return statsA.time - statsB.time;
         });
-    }, [vTeams, selRondaView, viewCategory]);
+    }, [vTeams, selRondaView, viewCategory, suspenseMode]);
 
     const formatResultTime = (ms) => {
         if (!ms || ms === 999999) return "--:--.--";
