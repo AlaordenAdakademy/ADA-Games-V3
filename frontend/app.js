@@ -77,6 +77,7 @@ function App() {
   const [showResetScores, setShowResetScores] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState(null);
   const [toastMessage, setToastMessage] = useState('');
+  const [rankingSuspenseMode, setRankingSuspenseMode] = useState(false);
 
   // 1. Cargar datos iniciales desde el servidor y sincronización periódica
   useEffect(() => {
@@ -598,11 +599,15 @@ function App() {
         initialCategory={currentUser.category === 'quest' ? 'quest' : 'line_follower'} 
         questTimer={questTimer} questTimerActive={questTimerActive} toggleQuestTimer={toggleQuestTimer} resetQuestTimer={resetQuestTimer} questDuration={questDuration}
         lineTimer={lineTimer} lineTimerActive={lineTimerActive} toggleLineTimer={toggleLineTimer} resetLineTimer={resetLineTimer} lineDuration={lineDuration}
-        formatTime={formatTime} onExit={() => setCompetitionMode(null)} />}
+        formatTime={formatTime} 
+        suspenseMode={rankingSuspenseMode}
+        onExit={() => setCompetitionMode(null)} />}
       {competitionMode === 'dual' && <CompetitionDualOverlay teams={teams} 
         questTimer={questTimer} questTimerActive={questTimerActive} toggleQuestTimer={toggleQuestTimer} resetQuestTimer={resetQuestTimer} questDuration={questDuration}
         lineTimer={lineTimer} lineTimerActive={lineTimerActive} toggleLineTimer={toggleLineTimer} resetLineTimer={resetLineTimer} lineDuration={lineDuration}
-        formatTime={formatTime} onExit={() => setCompetitionMode(null)} />}
+        formatTime={formatTime} 
+        suspenseMode={rankingSuspenseMode}
+        onExit={() => setCompetitionMode(null)} />}
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-4 right-4 z-50 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl font-bold text-sm flex items-center gap-3 animate-fadeIn">
@@ -694,6 +699,21 @@ function App() {
         <div className="hidden md:block p-4 border-t border-blue-900 space-y-3 mt-auto">
             {currentUser.role === 'admin' && (
                 <div className="flex flex-col gap-2">
+                    <div className="bg-blue-900/40 p-3 rounded-2xl border border-blue-800 mb-2">
+                        <label className="flex items-center justify-between cursor-pointer group">
+                            <span className="text-[9px] font-black uppercase text-blue-400 tracking-widest">Modo Suspenso (Mascara)</span>
+                            <div className="relative inline-flex items-center">
+                                <input 
+                                    type="checkbox" 
+                                    className="sr-only peer" 
+                                    checked={rankingSuspenseMode}
+                                    onChange={(e) => setRankingSuspenseMode(e.target.checked)}
+                                />
+                                <div className="w-8 h-4 bg-blue-900 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-orange-500"></div>
+                            </div>
+                        </label>
+                        <p className="text-[7px] font-bold text-blue-500/50 mt-1 uppercase tracking-tighter">Oculta posición y puntaje en TV</p>
+                    </div>
                     <button 
                         onClick={() => setCompetitionMode('individual')}
                         className="w-full flex items-center gap-3 p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all font-black text-[10px] uppercase tracking-widest shadow-lg shadow-blue-500/20"
@@ -2567,7 +2587,7 @@ function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam, 
   );
 }
 
-function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQuestTimer, resetQuestTimer, questDuration, lineTimer, lineTimerActive, toggleLineTimer, resetLineTimer, lineDuration, formatTime, onExit }) {
+function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQuestTimer, resetQuestTimer, questDuration, lineTimer, lineTimerActive, toggleLineTimer, resetLineTimer, lineDuration, formatTime, onExit, suspenseMode }) {
     const [allTeams, setAllTeams] = useState(teams);
     const [selRondaView, setSelRondaView] = useState('global');
 
@@ -2638,8 +2658,8 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
         return (
             <div className={`flex items-center gap-3 p-3 rounded-2xl border transition-all ${posBg} ${team.status === 'disqualified' ? 'opacity-30' : ''} hover:scale-[1.02] duration-300`}>
                 <div className="w-10 text-center flex-shrink-0">
-                    <span className={`text-xl font-black italic ${posColorText}`}>#{index + 1}</span>
-                    <div className="text-[10px]">{posBadge}</div>
+                    <span className={`text-xl font-black italic ${posColorText}`}>{suspenseMode ? '??' : `#${index + 1}`}</span>
+                    <div className="text-[10px]">{suspenseMode ? '🔒' : posBadge}</div>
                 </div>
                 <SchoolLogo schoolName={team.schoolName} size="w-10 h-10" />
                 <div className="flex-1 min-w-0">
@@ -2647,8 +2667,8 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
                     <p className="text-[9px] text-slate-400 truncate font-bold uppercase tracking-tight">{team.schoolName || 'Institución Independiente'}</p>
                 </div>
                 <div className="text-right flex-shrink-0 flex flex-col justify-center">
-                    <p className={`text-2xl font-black ${posColorText} leading-none`}>{stats.score}</p>
-                    <p className="text-[10px] text-slate-500 font-bold uppercase mt-1 leading-none">{formatResultTime(stats.time)}</p>
+                    <p className={`text-2xl font-black ${posColorText} leading-none`}>{suspenseMode ? '???' : stats.score}</p>
+                    <p className="text-[10px] text-slate-500 font-bold uppercase mt-1 leading-none">{suspenseMode ? '--:--.--' : formatResultTime(stats.time)}</p>
                 </div>
             </div>
         );
@@ -2788,7 +2808,7 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
     );
 }
 
-function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTimer, resetQuestTimer, questDuration, lineTimer, lineTimerActive, toggleLineTimer, resetLineTimer, lineDuration, formatTime, onExit, initialCategory }) {
+function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTimer, resetQuestTimer, questDuration, lineTimer, lineTimerActive, toggleLineTimer, resetLineTimer, lineDuration, formatTime, onExit, initialCategory, suspenseMode }) {
     const [viewCategory, setViewCategory] = useState(initialCategory);
     const [vTeams, setVTeams] = useState(teams);
     const [selRondaView, setSelRondaView] = useState('global');
@@ -2997,8 +3017,8 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
                     return (
                     <div key={t.id} className={`flex items-center gap-6 p-6 rounded-[2.5rem] border-2 transition-all ${posBg} ${t.status === 'disqualified' ? 'opacity-30' : ''}`}>
                         <div className="w-24 text-center flex flex-col items-center">
-                            <span className={`text-5xl font-black italic ${posColorText}`}>#{i + 1}</span>
-                            <span className={`text-[10px] font-bold mt-2 uppercase tracking-widest ${posColorText}`}>{posBadge}</span>
+                            <span className={`text-5xl font-black italic ${posColorText}`}>{suspenseMode ? '??' : `#${i + 1}`}</span>
+                            <span className={`text-[10px] font-bold mt-2 uppercase tracking-widest ${posColorText}`}>{suspenseMode ? 'BLOQUEADO' : posBadge}</span>
                         </div>
                         <SchoolLogo schoolName={t.schoolName} size="w-20 h-20 md:w-24 md:h-24 shadow-xl" />
                         <div className="flex-1 min-w-0">
@@ -3011,9 +3031,9 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
                             </p>
                         </div>
                         <div className="bg-slate-950/50 px-10 py-6 rounded-3xl border border-slate-800/50 flex flex-col items-end justify-center min-w-[250px] shadow-inner">
-                             <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Puntaje Total</p>
-                             <p className={`text-6xl font-black tracking-tighter ${posColorText}`}>{stats.score}</p>
-                             <p className="text-lg font-bold text-slate-400 mt-2 tracking-widest leading-none drop-shadow-md">{formatResultTime(stats.time)}</p>
+                             <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">{suspenseMode ? 'Puntaje Oculto' : 'Puntaje Total'}</p>
+                             <p className={`text-6xl font-black tracking-tighter ${posColorText}`}>{suspenseMode ? '???' : stats.score}</p>
+                             <p className="text-lg font-bold text-slate-400 mt-2 tracking-widest leading-none drop-shadow-md">{suspenseMode ? '--:--.--' : formatResultTime(stats.time)}</p>
                         </div>
                     </div>
                 )})}
