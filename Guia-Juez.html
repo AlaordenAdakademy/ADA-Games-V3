@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual del Juez - ADAGAMES v4.0</title>
+    <!-- Fuentes -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos para impresión */
+        @media print {
+            body { background-color: white; }
+            .no-print { display: none; }
+            .print-break-inside-avoid { break-inside: avoid; }
+        }
+        html { scroll-behavior: smooth; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-scrollbar-dark::-webkit-scrollbar-thumb { background: #475569; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-blue-200 selection:text-blue-900">
+
+    <!-- Navegación -->
+    <nav class="bg-blue-900 text-white p-4 sticky top-0 z-50 shadow-lg no-print">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-500 p-2 rounded-xl shadow-inner">
+                    <i data-lucide="gavel" class="w-6 h-6 text-white"></i>
+                </div>
+                <h1 class="text-xl font-black italic tracking-tighter">ADAGAMES<span class="text-blue-300 text-sm ml-2 font-bold not-italic">JUEZ</span></h1>
+            </div>
+            <div class="flex flex-wrap justify-center gap-2 text-xs font-bold uppercase tracking-wider">
+                <a href="#indicaciones" class="hover:bg-blue-800 px-3 py-2 rounded-lg transition-colors text-yellow-300">Indicaciones</a>
+                <a href="#flujo" class="hover:bg-blue-800 px-3 py-2 rounded-lg transition-colors">Flujo</a>
+                <a href="#acceso" class="hover:bg-blue-800 px-3 py-2 rounded-lg transition-colors">Acceso</a>
+                <a href="#evaluacion" class="bg-blue-600 hover:bg-blue-500 px-3 py-2 rounded-lg transition-colors shadow-md">Evaluación</a>
+                <a href="#ranking" class="hover:bg-blue-800 px-3 py-2 rounded-lg transition-colors">Ranking</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 md:px-12 py-16 space-y-20">
+        
+        <!-- Header -->
+        <header class="text-center space-y-6 mb-16">
+            <div class="inline-block bg-blue-100 text-blue-700 px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest mb-2 border border-blue-200 shadow-sm">
+                Guía Oficial de Evaluación
+            </div>
+            <h2 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+                Manual del Juez
+            </h2>
+            <p class="text-slate-500 md:text-lg max-w-2xl mx-auto font-medium">
+                Bienvenido al cuerpo de jueces de la competencia. Tu objetividad y atención al detalle son fundamentales para el éxito del evento.
+            </p>
+        </header>
+
+        <!-- Indicaciones -->
+        <section id="indicaciones" class="bg-amber-50 rounded-3xl p-6 md:p-10 shadow-md border border-amber-200 print-break-inside-avoid relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-6 opacity-10 pointer-events-none">
+                <i data-lucide="alert-circle" class="w-32 h-32 text-amber-500"></i>
+            </div>
+            <h3 class="text-2xl font-black text-amber-900 mb-6 flex items-center gap-3 relative z-10">
+                <i data-lucide="info" class="w-6 h-6 text-amber-600"></i> Indicaciones Importantes
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
+                <div class="bg-white p-5 rounded-2xl border border-amber-100 shadow-sm">
+                    <strong class="text-amber-700 text-lg block mb-2 flex items-center gap-2"><i data-lucide="map-pin" class="w-5 h-5"></i> Asignación de Pista</strong>
+                    <p class="text-slate-700 text-sm">Cada juez será <strong>asignado a una pista específica</strong>. Asegúrate de seleccionar siempre tu pista en el sistema para evitar modificar datos de otros grupos de evaluación.</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-amber-100 shadow-sm">
+                    <strong class="text-amber-700 text-lg block mb-2 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5"></i> Trabajo en Dupla</strong>
+                    <p class="text-slate-700 text-sm">Nunca evaluarás solo. Habrá <strong>2 jueces asignados por pista</strong>. Esto permite validar el cumplimiento de las reglas, seguir al robot de cerca y llegar a decisiones consensuadas de manera justa.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Flujo -->
+        <section id="flujo" class="bg-white rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 print-break-inside-avoid">
+            <h3 class="text-2xl font-black text-blue-900 mb-6 flex items-center gap-3">
+                <i data-lucide="git-merge" class="w-6 h-6 text-blue-500"></i> Tu Flujo de Trabajo
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-black mb-3">1</div>
+                    <h4 class="font-bold text-slate-800">Acceso</h4><p class="text-xs text-slate-500">Ingreso al sistema con tu usuario.</p>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 border-b-4 border-b-blue-500">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-black mb-3">2</div>
+                    <h4 class="font-bold text-slate-800">Mesa del Juez</h4><p class="text-xs text-slate-500">Selección de ronda, pista y equipo.</p>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 border-b-4 border-b-green-400">
+                    <div class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-black mb-3">3</div>
+                    <h4 class="font-bold text-slate-800">Evaluación</h4><p class="text-xs text-slate-500">Uso del tablero para calificar el robot.</p>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-black mb-3">4</div>
+                    <h4 class="font-bold text-slate-800">Resultados</h4><p class="text-xs text-slate-500">Consulta del ranking oficial.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASO 1 -->
+        <section id="acceso" class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 print-break-inside-avoid relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-1.5 h-full bg-slate-300"></div>
+            <h3 class="text-xl font-black text-slate-800 mb-4 flex items-center gap-2">
+                <i data-lucide="log-in" class="w-5 h-5 text-slate-400"></i> Paso 1: Acceso al Sistema
+            </h3>
+            <ul class="space-y-2 text-slate-600 ml-6 list-decimal marker:text-slate-400 marker:font-bold text-sm">
+                <li>Abre la aplicación en la tablet o computadora de tu mesa.</li>
+                <li><strong>Categoría:</strong> Elige cuidadosamente: <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-[10px] font-bold">Robotics Quest</span> o <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] font-bold">Seguidor de Línea</span>.</li>
+                <li><strong>Usuario/Rol:</strong> Selecciona tu nombre de la lista de jueces.</li>
+                <li><strong>Contraseña:</strong> Ingresa tu clave asignada y haz clic en "Acceder".</li>
+            </ul>
+        </section>
+
+        <!-- PASO 2: EVALUACIÓN (EL NÚCLEO) -->
+        <section id="evaluacion" class="bg-blue-900 text-white rounded-[2.5rem] shadow-2xl overflow-hidden print-break-inside-avoid">
+            <div class="p-6 md:p-10 border-b border-blue-800">
+                <h2 class="text-3xl font-black italic tracking-tight mb-2">⚖️ Paso 2: ¿Cómo Evaluar?</h2>
+                <p class="text-blue-200">Ve a la pestaña <strong>Evaluación</strong>. La interfaz cambiará totalmente dependiendo de la categoría que seleccionaste al iniciar sesión.</p>
+            </div>
+
+            <!-- ================= CATEGORÍA QUEST ================= -->
+            <div class="bg-white text-slate-800">
+                <div class="p-6 md:p-10 border-b border-slate-100">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="bg-blue-100 p-3 rounded-2xl"><i data-lucide="map" class="w-6 h-6 text-blue-600"></i></div>
+                        <h3 class="text-2xl font-black text-blue-900 uppercase">Categoría A: Robotics Quest</h3>
+                    </div>
+                    <p class="text-slate-600">Se evalúa la superación de misiones en un <strong>tablero de cuadrícula (A-J / 1-6)</strong>. Los jueces tocan cada círculo superado y el sistema acumula puntos secuencialmente.</p>
+                </div>
+
+                <div class="flex flex-col gap-12 p-8 md:p-12">
+                    <!-- Textos Quest -->
+                    <div class="space-y-6">
+                        <div class="border-l-2 border-blue-500 pl-4">
+                            <h4 class="font-bold text-lg mb-2 text-blue-900">1. Configurar la Mesa</h4>
+                            <p class="text-sm text-slate-600 mb-2">Selecciona al <strong>equipo</strong>, la <strong>ronda</strong> y tu <strong>pista</strong> en el panel izquierdo. Define el intento haciendo clic en un botón:</p>
+                            <ul class="list-disc ml-4 space-y-1 text-xs text-slate-600">
+                                <li><strong class="text-orange-600">Naranja (Práctica Libre):</strong> Solo para pruebas. No suma al ranking. Gasta un ticket de práctica.</li>
+                                <li><strong class="text-slate-600">Blanco (Evaluación):</strong> Intento oficial. Suma puntos al ranking global.</li>
+                                <li><strong class="text-blue-600">Práctica + Evaluación:</strong> Convierte una práctica exitosa en intento oficial.</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="border-l-2 border-blue-500 pl-4">
+                            <h4 class="font-bold text-lg mb-2 text-blue-900">2. El Bonus</h4>
+                            <p class="text-sm text-slate-600">Antes de arrancar, lee las reglas del bonus (recuadro amarillo). Pregúntale al equipo si van a intentarlo y marca <strong>SÍ / NO</strong>. Si lo logran en el recorrido, haz clic en el botón amarillo inferior <span class="bg-yellow-400 text-white font-bold px-2 py-0.5 rounded text-[10px] shadow-sm">LO LOGRARON (+3 PTS)</span>.</p>
+                        </div>
+
+                        <div class="border-l-2 border-blue-500 pl-4">
+                            <h4 class="font-bold text-lg mb-2 text-blue-900">3. Evaluar en la Cuadrícula</h4>
+                            <p class="text-sm text-slate-600">En el panel derecho verás una cuadrícula con círculos verdes numerados. <strong>Toca o haz clic secuencialmente en los círculos</strong> a medida que el robot avanza. No te preocupes por el tiempo, no hay cronómetro estricto en esta categoría.</p>
+                        </div>
+
+                        <div class="border-l-2 border-blue-500 pl-4">
+                            <h4 class="font-bold text-lg mb-2 text-blue-900">4. Guardar Resultado</h4>
+                            <p class="text-sm text-slate-600">Confirma el <strong>(TOTAL A SUMAR)</strong> en el recuadro azul y presiona <strong class="text-green-600">GUARDAR RESULTADO</strong> para registrar la evaluación.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- MOCKUP QUEST -->
+                    <div class="bg-slate-100 rounded-[2rem] p-4 md:p-6 border border-slate-200 shadow-inner flex flex-col items-center">
+                        <p class="text-center text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Vista Interactiva (Quest)</p>
+                        
+                        <!-- INTERFAZ REPLICA EXACTA QUEST -->
+                        <div class="flex flex-col sm:flex-row gap-4 w-full h-full max-h-[600px] bg-slate-50 p-2 md:p-4 rounded-3xl">
+                            <!-- Sidebar -->
+                            <div class="w-full sm:w-[35%] bg-white rounded-2xl shadow-sm border border-slate-200 p-4 flex flex-col font-sans overflow-y-auto custom-scrollbar">
+                                <h2 class="text-sm font-black text-blue-900 mb-4 flex items-center gap-2 uppercase tracking-tighter">
+                                    <i data-lucide="play-circle" class="w-5 h-5 text-blue-600"></i> MESA DE JUEZ
+                                </h2>
+                                
+                                <div class="mb-4">
+                                    <label class="text-[8px] font-black text-blue-500 uppercase tracking-widest block mb-1">EQUIPO EN PISTA</label>
+                                    <div class="w-full p-2.5 rounded-lg bg-blue-50/30 border border-blue-200 font-bold text-blue-900 flex justify-between items-center text-xs">
+                                        IDEAL N 1 (UE IDEAL) <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-3 mb-4">
+                                    <div>
+                                        <label class="text-[8px] font-black text-blue-500 uppercase tracking-widest block mb-1">RONDA</label>
+                                        <div class="w-full p-2 rounded-lg bg-white border border-slate-200 font-bold text-slate-700 flex justify-between items-center text-[10px]">
+                                            Ronda 1 <i data-lucide="chevron-down" class="w-3 h-3 text-slate-400"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="text-[8px] font-black text-blue-500 uppercase tracking-widest block mb-1">PISTA</label>
+                                        <div class="w-full p-2 rounded-lg bg-white border border-slate-200 font-bold text-slate-700 flex justify-between items-center text-[10px]">
+                                            Pista 1 <i data-lucide="chevron-down" class="w-3 h-3 text-slate-400"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-3 bg-orange-50 rounded-xl border border-orange-100 space-y-3 mb-4">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-[8px] font-black text-orange-600 uppercase tracking-widest">TICKETS DE PRÁCTICA</span>
+                                        <div class="flex gap-1">
+                                            <div class="w-2.5 h-4 bg-orange-500 rounded-sm"></div>
+                                            <div class="w-2.5 h-4 bg-orange-500 rounded-sm"></div>
+                                            <div class="w-2.5 h-4 bg-orange-500 rounded-sm"></div>
+                                            <div class="w-2.5 h-4 bg-orange-500 rounded-sm"></div>
+                                            <div class="w-2.5 h-4 bg-orange-500 rounded-sm"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between items-center border-t border-orange-200/50 pt-2">
+                                        <span class="text-[8px] font-black text-slate-600 uppercase tracking-widest">EVALUACIÓN P1</span>
+                                        <span class="bg-green-100 text-green-600 px-2 py-0.5 rounded-full flex items-center gap-1 text-[7px] font-black"><div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div> DISP.</span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="text-[8px] font-black text-blue-500 uppercase tracking-widest block mb-2 text-center">TIPO DE INTENTO</label>
+                                    <div class="flex gap-2 mb-2">
+                                        <div class="flex-1 py-2.5 bg-orange-600 border border-orange-500 text-white rounded-lg text-[8px] font-black uppercase shadow-md shadow-orange-600/30 flex justify-center items-center gap-1">PRÁCTICA LIBRE</div>
+                                        <div class="flex-1 py-2.5 bg-white border border-slate-200 text-slate-500 rounded-lg text-[8px] font-black uppercase text-center flex justify-center items-center gap-1">EVALUACIÓN</div>
+                                    </div>
+                                    <div class="w-full py-2.5 bg-white border border-slate-200 text-slate-500 rounded-lg text-[8px] font-black uppercase text-center flex justify-center items-center gap-1"><i data-lucide="star" class="w-3 h-3 mb-0.5"></i> PRÁCTICA + EVALUACIÓN</div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="text-[8px] font-black text-slate-500 uppercase tracking-widest block mb-2 text-center">¿EL EQUIPO REALIZARÁ EL INTENTO DE BONUS?</label>
+                                    <div class="flex gap-2 mb-3">
+                                        <div class="flex-1 py-2.5 bg-yellow-400 border border-yellow-400 text-white rounded-lg text-[9px] font-black uppercase shadow-md shadow-yellow-400/30 text-center">SÍ, VA POR BONUS</div>
+                                        <div class="flex-1 py-2.5 bg-white border border-slate-200 text-slate-400 rounded-lg text-[9px] font-black uppercase text-center">NO</div>
+                                    </div>
+                                    <div class="bg-yellow-50/50 border border-yellow-200 p-3 rounded-xl mb-3 text-left">
+                                        <h4 class="text-[8px] font-black text-yellow-600 uppercase tracking-widest flex items-center gap-1 mb-2"><i data-lucide="star" class="w-3 h-3"></i> REGLAS DEL BONUS</h4>
+                                        <div class="flex gap-1.5 mb-2">
+                                            <span class="bg-yellow-200 px-1.5 py-0.5 rounded text-yellow-900 shadow-sm text-[9px] font-bold flex items-center gap-1"><i data-lucide="star" class="w-2.5 h-2.5"></i> D6</span>
+                                            <span class="bg-yellow-200 px-1.5 py-0.5 rounded text-yellow-900 shadow-sm text-[9px] font-bold bg-yellow-300">S <span class="bg-blue-600 text-white px-1 rounded ml-1 text-[8px]">⬇</span></span>
+                                        </div>
+                                        <p class="text-[9px] font-medium text-yellow-800 italic leading-tight">El robot inicia en D6 y debe encender los LEDs en color azul al llegar a C2. Al alcanzar el punto final (E1), debe emitir un sonido de celebración y apagar todos los LEDs.</p>
+                                    </div>
+                                    <div class="w-full py-3 bg-white border border-yellow-300 text-yellow-600 rounded-xl text-[10px] font-black uppercase flex items-center justify-center gap-2 shadow-sm">LO LOGRARON (+3 PTS)</div>
+                                </div>
+
+                                <div class="mt-auto pt-2">
+                                    <div class="bg-blue-600 rounded-2xl p-4 text-center shadow-xl shadow-blue-600/30 mb-3">
+                                        <p class="text-blue-100 text-[9px] font-black uppercase tracking-widest opacity-90 mb-1">TOTAL A SUMAR</p>
+                                        <div class="text-5xl font-black text-white leading-none">5</div>
+                                    </div>
+                                    <div class="w-full bg-green-500 text-white font-black py-4 rounded-xl shadow-lg uppercase tracking-widest text-[11px] text-center">GUARDAR RESULTADO</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Board Area -->
+                            <div class="w-full sm:w-[65%] flex flex-col items-center">
+                                <div class="text-center mb-3 bg-blue-100/50 w-full py-3 rounded-2xl">
+                                    <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border border-blue-200">PANEL DE SEGUIMIENTO</span>
+                                    <h3 class="text-2xl font-black text-blue-900 mt-2 uppercase italic leading-tight">PISTA 1 - RONDA 1</h3>
+                                </div>
+
+                                <!-- Grid -->
+                                <div class="w-full h-full min-h-[400px] bg-white border-[8px] border-blue-600 rounded-2xl shadow-xl flex flex-col relative select-none overflow-hidden">
+                                    <!-- Top Row (A-J) -->
+                                    <div class="flex bg-blue-600 text-white font-black text-[10px] h-8 shrink-0">
+                                        <div class="w-8 border-r border-blue-500/50 bg-blue-700 flex items-center justify-center">#</div>
+                                        <div class="flex-1 grid grid-cols-10 text-center items-center">
+                                            <div>A</div><div>B</div><div>C</div><div>D</div><div>E</div><div>F</div><div>G</div><div>H</div><div>I</div><div>J</div>
+                                        </div>
+                                    </div>
+                                    <!-- Grid Body -->
+                                    <div class="flex-1 flex bg-white relative">
+                                        <!-- Left Col (6-1) -->
+                                        <div class="w-8 bg-blue-600 border-r border-blue-500/50 flex flex-col text-white font-black text-[10px] shrink-0">
+                                            <div class="flex-1 flex items-center justify-center border-b border-blue-500/30">6</div>
+                                            <div class="flex-1 flex items-center justify-center border-b border-blue-500/30">5</div>
+                                            <div class="flex-1 flex items-center justify-center border-b border-blue-500/30">4</div>
+                                            <div class="flex-1 flex items-center justify-center border-b border-blue-500/30">3</div>
+                                            <div class="flex-1 flex items-center justify-center border-b border-blue-500/30">2</div>
+                                            <div class="flex-1 flex items-center justify-center">1</div>
+                                        </div>
+                                        <!-- Lines -->
+                                        <div class="flex-1 grid grid-cols-10 grid-rows-6 divide-x divide-y divide-slate-100/50 relative">
+                                            <!-- Empty cells for background -->
+                                            <div class="border-t border-slate-100/50"></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                                            <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                                            <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                                            <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                                            <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                                            <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                                            
+                                            <!-- Green Circles matching image_35cdc1.png exactly -->
+                                            <!-- 1 at D6 -->
+                                            <div class="absolute top-[8%] left-[35%] w-8 h-8 bg-green-500 rounded-full text-white flex items-center justify-center text-[10px] font-black shadow-[0_0_12px_#22c55e] transform -translate-x-1/2 -translate-y-1/2 z-10">1</div>
+                                            <div class="absolute top-[3%] left-[37%] w-5 h-5 bg-yellow-400 border-2 border-yellow-200 rounded-full flex items-center justify-center shadow-md z-20"><i data-lucide="star" class="w-3 h-3 text-white fill-white"></i></div>
+                                            
+                                            <!-- 4 at A5 -->
+                                            <div class="absolute top-[25%] left-[5%] w-8 h-8 bg-green-500 rounded-full text-white flex items-center justify-center text-[10px] font-black shadow-[0_0_12px_#22c55e] transform -translate-x-1/2 -translate-y-1/2 z-10">4</div>
+
+                                            <!-- 2 at G4 -->
+                                            <div class="absolute top-[58%] left-[65%] w-8 h-8 bg-green-500 rounded-full text-white flex items-center justify-center text-[10px] font-black shadow-[0_0_12px_#22c55e] transform -translate-x-1/2 -translate-y-1/2 z-10">2</div>
+
+                                            <!-- 3 at C2 -->
+                                            <div class="absolute top-[75%] left-[25%] w-8 h-8 bg-green-500 rounded-full text-white flex items-center justify-center text-[10px] font-black shadow-[0_0_12px_#22c55e] transform -translate-x-1/2 -translate-y-1/2 z-10">3</div>
+
+                                            <!-- 5 at E1 -->
+                                            <div class="absolute top-[91%] left-[45%] w-8 h-8 bg-green-500 rounded-full text-white flex items-center justify-center text-[10px] font-black shadow-[0_0_12px_#22c55e] transform -translate-x-1/2 -translate-y-1/2 z-10">5</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Divisor -->
+            <div class="h-4 bg-slate-100"></div>
+
+            <!-- ================= CATEGORÍA LINE FOLLOWER ================= -->
+            <div class="bg-[#0f111a] text-slate-200">
+                <div class="p-6 md:p-10 border-b border-[#2a2e3f]">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="bg-blue-600 p-3 rounded-2xl shadow-lg"><i data-lucide="zap" class="w-6 h-6 text-white"></i></div>
+                        <h3 class="text-2xl font-black text-white uppercase">Categoría B: Seguidor de Línea</h3>
+                    </div>
+                    <p class="text-slate-400">Todo se realiza bajo la presión de un <strong>cronómetro máximo de 2:00 minutos</strong>. Los jueces marcan rectángulos numerados sobre un mapa oscuro interactivo.</p>
+                </div>
+
+                <div class="flex flex-col gap-12 p-8 md:p-12">
+                    <!-- Textos Line Follower -->
+                    <div class="space-y-6">
+                        <div class="border-l-2 border-blue-500 pl-4">
+                            <h4 class="font-bold text-lg mb-2 text-white">1. Preparación e Intentos</h4>
+                            <p class="text-sm text-slate-400">Selecciona al <strong>Equipo</strong>, la <strong>Ronda</strong> y la <strong>Pista</strong> en el panel izquierdo. Debajo verás 3 círculos que representan los <strong>Intentos (Máx 3)</strong> disponibles para ese robot.</p>
+                        </div>
+                        
+                        <div class="border-l-2 border-blue-500 pl-4">
+                            <h4 class="font-bold text-lg mb-2 text-white">2. Cronómetro y Tablero</h4>
+                            <ul class="list-disc ml-4 space-y-2 text-sm text-slate-400">
+                                <li>Haz clic en el botón con borde verde <strong class="text-green-500">Iniciar</strong> para arrancar el cronómetro en retroceso.</li>
+                                <li>Observa el <em>Tablero de Evaluación (Derecha)</em>. La pista está dividida en cuadrantes (Q1, Q2, Q3, Q4) y tiene rectángulos de puntaje.</li>
+                                <li><strong>¡Importante!</strong> A medida que el robot supera físicamente cada tramo, <strong>toca los rectángulos numerados (color gris)</strong> en tu pantalla. Se volverán azules y el recuadro de <em>PUNTOS ACTUALES</em> subirá.</li>
+                                <li>Haz clic en <strong class="text-orange-500">Pausar</strong> si el robot completa todo el circuito (ya que no hay una meta única, sino bifurcaciones) o si se sale de la pista por más de 10 segundos.</li>
+                            </ul>
+                        </div>
+
+                        <div class="border-l-2 border-blue-500 pl-4">
+                            <h4 class="font-bold text-lg mb-2 text-white">3. Sanciones</h4>
+                            <div class="space-y-2 mt-2">
+                                <div class="bg-[#1c1f2e] p-3 rounded-xl border border-orange-500/30 text-xs">
+                                    <strong class="text-orange-500 flex items-center gap-1 mb-1"><i data-lucide="alert-triangle" class="w-4 h-4"></i> Penalización (+5s)</strong>
+                                    Si el participante toca/acomoda el robot (tienen 10 segs para hacerlo). Suma 5s al tiempo neto.
+                                </div>
+                                <div class="bg-[#1c1f2e] p-3 rounded-xl border border-red-500/30 text-xs">
+                                    <strong class="text-red-400 flex items-center gap-1 mb-1"><i data-lucide="ban" class="w-4 h-4"></i> Intento Nulo</strong>
+                                    Si el robot se descarrila y no es acomodado a tiempo. Anula el intento actual para que usen el siguiente.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border-l-2 border-blue-500 pl-4">
+                            <h4 class="font-bold text-lg mb-2 text-white">4. Guardar</h4>
+                            <p class="text-sm text-slate-400">Al terminar, presiona <strong class="text-green-500">REGISTRAR INTENTO VÁLIDO</strong> para congelar el tiempo. Luego presiona <strong class="text-slate-400">GUARDAR RESULTADO FINAL</strong> para enviar el intento exitoso a la tabla general.</p>
+                        </div>
+                    </div>
+
+                    <!-- MOCKUP LINE FOLLOWER -->
+                    <div class="bg-[#161925] rounded-[2rem] p-6 border border-[#2a2e3f] flex flex-col items-center shadow-inner">
+                        <p class="text-center text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Vista Interactiva (Seguidor de Línea)</p>
+                        
+                        <!-- INTERFAZ REPLICA EXACTA LINE FOLLOWER -->
+                        <div class="flex flex-col sm:flex-row w-full h-full max-h-[600px] bg-[#0a0c12] rounded-2xl overflow-hidden border border-[#2a2e3f] shadow-2xl">
+                            <!-- Sidebar Dark -->
+                            <div class="w-full sm:w-[35%] bg-[#161925] border-r border-[#2a2e3f] p-4 flex flex-col font-sans overflow-y-auto custom-scrollbar-dark">
+                                <h2 class="text-xs font-black text-white flex items-center gap-2 mb-4 uppercase tracking-tighter">
+                                    <div class="w-3 h-3 rounded-full bg-blue-500"></div> Mesa del Juez
+                                </h2>
+                                
+                                <div class="mb-3">
+                                    <label class="text-[7px] font-black text-slate-500 uppercase tracking-widest block mb-1">Equipo en Pista</label>
+                                    <div class="bg-[#0f111a] border border-[#2a2e3f] rounded-lg text-[9px] p-2 font-bold text-slate-300 flex justify-between items-center shadow-inner">
+                                        IDEAL N 2 (U.E. IDEAL) <i data-lucide="chevron-down" class="w-3 h-3 text-slate-500"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-2 mb-4">
+                                    <div>
+                                        <label class="text-[7px] font-black text-slate-500 uppercase tracking-widest block mb-1">Ronda</label>
+                                        <div class="bg-[#0f111a] border border-[#2a2e3f] rounded-lg p-2 flex justify-between items-center text-[8px] text-slate-300 font-bold">Ronda 1 <i data-lucide="chevron-down" class="w-3 h-3 text-slate-500"></i></div>
+                                    </div>
+                                    <div>
+                                        <label class="text-[7px] font-black text-slate-500 uppercase tracking-widest block mb-1">Pista</label>
+                                        <div class="bg-[#0f111a] border border-[#2a2e3f] rounded-lg p-2 flex justify-between items-center text-[8px] text-slate-300 font-bold">Pista 1 <i data-lucide="chevron-down" class="w-3 h-3 text-slate-500"></i></div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4 text-center">
+                                    <span class="text-[7px] text-slate-500 uppercase tracking-widest font-black block mb-2">Intentos (Máx 3)</span>
+                                    <div class="flex gap-2 justify-center">
+                                        <div class="w-4 h-4 rounded-full border-2 bg-yellow-500/20 border-yellow-500 shadow-[0_0_8px_#eab308]"></div>
+                                        <div class="w-4 h-4 rounded-full border-2 bg-[#1c1f2e] border-[#2a2e3f]"></div>
+                                        <div class="w-4 h-4 rounded-full border-2 bg-[#1c1f2e] border-[#2a2e3f]"></div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-[#1c1f2e] border border-[#2a2e3f] rounded-2xl p-4 text-center shadow-inner mb-4 flex-shrink-0">
+                                    <div class="text-[8px] font-bold text-slate-400 mb-1 flex items-center justify-center gap-1 uppercase tracking-widest"><i data-lucide="timer" class="w-3 h-3"></i> Tiempo Restante</div>
+                                    <div class="text-4xl font-mono font-black text-white leading-none mb-3">01:46</div>
+                                    <div class="bg-green-800/40 text-green-500 border border-green-500/50 text-[10px] font-black py-2.5 rounded-lg flex items-center justify-center gap-1 uppercase tracking-wider"><i data-lucide="play" class="w-3 h-3 fill-green-500"></i> Iniciar</div>
+                                </div>
+
+                                <div class="bg-blue-600 rounded-2xl p-4 text-center text-white mb-4 shadow-lg shadow-blue-600/20 flex-shrink-0">
+                                    <div class="text-[8px] font-black uppercase tracking-widest opacity-80 mb-1">Puntos Actuales</div>
+                                    <div class="text-5xl font-black leading-none tracking-tighter">85</div>
+                                    <div class="text-[7px] font-medium bg-black/30 rounded-full inline-block px-2 py-0.5 mt-2">120 MAX <span class="border-l border-white/20 pl-1 ml-1 font-bold">70.8%</span></div>
+                                </div>
+
+                                <div class="flex gap-2 mb-4 flex-shrink-0">
+                                    <div class="flex-1 bg-[#1c1f2e] border border-orange-500/30 rounded-xl p-2 text-center flex flex-col items-center justify-center gap-1">
+                                        <i data-lucide="alert-triangle" class="w-4 h-4 text-orange-500"></i>
+                                        <div class="text-[7px] font-black text-orange-500 uppercase leading-tight">Penalización<br/>(+5s)</div>
+                                        <div class="bg-orange-500/20 text-orange-500 text-[8px] font-bold px-2 rounded-full">0</div>
+                                    </div>
+                                    <div class="flex-1 bg-[#1c1f2e] border border-red-500/30 rounded-xl p-2 text-center flex flex-col items-center justify-center gap-1">
+                                        <i data-lucide="ban" class="w-4 h-4 text-red-500"></i>
+                                        <div class="text-[7px] font-black text-red-500 uppercase leading-tight">Intento<br/>Nulo</div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-auto space-y-2 flex-shrink-0">
+                                    <div class="w-full bg-green-600 text-white font-black py-3 rounded-xl shadow-lg uppercase tracking-widest text-[8px] text-center flex justify-center items-center gap-1.5"><i data-lucide="check-circle" class="w-3 h-3"></i> Registrar Intento Válido</div>
+                                    <div class="w-full bg-transparent border border-slate-700 text-slate-500 font-black py-3 rounded-xl uppercase tracking-widest text-[8px] text-center flex justify-center items-center gap-1.5"><i data-lucide="save" class="w-3 h-3"></i> Guardar Resultado Final</div>
+                                </div>
+                            </div>
+
+                            <!-- Main Area Dark -->
+                            <div class="w-full sm:w-[65%] flex flex-col relative bg-[#0a0c12]">
+                                <div class="h-12 border-b border-[#2a2e3f] bg-[#161925] flex items-center px-4 justify-between shrink-0">
+                                    <span class="text-[10px] font-black text-white flex items-center gap-1.5 uppercase tracking-widest"><i data-lucide="play-circle" class="w-4 h-4 text-blue-500"></i> Tablero de Evaluación</span>
+                                    <div class="flex gap-3 text-[7px] text-slate-500 font-black">
+                                        <div class="text-center">Q1<br><span class="text-green-500 text-[8px]">35/35</span></div>
+                                        <div class="text-center">Q2<br><span class="text-slate-300 text-[8px]">10/40</span></div>
+                                        <div class="text-center">Q3<br><span class="text-green-500 text-[8px]">20/20</span></div>
+                                        <div class="text-center">Q4<br><span class="text-slate-300 text-[8px]">20/25</span></div>
+                                    </div>
+                                </div>
+                                <div class="flex-1 p-4 flex items-center justify-center relative">
+                                    <!-- Canvas Wrapper -->
+                                    <div class="w-full aspect-[16/10] bg-white rounded-xl relative overflow-hidden border-2 border-white shadow-2xl flex flex-col">
+                                        
+                                        <!-- Labels -->
+                                        <div class="absolute top-1 left-2 text-[7px] font-black text-slate-800 z-20">Q1 Sup Izq</div>
+                                        <div class="absolute top-1 right-2 text-[7px] font-black text-slate-800 z-20">Q2 Sup Der</div>
+                                        <div class="absolute bottom-1 left-2 text-[7px] font-black text-slate-800 z-20">Q3 Inf Izq</div>
+                                        <div class="absolute bottom-1 right-2 text-[7px] font-black text-slate-800 z-20">Q4 Inf Der</div>
+
+                                        <!-- Track Mock (SVG SVG Graphic) -->
+                                        <svg class="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+                                            <!-- Solid Black Lines -->
+                                            <path d="M 15 25 L 40 25 C 45 25, 45 15, 50 15 C 55 15, 55 30, 45 30 C 40 30, 40 45, 40 45 L 40 60 L 60 60 C 65 60, 65 80, 80 80 L 90 80 C 95 80, 95 70, 90 70 L 85 70 L 85 30 L 70 30" fill="none" stroke="#1e293b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M 60 60 L 60 70 L 75 70" fill="none" stroke="#1e293b" stroke-width="2" stroke-linejoin="round"/>
+                                            <!-- Dashed Black Lines -->
+                                            <path d="M 15 25 L 15 65 L 40 65" fill="none" stroke="#1e293b" stroke-width="2" stroke-dasharray="3 3" />
+                                            <path d="M 40 45 C 50 45, 50 30, 60 30 L 70 30" fill="none" stroke="#1e293b" stroke-width="2" stroke-dasharray="3 3" />
+                                        </svg>
+
+                                        <!-- Points (Blue/Grey Rectangles) -->
+                                        <!-- Completed (Blue) -->
+                                        <div class="absolute top-[25%] left-[10%] w-6 h-4 bg-blue-600 rounded text-white text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 shadow-sm z-10">10</div>
+                                        <div class="absolute top-[18%] left-[48%] w-5 h-4 bg-blue-600 rounded text-white text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 shadow-sm z-10">5</div>
+                                        <div class="absolute top-[45%] left-[45%] w-6 h-4 bg-blue-600 rounded text-white text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 shadow-sm z-10">10</div>
+                                        <div class="absolute top-[50%] left-[18%] w-6 h-4 bg-blue-600 rounded text-white text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 shadow-sm z-10">10</div>
+                                        <div class="absolute top-[65%] left-[20%] w-6 h-4 bg-blue-600 rounded text-white text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 shadow-sm z-10">10</div>
+                                        <div class="absolute top-[65%] left-[40%] w-6 h-4 bg-blue-600 rounded text-white text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 shadow-sm z-10">10</div>
+                                        <div class="absolute top-[65%] left-[55%] w-6 h-4 bg-blue-600 rounded text-white text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 shadow-sm z-10">10</div>
+                                        <div class="absolute top-[75%] left-[70%] w-6 h-4 bg-blue-600 rounded text-white text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 shadow-sm z-10">10</div>
+                                        <div class="absolute top-[45%] left-[62%] w-6 h-4 bg-blue-600 rounded text-white text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 shadow-sm z-10">10</div>
+                                        
+                                        <!-- Pending (Dark Grey) -->
+                                        <div class="absolute top-[30%] left-[55%] w-5 h-4 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 z-10">5</div>
+                                        <div class="absolute top-[25%] left-[70%] w-6 h-4 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 z-10">10</div>
+                                        <div class="absolute top-[25%] left-[88%] w-6 h-4 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 z-10">10</div>
+                                        <div class="absolute top-[50%] left-[88%] w-5 h-4 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 z-10">5</div>
+                                        <div class="absolute top-[78%] left-[90%] w-5 h-4 bg-[#2a2e3f] border border-slate-600 text-slate-300 rounded text-[7px] font-black flex items-center justify-center -translate-x-1/2 -translate-y-1/2 z-10">5</div>
+
+                                        <!-- Red Quadrant Guides -->
+                                        <div class="absolute top-0 bottom-0 left-[50%] border-l-2 border-dashed border-red-500/70 z-0"></div>
+                                        <div class="absolute left-0 right-0 top-[60%] border-t-2 border-dashed border-red-500/70 z-0"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASO 3 -->
+        <section id="ranking" class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 print-break-inside-avoid relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-1.5 h-full bg-purple-500"></div>
+            <h3 class="text-xl font-black text-slate-800 mb-4 flex items-center gap-2">
+                <i data-lucide="bar-chart-2" class="w-5 h-5 text-purple-500"></i> Paso 3: Visualizar Resultados (Ranking)
+            </h3>
+            <p class="text-slate-600 mb-4 text-sm">
+                Como juez, tienes acceso a la pestaña <strong>Ranking</strong> en cualquier momento. Esta vista te permite:
+            </p>
+            <ul class="space-y-3 text-sm text-slate-600 ml-6 list-disc marker:text-purple-400">
+                <li>Ver la tabla de posiciones en tiempo real de todos los equipos.</li>
+                <li>Comprobar si el puntaje que acabas de guardar se reflejó correctamente en el acumulado del equipo.</li>
+                <li>Filtrar la tabla para ver el "Ranking Global Acumulado" o el desempeño aislado en una ronda específica (Ej: "Ronda 1").</li>
+                <li><em>Nota: Solo los administradores pueden editar o borrar puntajes guardados desde esta pantalla. Si te equivocas al guardar un resultado, avisa a la mesa de control para que realicen la corrección.</em></li>
+            </ul>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-8 text-slate-400 text-xs font-bold uppercase tracking-widest no-print">
+        ADAGAMES Engine v4.0 &copy; 2026 - Documentación Exclusiva para Jueces
+    </footer>
+
+    <!-- Inicializar Iconos -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
