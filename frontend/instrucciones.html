@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrucciones Adagames 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            900: '#0c4a6e',
+                            950: '#082f49',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'slide-up': 'slideUp 0.8s ease-out forwards',
+                        'fade-in': 'fadeIn 1s ease-out forwards',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(40px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        glow: {
+                            '0%': { boxShadow: '0 0 10px rgba(14, 165, 233, 0.2)' },
+                            '100%': { boxShadow: '0 0 25px rgba(14, 165, 233, 0.6)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #0f111a;
+            color: #e2e8f0;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(14, 165, 233, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+        
+        .glass-panel {
+            background: rgba(22, 25, 37, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #38bdf8;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+
+        /* Scroll reveal classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px -10px rgba(14, 165, 233, 0.3);
+            border-color: rgba(56, 189, 248, 0.4);
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-panel border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                        <i data-lucide="gamepad-2" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <span class="font-black text-xl tracking-tighter text-white uppercase">ADAGAMES<span class="text-blue-500">26</span></span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="flex items-baseline space-x-8">
+                        <a href="#inicio" class="nav-link text-sm font-bold text-slate-300 hover:text-white transition-colors">Inicio</a>
+                        <a href="#quest" class="nav-link text-sm font-bold text-slate-300 hover:text-white transition-colors">Robotics Quest</a>
+                        <a href="#linefollower" class="nav-link text-sm font-bold text-slate-300 hover:text-white transition-colors">Seguidor de Línea</a>
+                        <a href="index.html" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20 hover:shadow-blue-500/40 text-sm flex items-center gap-2">
+                            <i data-lucide="arrow-left" class="w-4 h-4"></i> Volver al Sistema
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="pt-32 pb-20 lg:pt-48 lg:pb-32 px-6 overflow-hidden relative flex-1 flex items-center justify-center">
+        <div class="absolute inset-0 z-0">
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full mix-blend-screen filter blur-[100px] animate-pulse-slow"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full mix-blend-screen filter blur-[100px] animate-pulse-slow" style="animation-delay: 2s;"></div>
+        </div>
+
+        <div class="max-w-4xl mx-auto text-center relative z-10">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 font-bold text-xs uppercase tracking-widest mb-8 animate-fade-in">
+                <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                Manual Oficial de Jueces y Capitanes
+            </div>
+            
+            <h1 class="text-5xl lg:text-7xl font-black text-white tracking-tight leading-tight mb-8 animate-slide-up">
+                Domina la plataforma <br>
+                <span class="gradient-text">Adagames 2026</span>
+            </h1>
+            
+            <p class="text-lg text-slate-400 mb-12 max-w-2xl mx-auto leading-relaxed animate-slide-up" style="animation-delay: 0.1s;">
+                Bienvenido al centro de conocimiento interactivo. Aquí encontrarás todo lo necesario para operar el sistema de evaluación, registrar intentos y gestionar tickets de los equipos participantes en ambas modalidades.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row justify-center gap-4 animate-slide-up" style="animation-delay: 0.2s;">
+                <a href="#quest" class="bg-[#1a1d2d] hover:bg-[#2a2e3f] border border-[#3a3f58] text-white px-8 py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-3 group">
+                    <i data-lucide="map" class="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform"></i>
+                    Robotics Quest
+                </a>
+                <a href="#linefollower" class="bg-[#1a1d2d] hover:bg-[#2a2e3f] border border-[#3a3f58] text-white px-8 py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-3 group">
+                    <i data-lucide="git-branch" class="w-5 h-5 text-green-400 group-hover:scale-110 transition-transform"></i>
+                    Seguidor de Línea
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Robotics Quest Section -->
+    <section id="quest" class="py-24 relative bg-[#0a0c12]">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-3xl lg:text-5xl font-black text-white mb-4 flex items-center justify-center gap-4">
+                    <i data-lucide="map" class="w-10 h-10 text-blue-500"></i> Robotics Quest
+                </h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">Evaluación basada en tramos de matriz, obstáculos y puntos de bonificación.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-8">
+                    <div class="glass-panel p-6 rounded-2xl reveal flex gap-4 items-start border-l-4 border-blue-500">
+                        <div class="bg-blue-500/20 p-3 rounded-xl shrink-0">
+                            <i data-lucide="fast-forward" class="w-6 h-6 text-blue-400"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white text-lg mb-1">Avance por Tramos en Matriz</h4>
+                            <p class="text-sm text-slate-400">Haz clic en los números de la matriz (ej. A1, B2) para indicar hasta dónde llegó el robot. Los tramos anteriores se marcarán automáticamente como completados.</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl reveal flex gap-4 items-start border-l-4 border-yellow-500" style="transition-delay: 0.1s;">
+                        <div class="bg-yellow-500/20 p-3 rounded-xl shrink-0">
+                            <i data-lucide="star" class="w-6 h-6 text-yellow-400"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white text-lg mb-1">Punto de Bonus (+3 PTS)</h4>
+                            <p class="text-sm text-slate-400">Antes de iniciar, debes confirmar si el equipo intentará el Bonus. Si es afirmativo, aparecerá el botón "LO LOGRARON" que añade 3 puntos extra si completan el reto de la estrella amarilla.</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl reveal flex gap-4 items-start border-l-4 border-red-500" style="transition-delay: 0.2s;">
+                        <div class="bg-red-500/20 p-3 rounded-xl shrink-0">
+                            <i data-lucide="alert-octagon" class="w-6 h-6 text-red-400"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white text-lg mb-1">Manejo de Obstáculos</h4>
+                            <p class="text-sm text-slate-400">Las casillas con una "X" roja representan obstáculos o misiones. Al avanzar el progreso a través de ellas, el sistema suma automáticamente el puntaje correspondiente.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative reveal" style="transition-delay: 0.3s;">
+                    <div class="absolute inset-0 bg-blue-500/20 filter blur-[80px] rounded-full animate-pulse-slow"></div>
+                    <div class="bg-[#161925] border border-[#2a2e3f] rounded-3xl p-6 relative z-10 shadow-2xl">
+                        <div class="flex items-center justify-between mb-6 pb-4 border-b border-[#2a2e3f]">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Panel de Pista</span>
+                            <span class="px-2 py-1 bg-blue-500/20 text-blue-400 text-[10px] font-black rounded uppercase">Activo</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-4 gap-2 mb-6">
+                            <div class="aspect-square bg-blue-500 rounded-lg flex items-center justify-center font-black text-white shadow-lg shadow-blue-500/20 border-2 border-blue-300">1</div>
+                            <div class="aspect-square bg-blue-500 rounded-lg flex items-center justify-center font-black text-white shadow-lg shadow-blue-500/20 border-2 border-blue-300">2</div>
+                            <div class="aspect-square bg-slate-800 rounded-lg flex items-center justify-center font-black text-blue-500 border border-slate-700">3</div>
+                            <div class="aspect-square bg-red-500/10 rounded-lg flex items-center justify-center font-black text-red-400 border border-red-500/30"><i data-lucide="x" class="w-5 h-5"></i></div>
+                        </div>
+
+                        <div class="bg-[#0f111a] p-4 rounded-xl text-center">
+                            <p class="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1">Total a Sumar</p>
+                            <p class="text-5xl font-black text-white">2<span class="text-xl text-slate-500 ml-1">pts</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Flujo Visual de Tickets (reemplaza la lista aburrida) -->
+            <div class="mt-20 reveal">
+                <div class="text-center mb-10">
+                    <h3 class="text-2xl font-black text-white uppercase tracking-widest flex items-center justify-center gap-3">
+                        <i data-lucide="ticket" class="w-8 h-8 text-blue-400"></i> Flujo de Registro y Tickets
+                    </h3>
+                    <p class="text-slate-400 mt-2">Cómo interactúa el juez con el equipo durante el intento.</p>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-6 justify-center items-stretch">
+                    <!-- Paso 1 -->
+                    <div class="flex-1 bg-gradient-to-b from-[#1a1d2d] to-[#0f111a] border border-orange-500/30 rounded-3xl p-6 relative overflow-hidden group hover:border-orange-500 transition-all">
+                        <div class="absolute -right-4 -top-4 bg-orange-500/10 rounded-full p-8 group-hover:scale-110 transition-transform">
+                            <i data-lucide="ticket" class="w-16 h-16 text-orange-500/20"></i>
+                        </div>
+                        <div class="bg-orange-500 text-white w-10 h-10 rounded-xl flex items-center justify-center font-black mb-4 shadow-lg shadow-orange-500/30 relative z-10">1</div>
+                        <h4 class="text-lg font-black text-white mb-2 relative z-10 text-orange-400">Práctica Libre</h4>
+                        <p class="text-sm text-slate-400 relative z-10">El capitán solicita probar la pista. El juez selecciona este modo que <strong>gasta 1 Ticket de Práctica</strong>. El puntaje se guarda en el historial pero no va al ranking.</p>
+                    </div>
+
+                    <!-- Flecha -->
+                    <div class="hidden md:flex items-center justify-center text-slate-600">
+                        <i data-lucide="arrow-right" class="w-8 h-8"></i>
+                    </div>
+
+                    <!-- Paso 2 -->
+                    <div class="flex-1 bg-gradient-to-b from-[#1a1d2d] to-[#0f111a] border border-green-500/30 rounded-3xl p-6 relative overflow-hidden group hover:border-green-500 transition-all">
+                        <div class="absolute -right-4 -top-4 bg-green-500/10 rounded-full p-8 group-hover:scale-110 transition-transform">
+                            <i data-lucide="target" class="w-16 h-16 text-green-500/20"></i>
+                        </div>
+                        <div class="bg-green-500 text-white w-10 h-10 rounded-xl flex items-center justify-center font-black mb-4 shadow-lg shadow-green-500/30 relative z-10">2</div>
+                        <h4 class="text-lg font-black text-white mb-2 relative z-10 text-green-400">Evaluación Oficial</h4>
+                        <p class="text-sm text-slate-400 relative z-10">El capitán se siente listo y anuncia intento oficial. El juez selecciona este modo que <strong>gasta 1 Ticket de Evaluación</strong>. Este puntaje es el definitivo.</p>
+                    </div>
+
+                    <!-- Flecha -->
+                    <div class="hidden md:flex items-center justify-center text-slate-600">
+                        <i data-lucide="arrow-right" class="w-8 h-8"></i>
+                    </div>
+
+                    <!-- Paso 3 -->
+                    <div class="flex-1 bg-gradient-to-b from-[#1a1d2d] to-[#0f111a] border border-blue-500/30 rounded-3xl p-6 relative overflow-hidden group hover:border-blue-500 transition-all">
+                        <div class="absolute -right-4 -top-4 bg-blue-500/10 rounded-full p-8 group-hover:scale-110 transition-transform">
+                            <i data-lucide="star" class="w-16 h-16 text-blue-500/20"></i>
+                        </div>
+                        <div class="bg-blue-500 text-white w-10 h-10 rounded-xl flex items-center justify-center font-black mb-4 shadow-lg shadow-blue-500/30 relative z-10">3</div>
+                        <h4 class="text-lg font-black text-white mb-2 relative z-10 text-blue-400">Práctica + Evaluación</h4>
+                        <p class="text-sm text-slate-400 relative z-10">Si una Práctica Libre resulta ser perfecta, el capitán puede oficializarla en ese instante. Esta acción <strong>consume AMBOS tickets</strong> a la vez (Práctica y Evaluación).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seguidor de Línea Section -->
+    <section id="linefollower" class="py-24 relative">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-3xl lg:text-5xl font-black text-white mb-4 flex items-center justify-center gap-4">
+                    <i data-lucide="git-branch" class="w-10 h-10 text-green-500"></i> Seguidor de Línea
+                </h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">Evaluación sobre imagen de pista por cuadrantes con seguimiento de piezas.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="glass-panel p-8 rounded-[2rem] card-hover reveal">
+                    <div class="w-14 h-14 bg-green-500/20 rounded-2xl flex items-center justify-center mb-6">
+                        <i data-lucide="mouse-pointer-click" class="w-7 h-7 text-green-400"></i>
+                    </div>
+                    <h3 class="text-xl font-black text-white mb-3">1. Interacción en el Mapa</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Durante la evaluación de la pista, haz clic sobre las <strong>piezas o marcadores</strong> colocados sobre la imagen del mapa para registrar que el robot superó esa zona. El marcador se tornará azul y sumará puntos.
+                    </p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="glass-panel p-8 rounded-[2rem] card-hover reveal" style="transition-delay: 0.1s;">
+                    <div class="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-6">
+                        <i data-lucide="layout-grid" class="w-7 h-7 text-blue-400"></i>
+                    </div>
+                    <h3 class="text-xl font-black text-white mb-3">2. Cuadrantes Dinámicos</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        La vista principal muestra la pista dividida mediante guías en 4 cuadrantes (Q1 a Q4). Los puntos se van totalizando por cuadrante, dándote una vista rápida de qué zonas fueron dominadas por el robot.
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="glass-panel p-8 rounded-[2rem] card-hover reveal" style="transition-delay: 0.2s;">
+                    <div class="w-14 h-14 bg-red-500/20 rounded-2xl flex items-center justify-center mb-6">
+                        <i data-lucide="alert-triangle" class="w-7 h-7 text-red-400"></i>
+                    </div>
+                    <h3 class="text-xl font-black text-white mb-3">3. Penalizaciones y Fin</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Si el robot requiere toque o asistencia externa, utiliza el botón de penalización. Una vez que el tiempo se detenga o el robot alcance la meta, el modal final te pedirá la confirmación junto con el capitán.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Modal UI Showcase -->
+            <div class="mt-20 reveal max-w-4xl mx-auto">
+                <div class="bg-gradient-to-tr from-[#0f111a] to-[#1a1d2d] rounded-[2.5rem] border border-[#2a2e3f] p-8 md:p-12 shadow-2xl relative overflow-hidden">
+                    <div class="absolute -right-20 -top-20 bg-blue-500/10 w-64 h-64 rounded-full blur-3xl"></div>
+                    
+                    <div class="flex flex-col md:flex-row items-center gap-10 relative z-10">
+                        <div class="flex-1 space-y-6">
+                            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/10 text-green-400 text-xs font-bold uppercase tracking-widest border border-green-500/20">
+                                <i data-lucide="check-square" class="w-4 h-4"></i> Nuevo Flujo
+                            </div>
+                            <h3 class="text-3xl font-black text-white leading-tight">Confirmación <br>Transparente</h3>
+                            <p class="text-slate-400 leading-relaxed">
+                                Antes de enviar el resultado a la base de datos principal, un modal oscuro cubrirá la pantalla mostrando el resumen gigante de la operación. 
+                                <strong>El Juez y el Capitán</strong> deben verificar visualmente el puntaje, el tiempo y el tipo de ticket que se consumirá para garantizar 100% de transparencia en el torneo.
+                            </p>
+                        </div>
+
+                        <div class="w-full md:w-80 bg-[#0a0c12] border border-[#2a2e3f] rounded-2xl overflow-hidden shadow-2xl rotate-2 hover:rotate-0 transition-all duration-500">
+                            <div class="bg-blue-600 p-4">
+                                <p class="text-white/70 text-[8px] font-black uppercase tracking-widest mb-1">Confirmación de Juez</p>
+                                <h4 class="text-white font-black flex items-center gap-2"><i data-lucide="check-square" class="w-4 h-4"></i> VERIFICAR DATOS</h4>
+                            </div>
+                            <div class="p-5 space-y-4">
+                                <div class="bg-[#161925] p-3 rounded-lg border border-[#2a2e3f] text-center">
+                                    <p class="text-4xl font-black text-blue-400">125</p>
+                                    <p class="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Puntos</p>
+                                </div>
+                                <div class="bg-[#161925] p-3 rounded-lg border border-[#2a2e3f] text-center">
+                                    <p class="text-2xl font-black text-orange-400">45.20s</p>
+                                    <p class="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Tiempo</p>
+                                </div>
+                                <button class="w-full py-3 bg-blue-600 rounded-lg text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2">
+                                    <i data-lucide="save" class="w-4 h-4"></i> Confirmar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-[#2a2e3f] bg-[#0a0c12] py-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 text-center flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2 text-slate-400">
+                <i data-lucide="gamepad-2" class="w-5 h-5"></i>
+                <span class="font-bold text-sm">Adagames 2026 Engine</span>
+            </div>
+            <p class="text-xs font-medium text-slate-500">Documentación de Sistema Interno • Para Jueces y Staff</p>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // Scroll reveal animation
+        const revealElements = document.querySelectorAll('.reveal');
+        
+        const revealCallback = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        };
+
+        const revealOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const revealObserver = new IntersectionObserver(revealCallback, revealOptions);
+        
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // Active state for navigation links
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('section');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 150) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').substring(1) === current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

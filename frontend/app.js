@@ -409,14 +409,14 @@ function App() {
     });
   };
 
-  const addScore = (teamId, ronda, pista, points, finalTimeMs = null, isPractice = false) => {
+  const addScore = (teamId, ronda, pista, points, finalTimeMs = null, attemptType = 'evaluation') => {
     const updated = teams.map(t => {
       if (t.id === teamId) {
         // Inicializar tickets si no existen
         const practiceTickets = t.practiceTickets !== undefined ? t.practiceTickets : 5;
         const evalTickets = t.evaluationTickets || { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1 };
 
-        if (isPractice) {
+        if (attemptType === 'practice') {
             return {
                 ...t,
                 practiceTickets: Math.max(0, practiceTickets - 1),
@@ -427,15 +427,21 @@ function App() {
                 }]
             };
         } else {
+            // Es evaluación oficial o práctica convertida a evaluación
             const newEvalTickets = { ...evalTickets };
             newEvalTickets[pista] = 0;
+            
+            // Si es práctica convertida, también gastar ticket de práctica
+            const newPracticeTickets = attemptType === 'practice_to_eval' ? Math.max(0, practiceTickets - 1) : practiceTickets;
+
             return {
                 ...t,
                 score: (t.score || 0) + points,
                 lastTime: finalTimeMs !== null ? ((t.lastTime || 0) + finalTimeMs) : t.lastTime,
                 evaluationTickets: newEvalTickets,
+                practiceTickets: newPracticeTickets,
                 history: [...t.history, { 
-                    ronda, pista, points, finalTimeMs, practice: false,
+                    ronda, pista, points, finalTimeMs, practice: false, convertedFromPractice: attemptType === 'practice_to_eval',
                     date: new Date().toLocaleTimeString(),
                     judgeId: currentUser.id, judgeName: currentUser.name
                 }]
@@ -445,7 +451,11 @@ function App() {
       return t;
     });
     postTeams(updated);
-    showToast(isPractice ? 'Intento de PRÁCTICA registrado' : 'Evaluación OFICIAL guardada');
+    
+    let msg = 'Evaluación OFICIAL guardada';
+    if (attemptType === 'practice') msg = 'Intento de PRÁCTICA registrado';
+    if (attemptType === 'practice_to_eval') msg = 'Práctica oficializada (Gasta ambos tickets)';
+    showToast(msg);
   };
 
   const updateQualifiedRounds = (teamId, rounds) => {
@@ -1305,6 +1315,7 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
   const [bonus, setBonus] = useState(false);
   const [bonusIntention, setBonusIntention] = useState(null);
   const [showEditTeam, setShowEditTeam] = useState(false);
+  const [showConfirmSave, setShowConfirmSave] = useState(false);
   
   const activeTeams = teams.filter(t => t.status === 'inspected' && (t.qualifiedRounds || [1]).includes(selRonda));
   const track = (tracks[selRonda] && tracks[selRonda][selPista])
@@ -1345,7 +1356,15 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
         showToast('Este equipo ya no tiene tickets de práctica', 'error');
         return;
     }
+    if (attemptType === 'practice_to_eval' && (practiceRemaining <= 0 || !evalRemaining)) {
+        showToast('Tickets insuficientes para oficializar práctica', 'error');
+        return;
+    }
 
+    setShowConfirmSave(true);
+  };
+
+  const confirmSave = () => {
     const total = (progressIdx + 1) + (bonus ? 3 : 0);
     
     let finalTimeMs = 0;
@@ -1353,12 +1372,13 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
         finalTimeMs = (1800 - timer) * 1000;
     }
     
-    addScore(selTeam, selRonda, selPista, total, finalTimeMs, isPractice);
+    addScore(selTeam, selRonda, selPista, total, finalTimeMs, attemptType);
     setSelTeam('');
     setProgressIdx(-1);
     setBonus(false);
     setBonusIntention(null);
     setAttemptType('practice');
+    setShowConfirmSave(false);
   };
 
   return (
@@ -1400,48 +1420,57 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
               </div>
 
               {selTeam && (
-                <div className="p-4 bg-orange-50/50 rounded-2xl border border-orange-100 space-y-3">
-                    <div className="flex justify-between items-center">
-                        <span className="text-[9px] font-black text-orange-600 uppercase tracking-widest">Tickets de Práctica</span>
-                        <div className="flex gap-1">
-                            {[1,2,3,4,5].map(i => (
-                                <div key={i} className={`w-3 h-5 rounded-sm border ${i <= practiceRemaining ? 'bg-orange-500 border-orange-400 shadow-[0_0_8px_rgba(249,115,22,0.4)]' : 'bg-slate-200 border-slate-300 opacity-30'}`}></div>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="flex justify-between items-center pt-2 border-t border-orange-100/50">
-                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Evaluación P{selPista}</span>
-                        <div className={`w-8 h-4 rounded-full flex items-center px-1 transition-all ${evalRemaining ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
-                            <div className={`w-2 h-2 rounded-full mr-1 ${evalRemaining ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
-                            <span className="text-[8px] font-black">{evalRemaining ? 'DISP.' : 'AGOT.'}</span>
-                        </div>
-                    </div>
-                </div>
-              )}
+                <>
+                  <div className="p-4 bg-orange-50/50 rounded-2xl border border-orange-100 space-y-3">
+                      <div className="flex justify-between items-center">
+                          <span className="text-[9px] font-black text-orange-600 uppercase tracking-widest">Tickets de Práctica</span>
+                          <div className="flex gap-1">
+                              {[1,2,3,4,5].map(i => (
+                                  <div key={i} className={`w-3 h-5 rounded-sm border ${i <= practiceRemaining ? 'bg-orange-500 border-orange-400 shadow-[0_0_8px_rgba(249,115,22,0.4)]' : 'bg-slate-200 border-slate-300 opacity-30'}`}></div>
+                              ))}
+                          </div>
+                      </div>
+                      <div className="flex justify-between items-center pt-2 border-t border-orange-100/50">
+                          <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Evaluación P{selPista}</span>
+                          <div className={`w-10 h-5 rounded-full flex items-center px-1 transition-all ${evalRemaining ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                              <div className={`w-2 h-2 rounded-full mr-1 ${evalRemaining ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
+                              <span className="text-[8px] font-black">{evalRemaining ? 'DISP.' : 'AGOT.'}</span>
+                          </div>
+                      </div>
+                  </div>
 
-              {selTeam && (
-                <div className="pt-2">
-                    <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Tipo de Intento</label>
-                    <div className="flex gap-2">
-                        <button 
-                            onClick={() => setAttemptType('practice')}
-                            disabled={practiceRemaining <= 0}
-                            className={`flex-1 py-3 rounded-xl font-black text-[10px] uppercase border-2 transition-all ${attemptType === 'practice' ? 'bg-orange-600 border-orange-500 text-white shadow-lg shadow-orange-600/30' : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50'} ${practiceRemaining <= 0 ? 'opacity-30 cursor-not-allowed' : ''}`}
-                        >
-                            🎟️ Práctica ({practiceRemaining})
-                        </button>
-                        <button 
-                            onClick={() => setAttemptType('evaluation')}
-                            disabled={!evalRemaining}
-                            className={`flex-1 py-3 rounded-xl font-black text-[10px] uppercase border-2 transition-all ${attemptType === 'evaluation' ? 'bg-green-600 border-green-500 text-white shadow-lg shadow-green-600/30' : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50'} ${!evalRemaining ? 'opacity-30 cursor-not-allowed' : ''}`}
-                        >
-                            🎯 Evaluación
-                        </button>
-                    </div>
-                    {practiceRemaining <= 0 && attemptType === 'evaluation' && (
-                        <p className="text-[8px] font-bold text-red-500 mt-2 text-center uppercase tracking-tighter animate-bounce">⚠️ Tickets de práctica agotados. Muerte Súbita.</p>
-                    )}
-                </div>
+                  <div className="pt-2">
+                      <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2 text-center">Tipo de Intento</label>
+                      <div className="flex flex-col gap-2">
+                          <div className="flex gap-2">
+                              <button 
+                                  onClick={() => setAttemptType('practice')}
+                                  disabled={practiceRemaining <= 0}
+                                  className={`flex-1 py-3 rounded-xl font-black text-[10px] uppercase border-2 transition-all ${attemptType === 'practice' ? 'bg-orange-600 border-orange-500 text-white shadow-lg shadow-orange-600/30' : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50'} ${practiceRemaining <= 0 ? 'opacity-30 cursor-not-allowed' : ''}`}
+                              >
+                                  🎟️ Práctica Libre
+                              </button>
+                              <button 
+                                  onClick={() => setAttemptType('evaluation')}
+                                  disabled={!evalRemaining}
+                                  className={`flex-1 py-3 rounded-xl font-black text-[10px] uppercase border-2 transition-all ${attemptType === 'evaluation' ? 'bg-green-600 border-green-500 text-white shadow-lg shadow-green-600/30' : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50'} ${!evalRemaining ? 'opacity-30 cursor-not-allowed' : ''}`}
+                              >
+                                  🎯 Evaluación
+                              </button>
+                          </div>
+                          <button 
+                              onClick={() => setAttemptType('practice_to_eval')}
+                              disabled={practiceRemaining <= 0 || !evalRemaining}
+                              className={`w-full py-3 rounded-xl font-black text-[10px] uppercase border-2 transition-all ${attemptType === 'practice_to_eval' ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-600/30' : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50'} ${practiceRemaining <= 0 || !evalRemaining ? 'opacity-30 cursor-not-allowed' : ''}`}
+                          >
+                              ⭐ Práctica + Evaluación
+                          </button>
+                      </div>
+                      {practiceRemaining <= 0 && attemptType === 'evaluation' && (
+                          <p className="text-[8px] font-bold text-red-500 mt-2 text-center uppercase tracking-tighter animate-bounce">⚠️ Tickets de práctica agotados. Muerte Súbita.</p>
+                      )}
+                  </div>
+                </>
               )}
 
               {existingEvaluation && (
@@ -1584,6 +1613,53 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
                   setSelTeam('');
               }}
           />
+      )}
+      {showConfirmSave && selTeam && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-fadeIn">
+              <div className="bg-white border border-slate-200 w-full max-w-sm rounded-[2rem] shadow-2xl overflow-hidden flex flex-col">
+                  <div className="bg-blue-600 p-6 text-center shrink-0">
+                      <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <Icon name="save" className="w-8 h-8 text-white" />
+                      </div>
+                      <h3 className="text-xl font-black text-white uppercase tracking-wider mb-1">Confirmar Registro</h3>
+                      <p className="text-blue-200 text-xs font-medium">Revisa los datos antes de guardar</p>
+                  </div>
+                  
+                  <div className="p-6 flex flex-col gap-4 flex-1 bg-slate-50">
+                      <div className="bg-white p-4 rounded-xl border border-slate-200 text-center shadow-sm">
+                          <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">Equipo a Evaluar</p>
+                          <p className="text-sm font-black text-blue-900 uppercase truncate px-2">{selectedTeamData?.teamName}</p>
+                      </div>
+
+                      <div className="bg-white p-4 rounded-xl border border-slate-200 grid grid-cols-2 gap-4 shadow-sm">
+                          <div>
+                              <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Ronda</p>
+                              <p className="text-sm font-bold text-slate-700">Ronda {selRonda}</p>
+                          </div>
+                          <div>
+                              <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Pista</p>
+                              <p className="text-sm font-bold text-slate-700">Pista {selPista}</p>
+                          </div>
+                      </div>
+
+                      <div className={`p-4 rounded-xl border shadow-sm ${attemptType === 'practice' ? 'bg-orange-50 border-orange-200' : attemptType === 'evaluation' ? 'bg-green-50 border-green-200' : 'bg-blue-50 border-blue-200'}`}>
+                          <p className="text-[10px] font-bold tracking-wider mb-1 uppercase text-slate-500">Tipo de Registro</p>
+                          <p className={`text-sm font-black uppercase flex items-center gap-2 ${attemptType === 'practice' ? 'text-orange-600' : attemptType === 'evaluation' ? 'text-green-600' : 'text-blue-600'}`}>
+                              {attemptType === 'practice' ? '🎟️ Práctica Libre' : attemptType === 'evaluation' ? '🎯 Evaluación Oficial' : '⭐ Práctica + Evaluación'}
+                          </p>
+                      </div>
+
+                      <div className="pt-2 flex gap-3">
+                          <button onClick={() => setShowConfirmSave(false)} className="flex-1 py-4 bg-white border border-slate-200 hover:bg-slate-100 text-slate-600 font-bold rounded-xl transition-all">
+                              Cancelar
+                          </button>
+                          <button onClick={confirmSave} className="flex-1 py-4 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl shadow-lg shadow-blue-500/20 transition-all uppercase tracking-widest flex items-center justify-center gap-2">
+                              <Icon name="save" className="w-5 h-5" /> GUARDAR
+                          </button>
+                      </div>
+                  </div>
+              </div>
+          </div>
       )}
     </div>
   );
@@ -2722,6 +2798,9 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
   const [selRonda, setSelRonda] = useState(1);
   const [selPista, setSelPista] = useState(1);
   const [showEditTeam, setShowEditTeam] = useState(false);
+  const [showConfirmSave, setShowConfirmSave] = useState(false);
+
+  const selectedTeamData = React.useMemo(() => teams.find(t => t.id === selTeam), [teams, selTeam]);
 
   const [bgImage, setBgImage] = useState(null);
   const [points, setPoints] = useState([]);
@@ -2970,12 +3049,17 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
     setMode(newMode);
   };
 
-  const safeSaveRealApp = () => {
+  const handleConfirmSave = () => {
     if (!selTeam || !addScore || existingEvaluation || !savedResults) return;
-    // Pasar tiempo en milisegundos para estandarizar con el sistema de ranking global
     addScore(selTeam, selRonda, selPista, savedResults.score, (savedResults.finalTime * 1000));
     handleResetMatch();
     setSelTeam('');
+    setShowConfirmSave(false);
+  };
+
+  const safeSaveRealApp = () => {
+    if (!selTeam || !addScore || existingEvaluation || !savedResults) return;
+    setShowConfirmSave(true);
   };
 
   return (
@@ -2983,11 +3067,6 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
       
       {initialMode === 'evaluate' && (
       <div className="w-full md:w-80 bg-[#161925] border-b md:border-b-0 md:border-r border-[#2a2e3f] flex flex-col z-10 shadow-2xl relative overflow-y-auto custom-scrollbar max-h-[40vh] md:max-h-full">
-        {existingEvaluation && <div className="absolute inset-0 z-20 bg-slate-900/40 backdrop-blur-[2px] flex items-center justify-center">
-            <div className="bg-white/90 px-6 py-3 rounded-full shadow-2xl border border-white font-black text-blue-900 uppercase tracking-widest text-[10px] md:text-xs flex items-center gap-3">
-              <Icon name="lock" className="w-4 h-4" /> Ya Evaluado
-            </div>
-        </div>}
         <div className="p-4 md:p-6 border-b border-[#2a2e3f] shrink-0">
           <h1 className="text-lg md:text-xl font-bold text-white flex items-center gap-2 tracking-wide mb-3 md:mb-4">
             <Icon name="play-circle" className="w-5 h-5 text-blue-500 fill-blue-500" /> MESA DEL JUEZ
@@ -3018,10 +3097,16 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
                 {[1,2,3,4,5].map(p => <option key={p} value={p}>Pista {p}</option>)}
               </select>
             </div>
+            </div>
           </div>
-        </div>
+          
 
-        <div className="p-4 md:p-6 flex-1 flex flex-col pt-3 md:pt-4">
+        <div className="p-4 md:p-6 flex-1 flex flex-col pt-3 md:pt-4 relative overflow-hidden">
+          {existingEvaluation && <div className="absolute inset-0 z-20 bg-slate-900/40 backdrop-blur-[2px] flex items-center justify-center">
+              <div className="bg-white/90 px-6 py-3 rounded-full shadow-2xl border border-white font-black text-blue-900 uppercase tracking-widest text-[10px] md:text-xs flex items-center gap-3">
+                <Icon name="lock" className="w-4 h-4" /> Ya Evaluado
+              </div>
+          </div>}
           <div className="flex flex-col items-center mb-4 md:mb-6">
             <span className="text-[9px] md:text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Intentos (Máx 3)</span>
             <div className="flex gap-3 md:gap-4">
@@ -3232,6 +3317,67 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
                   setSelTeam('');
               }}
           />
+      )}
+
+      {showConfirmSave && savedResults && selTeam && (
+          <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
+              <div className="bg-[#161925] rounded-[2rem] shadow-2xl w-full max-w-lg border border-[#2a2e3f] overflow-hidden animate-fadeIn">
+                  <div className="bg-blue-600 p-6 flex justify-between items-center">
+                      <div>
+                          <p className="text-blue-200 text-[10px] font-black uppercase tracking-widest mb-1">Confirmación de Juez</p>
+                          <h3 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
+                              <Icon name="check-square" className="w-6 h-6" /> VERIFICAR DATOS
+                          </h3>
+                      </div>
+                      <button onClick={() => setShowConfirmSave(false)} className="text-white/50 hover:text-white transition-colors bg-black/20 p-2 rounded-full">
+                          <Icon name="x" className="w-5 h-5" />
+                      </button>
+                  </div>
+                  
+                  <div className="p-6 space-y-6">
+                      <div className="bg-[#0f111a] p-4 rounded-xl border border-[#2a2e3f]">
+                          <p className="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">Equipo Evaluado</p>
+                          <p className="text-lg font-black text-white">{selectedTeamData?.teamName}</p>
+                          <p className="text-sm text-slate-400 font-medium">{selectedTeamData?.schoolName}</p>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                          <div className="bg-[#0f111a] p-4 rounded-xl border border-[#2a2e3f] text-center">
+                              <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-2">Puntuación Final</p>
+                              <p className="text-4xl font-black text-blue-400">{savedResults.score}</p>
+                              <p className="text-xs text-slate-500 mt-1">Puntos</p>
+                          </div>
+                          <div className="bg-[#0f111a] p-4 rounded-xl border border-[#2a2e3f] text-center">
+                              <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-2">Tiempo Registrado</p>
+                              <p className="text-3xl font-black text-orange-400 mt-1">{savedResults.finalTime.toFixed(2)}s</p>
+                              <p className="text-xs text-slate-500 mt-1">Segundos</p>
+                          </div>
+                      </div>
+
+                      <div className="bg-[#0f111a] p-4 rounded-xl border border-[#2a2e3f] grid grid-cols-2 gap-4">
+                          <div>
+                              <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Ronda</p>
+                              <p className="text-sm font-bold text-slate-200">Ronda {selRonda}</p>
+                          </div>
+                          <div>
+                              <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Pista</p>
+                              <p className="text-sm font-bold text-slate-200">Pista {selPista}</p>
+                          </div>
+                      </div>
+
+
+
+                      <div className="pt-2 flex gap-3">
+                          <button onClick={() => setShowConfirmSave(false)} className="flex-1 py-4 bg-[#1a1d2d] hover:bg-[#2a2e3f] text-slate-300 font-bold rounded-xl transition-all">
+                              Cancelar
+                          </button>
+                          <button onClick={handleConfirmSave} className="flex-1 py-4 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl shadow-lg shadow-blue-500/20 transition-all uppercase tracking-widest flex items-center justify-center gap-2">
+                              <Icon name="save" className="w-5 h-5" /> CONFIRMAR
+                          </button>
+                      </div>
+                  </div>
+              </div>
+          </div>
       )}
     </div>
   );

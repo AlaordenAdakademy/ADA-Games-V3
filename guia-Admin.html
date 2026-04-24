@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Usuario - ADAGAMES v4.0</title>
+    <!-- Fuentes -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos para impresión */
+        @media print {
+            body { background-color: white; }
+            .no-print { display: none; }
+            .print-break-inside-avoid { break-inside: avoid; }
+        }
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-blue-200 selection:text-blue-900">
+
+    <!-- Navegación lateral (Desktop) / Superior (Mobile) -->
+    <nav class="bg-blue-900 text-white p-4 sticky top-0 z-50 shadow-lg no-print">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-500 p-2 rounded-xl shadow-inner">
+                    <i data-lucide="book-open" class="w-6 h-6 text-white"></i>
+                </div>
+                <h1 class="text-xl font-black italic tracking-tighter">ADAGAMES<span class="text-blue-300 text-sm ml-2 font-bold not-italic">v4.0</span></h1>
+            </div>
+            <div class="flex flex-wrap justify-center gap-2 text-xs font-bold uppercase tracking-wider">
+                <a href="#flujo" class="hover:bg-blue-800 px-3 py-2 rounded-lg transition-colors">Flujo</a>
+                <a href="#acceso" class="hover:bg-blue-800 px-3 py-2 rounded-lg transition-colors">Acceso</a>
+                <a href="#registro" class="hover:bg-blue-800 px-3 py-2 rounded-lg transition-colors">Registro</a>
+                <a href="#inspeccion" class="hover:bg-blue-800 px-3 py-2 rounded-lg transition-colors">Inspección</a>
+                <a href="#evaluacion" class="bg-blue-600 hover:bg-blue-500 px-3 py-2 rounded-lg transition-colors shadow-md">Evaluación</a>
+                <a href="#sistema" class="hover:bg-blue-800 px-3 py-2 rounded-lg transition-colors">Sistema</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto p-4 md:p-8 space-y-12">
+        
+        <!-- Header Principal -->
+        <header class="text-center space-y-4 mb-12">
+            <div class="inline-block bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest mb-2 border border-blue-200">
+                Guía Oficial de Uso
+            </div>
+            <h2 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+                Manual de Sistema
+            </h2>
+            <p class="text-slate-500 md:text-lg max-w-2xl mx-auto font-medium">
+                Bienvenido a la plataforma oficial de gestión de competencias de robótica. Sigue esta guía paso a paso para asegurar un evento sin interrupciones.
+            </p>
+        </header>
+
+        <!-- Flujo de Trabajo -->
+        <section id="flujo" class="bg-white rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 print-break-inside-avoid">
+            <h3 class="text-2xl font-black text-blue-900 mb-6 flex items-center gap-3">
+                <i data-lucide="git-merge" class="w-6 h-6 text-blue-500"></i> Flujo de Trabajo General
+            </h3>
+            <p class="text-slate-600 mb-8">Para que el evento fluya correctamente, el sistema requiere que se respete el siguiente orden estricto:</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex items-start gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-black flex-shrink-0">1</div>
+                    <div><h4 class="font-bold text-slate-800">Acceso</h4><p class="text-sm text-slate-500">Selección de categoría y rol.</p></div>
+                </div>
+                <div class="flex items-start gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-black flex-shrink-0">2</div>
+                    <div><h4 class="font-bold text-slate-800">Registro</h4><p class="text-sm text-slate-500">Ingreso de equipos al sistema.</p></div>
+                </div>
+                <div class="flex items-start gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 border-l-4 border-l-orange-400">
+                    <div class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-black flex-shrink-0">3</div>
+                    <div><h4 class="font-bold text-slate-800">Inspección</h4><p class="text-sm text-slate-500">Aprobación técnica obligatoria de los robots.</p></div>
+                </div>
+                <div class="flex items-start gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 border-l-4 border-l-green-400">
+                    <div class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-black flex-shrink-0">4</div>
+                    <div><h4 class="font-bold text-slate-800">Evaluación</h4><p class="text-sm text-slate-500">Calificación en pista por parte de los jueces.</p></div>
+                </div>
+                <div class="flex items-start gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-black flex-shrink-0">5</div>
+                    <div><h4 class="font-bold text-slate-800">Fases</h4><p class="text-sm text-slate-500">Promoción de equipos a las siguientes rondas.</p></div>
+                </div>
+                <div class="flex items-start gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-black flex-shrink-0">6</div>
+                    <div><h4 class="font-bold text-slate-800">Resultados y Sistema</h4><p class="text-sm text-slate-500">Gestión global y pantallas en vivo.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASOS DEL 1 AL 3 -->
+        <div class="space-y-8">
+            <!-- Paso 1 -->
+            <section id="acceso" class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 print-break-inside-avoid relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1.5 h-full bg-slate-300"></div>
+                <h3 class="text-xl font-black text-slate-800 mb-4 flex items-center gap-2">
+                    <i data-lucide="log-in" class="w-5 h-5 text-slate-400"></i> Paso 1: Acceso al Sistema (Login)
+                </h3>
+                <ul class="space-y-3 text-slate-600 ml-6 list-decimal marker:text-slate-400 marker:font-bold">
+                    <li>Abre la aplicación en tu navegador.</li>
+                    <li><strong>Categoría:</strong> Elige entre <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs font-bold">Robotics Quest</span> o <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-xs font-bold">Seguidor de Línea</span>.</li>
+                    <li><strong>Usuario/Rol:</strong> Selecciona tu nombre (Admin o Juez).</li>
+                    <li><strong>Contraseña:</strong> Ingresa tu clave asignada y haz clic en "Acceder al Sistema".</li>
+                </ul>
+            </section>
+
+            <!-- Paso 2 -->
+            <section id="registro" class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 print-break-inside-avoid relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1.5 h-full bg-blue-400"></div>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-black text-slate-800 flex items-center gap-2">
+                        <i data-lucide="users" class="w-5 h-5 text-blue-500"></i> Paso 2: Registro de Equipos
+                    </h3>
+                    <span class="bg-slate-100 text-slate-500 text-[10px] font-black px-2 py-1 rounded uppercase tracking-wider hidden md:block">Solo Admins</span>
+                </div>
+                <p class="text-slate-600 mb-4">Ve a la pestaña <strong>Registro</strong>. Tienes dos opciones para ingresar equipos:</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2"><i data-lucide="keyboard" class="w-4 h-4"></i> Manual</h4>
+                        <p class="text-sm text-slate-600">Llena los datos del equipo (Nombre, Institución, Capitán, Coach, Integrantes) y presiona el botón azul "Registrar Equipo".</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4 text-green-600"></i> Masivo (Excel/CSV)</h4>
+                        <p class="text-sm text-slate-600">Descarga la plantilla CSV, complétala con todos los equipos y súbela haciendo clic en "Importar Archivo".</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Paso 3 -->
+            <section id="inspeccion" class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 print-break-inside-avoid relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1.5 h-full bg-orange-400"></div>
+                <h3 class="text-xl font-black text-slate-800 mb-4 flex items-center gap-2">
+                    <i data-lucide="clipboard-check" class="w-5 h-5 text-orange-500"></i> Paso 3: Inspección Técnica
+                </h3>
+                <div class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl mb-4 text-sm font-medium flex gap-3 items-start">
+                    <i data-lucide="alert-triangle" class="w-5 h-5 flex-shrink-0 text-red-500 mt-0.5"></i>
+                    <p><strong>Paso Crucial:</strong> Ningún equipo aparecerá en la mesa de los jueces para ser evaluado si no ha sido aprobado previamente en esta sección.</p>
+                </div>
+                <ul class="space-y-2 text-slate-600 ml-6 list-disc marker:text-orange-400">
+                    <li>Ve a la pestaña <strong>Inspección</strong>.</li>
+                    <li>Busca a los equipos en estado "ESPERA".</li>
+                    <li>Haz clic en <strong class="text-green-600">Aprobar</strong> si el robot cumple las reglas de medidas y peso.</li>
+                    <li>Haz clic en <strong class="text-red-600">Rechazar</strong> si el robot es descalificado antes de competir.</li>
+                </ul>
+            </section>
+        </div>
+
+        <!-- PASO 4: EVALUACIÓN (EL NÚCLEO) -->
+        <section id="evaluacion" class="bg-blue-900 text-white rounded-[2.5rem] shadow-2xl overflow-hidden print-break-inside-avoid">
+            <div class="p-6 md:p-10 border-b border-blue-800">
+                <h2 class="text-3xl font-black italic tracking-tight mb-2">⚖️ Paso 4: ¿Cómo Evaluar?</h2>
+                <p class="text-blue-200">El proceso de evaluación cambia totalmente dependiendo de la categoría seleccionada. Ve a la pestaña <strong>Evaluación</strong> (Mesa del Juez).</p>
+            </div>
+
+            <!-- Categoría Quest -->
+            <div class="p-6 md:p-10 bg-white text-slate-800">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="bg-blue-100 p-3 rounded-2xl"><i data-lucide="map" class="w-6 h-6 text-blue-600"></i></div>
+                    <h3 class="text-2xl font-black text-blue-900 uppercase">Categoría A: Robotics Quest</h3>
+                </div>
+                <p class="text-slate-600 mb-6">Esta categoría evalúa misiones en un tablero (mapa) mediante acumulación de puntos por zonas alcanzadas.</p>
+                
+                <div class="space-y-6">
+                    <div class="border-l-2 border-slate-200 pl-4">
+                        <h4 class="font-bold text-lg mb-2">1. Seleccionar Intento</h4>
+                        <p class="text-sm text-slate-600 mb-3">Elige al equipo, la ronda y la pista. Luego define el tipo de ticket a usar:</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                            <div class="bg-orange-50 border border-orange-200 p-3 rounded-xl"><strong class="text-orange-700 block mb-1">🎟️ Práctica Libre</strong>No suma puntos al ranking. Gasta 1 de los 5 tickets de práctica.</div>
+                            <div class="bg-green-50 border border-green-200 p-3 rounded-xl"><strong class="text-green-700 block mb-1">🎯 Ev. Oficial</strong>Suma puntos al ranking. Gasta el ticket único de esa pista.</div>
+                            <div class="bg-blue-50 border border-blue-200 p-3 rounded-xl"><strong class="text-blue-700 block mb-1">⭐ Práctica + Ev.</strong>Oficializa un intento de práctica. Gasta ambos tickets a la vez.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="border-l-2 border-slate-200 pl-4">
+                        <h4 class="font-bold text-lg mb-2">2. Evaluar en el Mapa</h4>
+                        <ul class="list-disc ml-4 space-y-2 text-sm text-slate-600">
+                            <li>En el mapa derecho, verás círculos con números (Ruta) y círculos con una "X" roja (Obstáculos).</li>
+                            <li><strong>Anotar Puntos:</strong> Haz clic en el número correspondiente hasta donde llegó el robot. El sistema sumará todo el recorrido anterior automáticamente.</li>
+                            <li><strong>Bonus:</strong> Responde en el sistema si el equipo intentará el bonus. Si lo logran, haz clic en el botón amarillo <span class="bg-yellow-400 text-white font-bold px-2 py-0.5 rounded text-xs">LO LOGRARON (+3 PTS)</span>.</li>
+                        </ul>
+                    </div>
+
+                    <div class="border-l-2 border-slate-200 pl-4">
+                        <h4 class="font-bold text-lg mb-2">3. Guardar</h4>
+                        <p class="text-sm text-slate-600">Verifica el "Total a Sumar" en el panel izquierdo. Haz clic en el botón verde <strong>Guardar Resultado</strong> y confirma en la ventana emergente.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Divisor -->
+            <div class="h-4 bg-slate-100"></div>
+
+            <!-- Categoría Line Follower -->
+            <div class="p-6 md:p-10 bg-[#0f111a] text-slate-200">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="bg-blue-600 p-3 rounded-2xl shadow-lg"><i data-lucide="map" class="w-6 h-6 text-white"></i></div>
+                    <h3 class="text-2xl font-black text-white uppercase">Categoría B: Seguidor de Línea</h3>
+                </div>
+                <p class="text-slate-400 mb-6">Esta categoría evalúa el avance del robot sobre un <strong>mapa interactivo</strong> (Tablero de Evaluación). Los jueces marcan las piezas superadas en tiempo real mientras corre el cronómetro de 2:00 minutos.</p>
+                
+                <div class="space-y-6">
+                    <div class="border-l-2 border-[#2a2e3f] pl-4">
+                        <h4 class="font-bold text-lg mb-2 text-white">1. Preparación en la Mesa del Juez</h4>
+                        <p class="text-sm text-slate-400">Selecciona al <strong>Equipo</strong>, la <strong>Ronda</strong> y la <strong>Pista</strong> en el panel izquierdo. El sistema te mostrará 3 círculos que representan los <strong>Intentos (Máx 3)</strong> disponibles para ese robot.</p>
+                    </div>
+                    
+                    <div class="border-l-2 border-[#2a2e3f] pl-4">
+                        <h4 class="font-bold text-lg mb-2 text-white">2. Ejecución y Tablero Interactivo</h4>
+                        <ul class="list-disc ml-4 space-y-2 text-sm text-slate-400">
+                            <li>Cuando el robot empiece, haz clic en el botón verde <strong>Iniciar</strong> bajo el temporizador.</li>
+                            <li><strong>Evaluar en tiempo real:</strong> Observa el mapa interactivo en el panel derecho. A medida que el robot supera los tramos, <strong>haz clic sobre cada casilla de puntaje</strong> en la pantalla. Estas se iluminarán y los <em>Puntos Actuales</em> subirán automáticamente.</li>
+                            <li>Si el robot se sale de la línea (y tarda más de 10 segundos) o termina todas las piezas de la pista, debes <strong>Pausar</strong> el tiempo.</li>
+                        </ul>
+                    </div>
+
+                    <div class="border-l-2 border-[#2a2e3f] pl-4">
+                        <h4 class="font-bold text-lg mb-2 text-white">3. Sanciones y Nulidad</h4>
+                        <div class="flex flex-col sm:flex-row gap-3 mt-2">
+                            <div class="flex-1 bg-[#1c1f2e] p-3 rounded-xl border border-orange-500/30 text-sm">
+                                <strong class="text-orange-500 flex items-center gap-1 mb-1"><i data-lucide="alert-triangle" class="w-4 h-4"></i> Penalización (+5s)</strong>
+                                Sanción por tocar/acomodar el robot. Suma 5 segundos al tiempo neto.
+                            </div>
+                            <div class="flex-1 bg-[#1c1f2e] p-3 rounded-xl border border-red-500/30 text-sm">
+                                <strong class="text-red-400 flex items-center gap-1 mb-1"><i data-lucide="ban" class="w-4 h-4"></i> Intento Nulo</strong>
+                                Quema el intento actual si el robot se descarrila por completo. El tablero se reiniciará para un nuevo intento.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-l-2 border-[#2a2e3f] pl-4">
+                        <h4 class="font-bold text-lg mb-2 text-white">4. Registrar y Guardar</h4>
+                        <p class="text-sm text-slate-400">Tras un intento que no haya sido nulo, haz clic en <strong class="text-green-500">Registrar Intento Válido</strong>. Se procesará el tiempo con penalizaciones incluidas. Luego, presiona el botón final <strong class="text-blue-500">Guardar Resultado</strong> para confirmar el envío a la base de datos.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASOS 5 Y 6 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Paso 5 -->
+            <section class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 print-break-inside-avoid">
+                <h3 class="text-xl font-black text-slate-800 mb-3 flex items-center gap-2">
+                    <i data-lucide="layers" class="w-5 h-5 text-purple-500"></i> Paso 5: Fases (Admin)
+                </h3>
+                <p class="text-sm text-slate-600 mb-4">Ve a la pestaña <strong>Fases</strong>. Aquí decides quién pasa a la siguiente ronda.</p>
+                <ol class="list-decimal ml-4 space-y-2 text-sm text-slate-600 marker:font-bold">
+                    <li>Selecciona la ronda actual (Ej: R1).</li>
+                    <li>El sistema ordenará a los equipos según su puntaje/tiempo.</li>
+                    <li>Usa las casillas para seleccionar equipos, o usa el botón rápido <strong>"Marcar Ganadores (Top 50%)"</strong>.</li>
+                    <li>Haz clic en el botón de la ronda destino (Ej: "R2") para promoverlos masivamente.</li>
+                </ol>
+            </section>
+
+            <!-- Paso 6 -->
+            <section class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 print-break-inside-avoid">
+                <h3 class="text-xl font-black text-slate-800 mb-3 flex items-center gap-2">
+                    <i data-lucide="trophy" class="w-5 h-5 text-yellow-500"></i> Paso 6: Resultados & TV
+                </h3>
+                <p class="text-sm text-slate-600 mb-4"><strong>Ranking:</strong> Todos pueden ver la tabla en la pestaña "Ranking".</p>
+                <div class="bg-slate-900 text-slate-300 p-4 rounded-xl text-sm">
+                    <strong class="text-white block mb-1">Modo Pantalla Gigante (TV):</strong>
+                    <p>El administrador puede ir al menú inferior izquierdo y hacer clic en <strong>"Lanzar TV Individual"</strong> o <strong>"Lanzar TV Dual"</strong>. Esto abrirá una interfaz oscura ideal para proyectores que se actualiza sola cada 5 segundos.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- PASO 7: SISTEMA (ADMIN) -->
+        <section id="sistema" class="bg-slate-900 text-white rounded-3xl p-6 md:p-10 shadow-2xl border border-slate-800 print-break-inside-avoid relative overflow-hidden">
+            <h3 class="text-2xl font-black text-white mb-6 flex items-center gap-3">
+                <i data-lucide="settings" class="w-7 h-7 text-blue-400"></i> Paso 7: Ajustes de Sistema (Solo Admins)
+            </h3>
+            <p class="text-slate-300 mb-8">En la pestaña <strong>Sistema</strong>, los administradores tienen control total sobre los parámetros globales y la limpieza de datos de la competencia.</p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Ajustes Generales -->
+                <div class="space-y-6">
+                    <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/50">
+                        <h4 class="font-bold text-blue-400 mb-2 flex items-center gap-2"><i data-lucide="clock" class="w-5 h-5"></i> Cronómetro Global</h4>
+                        <p class="text-sm text-slate-300 mb-3">Ajusta la duración total de la competencia usando la barra deslizante (de 1 a 120 minutos). Este es el tiempo principal que los espectadores y equipos ven en las pantallas de TV (Ranking en vivo).</p>
+                    </div>
+                    <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700/50">
+                        <h4 class="font-bold text-blue-400 mb-2 flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-5 h-5"></i> Dashboard Rápido</h4>
+                        <p class="text-sm text-slate-300">Te ofrece una visualización rápida de la salud del evento: muestra cuántos equipos en total están registrados y cuántos de ellos ya fueron aprobados en la Inspección Técnica.</p>
+                    </div>
+                </div>
+
+                <!-- Zona de Peligro -->
+                <div class="bg-red-950/40 p-6 rounded-3xl border border-red-900/50 flex flex-col justify-center">
+                    <h4 class="font-black text-red-500 mb-5 flex items-center gap-2 uppercase tracking-widest text-lg">
+                        <i data-lucide="alert-triangle" class="w-6 h-6"></i> Zona de Peligro
+                    </h4>
+                    <div class="space-y-4">
+                        <div class="bg-orange-950/60 p-4 rounded-2xl border border-orange-900/60">
+                            <strong class="text-orange-500 block mb-2 flex items-center gap-2"><i data-lucide="refresh-cw" class="w-5 h-5"></i> Reset Parcial (Limpiar Resultados)</strong>
+                            <p class="text-sm text-orange-200/80 leading-relaxed">
+                                Ejecutar esta acción <strong>mantiene a los equipos registrados intactos</strong>, pero borra todos sus puntajes, historiales de evaluación y restaura sus tickets. Ideal si necesitas reiniciar una categoría desde cero o corregir errores masivos de los jueces.
+                            </p>
+                        </div>
+                        <div class="bg-red-950/60 p-4 rounded-2xl border border-red-900/60">
+                            <strong class="text-red-500 block mb-2 flex items-center gap-2"><i data-lucide="trash-2" class="w-5 h-5"></i> Aniquilar Todo (Reset Global)</strong>
+                            <p class="text-sm text-red-200/80 leading-relaxed">
+                                Borra absolutamente toda la base de datos histórica, <strong>incluyendo los equipos, configuraciones y mapas</strong>. El sistema queda completamente limpio como si recién se hubiera instalado para un evento nuevo.
+                            </p>
+                        </div>
+                        <div class="bg-black/30 p-3 rounded-xl border border-slate-800 text-center mt-4">
+                            <p class="text-xs text-red-400 font-bold uppercase tracking-wider flex items-center justify-center gap-2">
+                                <i data-lucide="lock" class="w-4 h-4"></i> Ambas acciones requieren tu contraseña
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Notas Finales Admin -->
+        <section class="bg-slate-100 rounded-3xl p-6 md:p-8 border border-slate-200 print-break-inside-avoid mt-8">
+            <h3 class="text-lg font-black text-slate-800 mb-4 flex items-center gap-2 uppercase tracking-widest">
+                <i data-lucide="info" class="w-5 h-5"></i> Otras Funciones Administrativas
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <strong class="text-blue-700 block mb-2 flex items-center gap-2"><i data-lucide="edit" class="w-4 h-4"></i> Corrección de Errores:</strong>
+                    <p>En la pestaña "Ranking", si haces clic sobre un equipo, se abrirá su historial completo de evaluaciones. Puedes editar puntos, cambiar tiempos o borrar una evaluación por completo si un juez cometió un error.</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <strong class="text-blue-700 block mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4"></i> Diseño de Pistas (Quest):</strong>
+                    <p>En la pestaña "Pistas", puedes configurar los mapas virtuales: sube imágenes de fondo, traza la ruta (secuencia de números), y coloca obstáculos. <em>Recuerda siempre presionar Guardar</em> en la barra superior antes de cambiar de pista.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-8 text-slate-400 text-xs font-bold uppercase tracking-widest no-print">
+        ADAGAMES Engine v4.0 &copy; 2026
+    </footer>
+
+    <!-- Inicializar Iconos -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

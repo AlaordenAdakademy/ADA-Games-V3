@@ -1,6 +1,310 @@
 {
     "teams": [
         {
+            "id": "177689253970613",
+            "teamName": "(Pendiente) Abajo Cadenas",
+            "schoolName": "U.E. Abajo Cadenas",
+            "school": "(Pendiente) Abajo Cadenas — U.E. Abajo Cadenas",
+            "captainName": "(Pendiente)",
+            "coachName": "",
+            "members": [
+                "(Pendiente)"
+            ],
+            "studentsCount": 1,
+            "status": "inspected",
+            "score": 85,
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 85,
+                    "finalTimeMs": 15000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "10:08:27 p. m.",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                }
+            ],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 0,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 15000
+        },
+        {
+            "id": "177689253971614",
+            "teamName": "Don Bosco Tech",
+            "schoolName": "U.E. Colegio Don Bosco",
+            "school": "Don Bosco Tech — U.E. Colegio Don Bosco",
+            "captainName": "Michelle Fariñas",
+            "coachName": "",
+            "members": [
+                "Michelle de los Angeles Fariñas Sanchez",
+                "Augusto Anselmetti Bruzual"
+            ],
+            "studentsCount": 2,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "177689253967410",
+            "teamName": "IDEAL N 2",
+            "schoolName": "U.E. IDEAL",
+            "school": "IDEAL N 2 — U.E. IDEAL",
+            "captainName": "Pastor Sosa",
+            "coachName": "",
+            "members": [
+                "Pastor Sosa",
+                "Roberto Rivas",
+                "Fabiana Quijada"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "177689253972715",
+            "teamName": "La Paz Tech",
+            "schoolName": "U.E. Nuestra Señora de La Paz",
+            "school": "La Paz Tech — U.E. Nuestra Señora de La Paz",
+            "captainName": "José Marcos Laya",
+            "coachName": "",
+            "members": [
+                "José Marcos Laya Candurin",
+                "Antonella Sánchez Ysaccis"
+            ],
+            "studentsCount": 2,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "177689253974817",
+            "teamName": "Los Promnue28",
+            "schoolName": "U.E. Nueva Barcelona",
+            "school": "Los Promnue28 — U.E. Nueva Barcelona",
+            "captainName": "Eduardo Villegas",
+            "coachName": "",
+            "members": [
+                "Francisco Deffitt",
+                "Eduardo Villegas",
+                "Salomón Turmero"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "177689253968511",
+            "teamName": "Menca PRJ",
+            "schoolName": "U.E. Doña Menca de Leoni",
+            "school": "Menca PRJ — U.E. Doña Menca de Leoni",
+            "captainName": "Rogelio Fernández",
+            "coachName": "",
+            "members": [
+                "Rogelio Fernández",
+                "José Camperos",
+                "Roberto Monagas"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "177689253969612",
+            "teamName": "Nitro Bytes",
+            "schoolName": "U.E. Raúl Leoni",
+            "school": "Nitro Bytes — U.E. Raúl Leoni",
+            "captainName": "Fernando Rojas",
+            "coachName": "",
+            "members": [
+                "Fernando Javier Rojas Figueroa",
+                "Isabella Lucia del Valle Jiménez Zambrano",
+                "Laura Cristina Macadan Noriega"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "1776955303841",
+            "teamName": "Pendiente",
+            "schoolName": "U.E. Colegio Eduardo Blanco",
+            "school": "Pendiente — U.E. Colegio Eduardo Blanco",
+            "captainName": "Pendiente",
+            "coachName": "",
+            "members": [],
+            "studentsCount": 1,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "177689253973716",
+            "teamName": "PyBulis",
+            "schoolName": "U.E. Cacica Urimare",
+            "school": "PyBulis — U.E. Cacica Urimare",
+            "captainName": "Carmila Benitez",
+            "coachName": "",
+            "members": [
+                "Camila Benitez",
+                "Victor Jiménez",
+                "Leonardo Rodríguez"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "1776892474497",
+            "teamName": "Wall-E",
+            "schoolName": "U.E. Colegio Juan Vicente González",
+            "school": "Wall-E — U.E. Colegio Juan Vicente González",
+            "captainName": "Ruth Suárez",
+            "coachName": "",
+            "members": [
+                "Ruth Suárez",
+                "Richard Rodriguez",
+                "Josué Aular"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
             "id": "17768923484205",
             "teamName": "(Pendiente) Don Bosco",
             "schoolName": "U.E. Colegio Don Bosco",
@@ -70,16 +374,49 @@
             ],
             "studentsCount": 3,
             "status": "inspected",
-            "score": 0,
-            "history": [],
+            "score": 16,
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 2,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "convertedFromPractice": true,
+                    "date": "10:10:12 p. m.",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 3,
+                    "finalTimeMs": 0,
+                    "practice": true,
+                    "date": "10:11:07 p. m.",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "10:11:26 p. m.",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                }
+            ],
             "category": "quest",
             "qualifiedRounds": [
                 1
             ],
-            "practiceTickets": 5,
+            "practiceTickets": 3,
             "evaluationTickets": {
-                "1": 1,
-                "2": 1,
+                "1": 0,
+                "2": 0,
                 "3": 1,
                 "4": 1,
                 "5": 1
@@ -289,289 +626,8 @@
                 "3": 1,
                 "4": 1,
                 "5": 1
-            }
-        },
-        {
-            "id": "177689253970613",
-            "teamName": "(Pendiente) Abajo Cadenas",
-            "schoolName": "U.E. Abajo Cadenas",
-            "school": "(Pendiente) Abajo Cadenas — U.E. Abajo Cadenas",
-            "captainName": "(Pendiente)",
-            "coachName": "",
-            "members": [
-                "(Pendiente)"
-            ],
-            "studentsCount": 1,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "line_follower",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            }
-        },
-        {
-            "id": "177689253971614",
-            "teamName": "Don Bosco Tech",
-            "schoolName": "U.E. Colegio Don Bosco",
-            "school": "Don Bosco Tech — U.E. Colegio Don Bosco",
-            "captainName": "Michelle Fariñas",
-            "coachName": "",
-            "members": [
-                "Michelle de los Angeles Fariñas Sanchez",
-                "Augusto Anselmetti Bruzual"
-            ],
-            "studentsCount": 2,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "line_follower",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            }
-        },
-        {
-            "id": "177689253967410",
-            "teamName": "IDEAL N 2",
-            "schoolName": "U.E. IDEAL",
-            "school": "IDEAL N 2 — U.E. IDEAL",
-            "captainName": "Pastor Sosa",
-            "coachName": "",
-            "members": [
-                "Pastor Sosa",
-                "Roberto Rivas",
-                "Fabiana Quijada"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "line_follower",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            }
-        },
-        {
-            "id": "177689253972715",
-            "teamName": "La Paz Tech",
-            "schoolName": "U.E. Nuestra Señora de La Paz",
-            "school": "La Paz Tech — U.E. Nuestra Señora de La Paz",
-            "captainName": "José Marcos Laya",
-            "coachName": "",
-            "members": [
-                "José Marcos Laya Candurin",
-                "Antonella Sánchez Ysaccis"
-            ],
-            "studentsCount": 2,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "line_follower",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            }
-        },
-        {
-            "id": "177689253974817",
-            "teamName": "Los Promnue28",
-            "schoolName": "U.E. Nueva Barcelona",
-            "school": "Los Promnue28 — U.E. Nueva Barcelona",
-            "captainName": "Eduardo Villegas",
-            "coachName": "",
-            "members": [
-                "Francisco Deffitt",
-                "Eduardo Villegas",
-                "Salomón Turmero"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "line_follower",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            }
-        },
-        {
-            "id": "177689253968511",
-            "teamName": "Menca PRJ",
-            "schoolName": "U.E. Doña Menca de Leoni",
-            "school": "Menca PRJ — U.E. Doña Menca de Leoni",
-            "captainName": "Rogelio Fernández",
-            "coachName": "",
-            "members": [
-                "Rogelio Fernández",
-                "José Camperos",
-                "Roberto Monagas"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "line_follower",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            }
-        },
-        {
-            "id": "177689253969612",
-            "teamName": "Nitro Bytes",
-            "schoolName": "U.E. Raúl Leoni",
-            "school": "Nitro Bytes — U.E. Raúl Leoni",
-            "captainName": "Fernando Rojas",
-            "coachName": "",
-            "members": [
-                "Fernando Javier Rojas Figueroa",
-                "Isabella Lucia del Valle Jiménez Zambrano",
-                "Laura Cristina Macadan Noriega"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "line_follower",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            }
-        },
-        {
-            "id": "1776955303841",
-            "teamName": "Pendiente",
-            "schoolName": "U.E. Colegio Eduardo Blanco",
-            "school": "Pendiente — U.E. Colegio Eduardo Blanco",
-            "captainName": "Pendiente",
-            "coachName": "",
-            "members": [],
-            "studentsCount": 1,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "line_follower",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            }
-        },
-        {
-            "id": "177689253973716",
-            "teamName": "PyBulis",
-            "schoolName": "U.E. Cacica Urimare",
-            "school": "PyBulis — U.E. Cacica Urimare",
-            "captainName": "Carmila Benitez",
-            "coachName": "",
-            "members": [
-                "Camila Benitez",
-                "Victor Jiménez",
-                "Leonardo Rodríguez"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "line_follower",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            }
-        },
-        {
-            "id": "1776892474497",
-            "teamName": "Wall-E",
-            "schoolName": "U.E. Colegio Juan Vicente González",
-            "school": "Wall-E — U.E. Colegio Juan Vicente González",
-            "captainName": "Ruth Suárez",
-            "coachName": "",
-            "members": [
-                "Ruth Suárez",
-                "Richard Rodriguez",
-                "Josué Aular"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "line_follower",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            }
+            },
+            "lastTime": 0
         }
     ],
     "tracks": {
@@ -1631,6 +1687,6 @@
     "timer": {
         "timer": 1800,
         "timerActive": false,
-        "updatedAt": 1776894459.9282799
+        "updatedAt": 1776955904.790719
     }
 }
