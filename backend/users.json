@@ -1,0 +1,9 @@
+[
+    {"id": "admin", "name": "Administrador Central", "role": "admin", "password": "ada123admin"},
+    {"id": "juez_quest_1", "name": "Juez Quest 1", "role": "judge", "password": "juezquest1"},
+    {"id": "juez_quest_2", "name": "Juez Quest 2", "role": "judge", "password": "juezquest2"},
+    {"id": "juez_quest_3", "name": "Juez Quest 3", "role": "judge", "password": "juezquest3"},
+    {"id": "juez_quest_4", "name": "Juez Quest 4", "role": "judge", "password": "juezquest4"},
+    {"id": "juez_line_1", "name": "Juez Line 1", "role": "judge", "password": "juezline1"},
+    {"id": "juez_line_2", "name": "Juez Line 2", "role": "judge", "password": "juezline2"}
+]
