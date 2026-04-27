@@ -1,21 +1,22 @@
 {
     "teams": [
         {
-            "id": "177689253971614",
-            "teamName": "Don Bosco Tech",
-            "schoolName": "U.E. Colegio Don Bosco Nueva Barcelona",
-            "school": "Don Bosco Tech — U.E. Colegio Don Bosco Nueva Barcelona",
-            "captainName": "Augusto Anselmetti Bruzual",
-            "coachName": "Manuel La Rosa Castillo",
+            "id": "17768923483993",
+            "teamName": "Doragons",
+            "schoolName": "U.E. Dr. Raúl Leoni",
+            "school": "Doragons — U.E. Dr. Raúl Leoni",
+            "captainName": "Ariel Cristina Algarín García",
+            "coachName": "Frangelith Villarroel",
             "members": [
-                "Michelle de los Ángeles Fariñas Sánchez",
-                "Augusto Anselmetti Bruzual"
+                "Ariel Cristina Algarín García",
+                "Gabriel Jesús Molina Zapata",
+                "Ángel Luis Rodríguez Vegas"
             ],
-            "studentsCount": 2,
+            "studentsCount": 3,
             "status": "inspected",
             "score": 0,
             "history": [],
-            "category": "line_follower",
+            "category": "quest",
             "qualifiedRounds": [
                 1
             ],
@@ -30,9 +31,264 @@
             "lastTime": 0
         },
         {
+            "id": "17768923483771",
+            "teamName": "IDEAL N°1",
+            "schoolName": "U.E. Instituto de Enseñanza América Latina (IDEAL)",
+            "school": "IDEAL N°1 — U.E. Instituto de Enseñanza América Latina (IDEAL)",
+            "captainName": "Kenay Rafael Silvera Romero",
+            "coachName": "Juan Diego Yepez Gil",
+            "members": [
+                "Kenay Rafael Silvera Romero",
+                "Diego Andrés García Mora",
+                "Ángelo Alessandro Mantovani Ortíz"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "1776892156424",
+            "teamName": "Jvg-bot",
+            "schoolName": "U. E. Colegio Juan Vicente Gonzalez",
+            "school": "Jvg-bot — Unidad Educativa Colegio Juan Vicente Gonzalez",
+            "captainName": "Christopher Roberto Sánchez Cepeda",
+            "coachName": "Luis Marcano",
+            "members": [
+                "Christopher Roberto Sánchez Cepeda",
+                "Sebastián Josué Carvajal Ochoa",
+                "Rahel de Jesús Carreño Medina"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "17768923484417",
+            "teamName": "Lambda",
+            "schoolName": "U.E. Cacica Urimare",
+            "school": "Lambda — UE Cacica Urimare",
+            "captainName": "José Daniel Ramos Marín",
+            "coachName": "Luis Gamboa",
+            "members": [
+                "José Daniel Ramos Marín",
+                "Adrián Antonio Güipe González",
+                "Camila Alejandra Vielma Moronta"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "17768923484518",
+            "teamName": "Los Blinders",
+            "schoolName": "U.E. Nueva Barcelona",
+            "school": "Los Blinders — U.E. Nueva Barcelona",
+            "captainName": "Ilan Zahir Ávila Guaiquirián",
+            "coachName": "Carolina Astudillo",
+            "members": [
+                "Ilan Zahir Ávila Guaiquirián",
+                "Geovanny Eduardo José Ortíz Lusinchi",
+                "Winston Gabriel Molina Mata"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "17768923484104",
+            "teamName": "Los Boys",
+            "schoolName": "U. E. ABAJO CADENAS",
+            "school": "Los Boys — UNIDAD EDUCATIVA ABAJO CADENAS",
+            "captainName": "Eduardo Girot",
+            "coachName": "Yatsmary Villarroel",
+            "members": [
+                "Eduardo Girot",
+                "Jorge Zamora",
+                "José Romero"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "238027238596759",
+            "teamName": "MENCA M3NS",
+            "schoolName": "U.E. Doña Menca de Leoni",
+            "school": "MENCA M3NS — U.E. Doña Menca de Leoni",
+            "captainName": "Jhean Brito",
+            "coachName": "Alberto Thomas",
+            "members": [
+                "Jhean Brito",
+                "Hiroshi Yoshida",
+                "Alejandro Cedeño"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0,
+            "judgeId": "admin",
+            "judgeName": "Administrador Central"
+        },
+        {
+            "id": "82112924798217",
+            "teamName": "NALA",
+            "schoolName": "U. E. Colegio Eduardo Blanco",
+            "school": "NALA — Unidad Educativa Colegio Eduardo Blanco",
+            "captainName": "Pedro Antonio Catamo Guzman",
+            "coachName": "Ramses Antolines",
+            "members": [
+                "Pedro Antonio Catamo Guzman",
+                "Nathalie Sofia Sanchez Carrero",
+                "Michell De Los Angeles Urbaneja Vasquez"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0,
+            "judgeId": "admin",
+            "judgeName": "Administrador Central"
+        },
+        {
+            "id": "177689253971614",
+            "teamName": "Don Bosco Tech",
+            "schoolName": "U.E. Colegio Don Bosco",
+            "school": "Don Bosco Tech — U.E. Colegio Don Bosco Nueva Barcelona",
+            "captainName": "Augusto Anselmetti Bruzual",
+            "coachName": "Manuel La Rosa Castillo",
+            "members": [
+                "Michelle de los Ángeles Fariñas Sánchez",
+                "Augusto Anselmetti Bruzual"
+            ],
+            "studentsCount": 2,
+            "status": "inspected",
+            "score": 65,
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 65,
+                    "finalTimeMs": 11000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "6:21:45 p. m.",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                }
+            ],
+            "category": "line_follower",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 0,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 11000
+        },
+        {
             "id": "63689415686062",
             "teamName": "Guacamaya Squart",
-            "schoolName": "UNIDAD EDUCATIVA ABAJO CADENAS",
+            "schoolName": "U. E. ABAJO CADENAS",
             "school": "Guacamaya Squart — UNIDAD EDUCATIVA ABAJO CADENAS",
             "captainName": "Samuel José Gómez Gallardo",
             "coachName": "Yatsmary Villarroel",
@@ -215,7 +471,7 @@
         {
             "id": "105227871001476",
             "teamName": "Onorix",
-            "schoolName": "Unidad Educativa Colegio Eduardo Blanco",
+            "schoolName": "U. E. Colegio Eduardo Blanco",
             "school": "Onorix — Unidad Educativa Colegio Eduardo Blanco",
             "captainName": "Daniella Alejandra Lira Bonilla",
             "coachName": "Sircar Bello",
@@ -247,7 +503,7 @@
         {
             "id": "99491260164374",
             "teamName": "PyBulls",
-            "schoolName": "UE Cacica Urimare",
+            "schoolName": "U.E. Cacica Urimare",
             "school": "PyBulls — UE Cacica Urimare",
             "captainName": "Leonardo Andrés Rodríguez Farías",
             "coachName": "Daniel Ramos",
@@ -279,7 +535,7 @@
         {
             "id": "1776892474497",
             "teamName": "Wall-e",
-            "schoolName": "Unidad Educativa Colegio Juan Vicente Gonzalez",
+            "schoolName": "U. E. Colegio Juan Vicente Gonzalez",
             "school": "Wall-e — Unidad Educativa Colegio Juan Vicente Gonzalez",
             "captainName": "Josué Isai Aular Guacaran",
             "coachName": "Luis Marcano",
@@ -305,250 +561,6 @@
                 "5": 1
             },
             "lastTime": 0
-        },
-        {
-            "id": "17768923483993",
-            "teamName": "Doragons",
-            "schoolName": "U.E. Dr. Raúl Leoni",
-            "school": "Doragons — U.E. Dr. Raúl Leoni",
-            "captainName": "Ariel Cristina Algarín García",
-            "coachName": "Frangelith Villarroel",
-            "members": [
-                "Ariel Cristina Algarín García",
-                "Gabriel Jesús Molina Zapata",
-                "Ángel Luis Rodríguez Vegas"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "17768923483771",
-            "teamName": "IDEAL N°1",
-            "schoolName": "U.E. Instituto de Enseñanza América Latina (IDEAL)",
-            "school": "IDEAL N°1 — U.E. Instituto de Enseñanza América Latina (IDEAL)",
-            "captainName": "Kenay Rafael Silvera Romero",
-            "coachName": "Juan Diego Yepez Gil",
-            "members": [
-                "Kenay Rafael Silvera Romero",
-                "Diego Andrés García Mora",
-                "Ángelo Alessandro Mantovani Ortíz"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "1776892156424",
-            "teamName": "Jvg-bot",
-            "schoolName": "Unidad Educativa Colegio Juan Vicente Gonzalez",
-            "school": "Jvg-bot — Unidad Educativa Colegio Juan Vicente Gonzalez",
-            "captainName": "Christopher Roberto Sánchez Cepeda",
-            "coachName": "Luis Marcano",
-            "members": [
-                "Christopher Roberto Sánchez Cepeda",
-                "Sebastián Josué Carvajal Ochoa",
-                "Rahel de Jesús Carreño Medina"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "17768923484417",
-            "teamName": "Lambda",
-            "schoolName": "UE Cacica Urimare",
-            "school": "Lambda — UE Cacica Urimare",
-            "captainName": "José Daniel Ramos Marín",
-            "coachName": "Luis Gamboa",
-            "members": [
-                "José Daniel Ramos Marín",
-                "Adrián Antonio Güipe González",
-                "Camila Alejandra Vielma Moronta"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "17768923484518",
-            "teamName": "Los Blinders",
-            "schoolName": "U.E. Nueva Barcelona",
-            "school": "Los Blinders — U.E. Nueva Barcelona",
-            "captainName": "Ilan Zahir Ávila Guaiquirián",
-            "coachName": "Carolina Astudillo",
-            "members": [
-                "Ilan Zahir Ávila Guaiquirián",
-                "Geovanny Eduardo José Ortíz Lusinchi",
-                "Winston Gabriel Molina Mata"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "17768923484104",
-            "teamName": "Los Boys",
-            "schoolName": "UNIDAD EDUCATIVA ABAJO CADENAS",
-            "school": "Los Boys — UNIDAD EDUCATIVA ABAJO CADENAS",
-            "captainName": "Eduardo Girot",
-            "coachName": "Yatsmary Villarroel",
-            "members": [
-                "Eduardo Girot",
-                "Jorge Zamora",
-                "José Romero"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "238027238596759",
-            "teamName": "MENCA M3NS",
-            "schoolName": "U.E. Doña Menca de Leoni",
-            "school": "MENCA M3NS — U.E. Doña Menca de Leoni",
-            "captainName": "Jhean Brito",
-            "coachName": "Alberto Thomas",
-            "members": [
-                "Jhean Brito",
-                "Hiroshi Yoshida",
-                "Alejandro Cedeño"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0,
-            "judgeId": "admin",
-            "judgeName": "Administrador Central"
-        },
-        {
-            "id": "82112924798217",
-            "teamName": "NALA",
-            "schoolName": "Unidad Educativa Colegio Eduardo Blanco",
-            "school": "NALA — Unidad Educativa Colegio Eduardo Blanco",
-            "captainName": "Pedro Antonio Catamo Guzman",
-            "coachName": "Ramses Antolines",
-            "members": [
-                "Pedro Antonio Catamo Guzman",
-                "Nathalie Sofia Sanchez Carrero",
-                "Michell De Los Angeles Urbaneja Vasquez"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0,
-            "judgeId": "admin",
-            "judgeName": "Administrador Central"
         }
     ],
     "tracks": {
@@ -1605,9 +1617,16 @@
             }
         }
     },
-    "timer": {
-        "timer": 1800,
-        "timerActive": false,
-        "updatedAt": 1776894459.9282799
+    "timers": {
+        "quest": {
+            "timer": 1800,
+            "timerActive": false,
+            "updatedAt": 1776894459.9282799
+        },
+        "line_follower": {
+            "timer": 1800,
+            "timerActive": false,
+            "updatedAt": 1777325716.5955215
+        }
     }
 }

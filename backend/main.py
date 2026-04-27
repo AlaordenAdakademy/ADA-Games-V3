@@ -28,7 +28,7 @@ def get_local_ip():
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
-app = FastAPI(title="Adagames API v2")
+app = FastAPI(title="Robot Challenge 2026 API")
 
 # Allow CORS
 app.add_middleware(
@@ -351,7 +351,7 @@ if __name__ == "__main__":
     import uvicorn
     local_ip = get_local_ip()
     print(f"\n{'#'*50}")
-    print(f"ADAGAMES v4.5 INICIADO")
+    print(f"ROBOT CHALLENGE 2026 INICIADO")
     print(f"ACCESO LOCAL: http://localhost:8001")
     print(f"ACCESO WIFI:  http://{local_ip}:8001")
     print(f"{'#'*50}\n")

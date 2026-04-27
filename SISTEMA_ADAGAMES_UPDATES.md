@@ -1,4 +1,4 @@
-# Adagames Robotics Quest - Bitácora de Sistema y Actualizaciones
+# Robot Challenge 2026 - Bitácora de Sistema y Actualizaciones
 
 Este documento detalla las funcionalidades principales y la evolución del sistema Adagames desde un tablero local hasta una plataforma de competencia profesional y colaborativa.
 

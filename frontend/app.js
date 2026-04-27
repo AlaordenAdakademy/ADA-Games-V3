@@ -576,7 +576,7 @@ function App() {
     <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
       <div className="animate-pulse flex flex-col items-center">
         <Icon name="trophy" className="w-12 h-12 text-blue-400 mb-4" />
-        <h2 className="font-black text-2xl uppercase tracking-widest">Cargando Adagames...</h2>
+        <h2 className="font-black text-2xl uppercase tracking-widest">Cargando Robot Challenge...</h2>
       </div>
     </div>
   );
@@ -639,7 +639,7 @@ function App() {
             <div className="bg-blue-500 p-1.5 rounded-lg shadow-lg shadow-blue-500/20">
               <Icon name="trophy" className="text-white w-5 h-5 md:w-6 md:h-6" />
             </div>
-            <h1 className="font-black text-base md:text-xl tracking-tighter leading-tight">ADAGAMES<br/><span className="text-[8px] md:text-[10px] text-blue-400 font-bold tracking-widest uppercase">{currentUser.category === 'line_follower' ? 'Line Follower' : 'Robotics Quest'}</span></h1>
+            <h1 className="font-black text-base md:text-xl tracking-tighter leading-tight">ROBOT CHALLENGE<br/><span className="text-[8px] md:text-[10px] text-blue-400 font-bold tracking-widest uppercase">{currentUser.category === 'line_follower' ? 'Line Follower' : 'Robotics Quest'}</span></h1>
           </div>
           
           <div className="hidden md:block bg-blue-900/50 p-3 rounded-xl">
@@ -736,6 +736,22 @@ function App() {
                 <Icon name="log-out" className="w-4 h-4" />
                 <span className="text-[10px] font-black uppercase tracking-widest">Cerrar Sesión</span>
             </button>
+
+            {/* CRÉDITOS */}
+            <div className="mt-4 pt-4 border-t border-blue-900/50">
+                <div className="flex justify-between items-center opacity-60 grayscale hover:grayscale-0 transition-all mb-3 px-1">
+                   <span className="text-[9px] font-black tracking-widest text-blue-300">ADAKADEMY</span>
+                   <span className="text-[9px] font-black tracking-widest text-blue-300">UGMA</span>
+                </div>
+                <p className="text-[8px] font-bold text-blue-400 uppercase leading-tight text-center tracking-tighter">
+                    Desarrollo de Software:<br/>
+                    <span className="text-white">Ing. Jose G. Rojas-Adakademy</span>
+                </p>
+                <p className="text-[7px] font-bold text-blue-500/80 uppercase leading-tight text-center tracking-tighter mt-1">
+                    Colaborador:<br/>
+                    <span className="text-slate-300">Vincenzo Fernández-Estudiante UGMA</span>
+                </p>
+            </div>
         </div>
 
         {/* Indicador de conexión (Solo Desktop) */}
@@ -897,7 +913,7 @@ function Login({ onLogin, users }) {
           <div className="bg-white/20 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 backdrop-blur-md shadow-inner border border-white/30">
             <Icon name="trophy" className="w-10 h-10 text-white" />
           </div>
-          <h2 className="text-3xl font-black uppercase tracking-tighter italic">Adagames v4.0</h2>
+          <h2 className="text-3xl font-black uppercase tracking-tighter italic">Robot Challenge 2026</h2>
           <p className="text-blue-100 font-bold mt-2 uppercase text-[10px] tracking-widest leading-none">Plataforma de Competencia de Robótica</p>
         </div>
         <form onSubmit={handleLogin} className="p-8 space-y-4">
@@ -1253,7 +1269,7 @@ function SistemasTab({ questDuration, setQuestDuration, questTimerActive, setQue
                 </div>
 
                 <div className="text-center">
-                    <p className="text-[9px] md:text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] md:tracking-[0.3em]">Adagames V4.0 Engine &bull; Admin Mode</p>
+                    <p className="text-[9px] md:text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] md:tracking-[0.3em]">Robot Challenge Engine &bull; Admin Mode</p>
                 </div>
             </>
         );
@@ -1877,7 +1893,7 @@ function RegistroTab({ addTeam, bulkAddTeams }) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'plantilla_equipos_adagames.csv';
+    link.download = 'plantilla_equipos_robot_challenge_2026.csv';
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -2276,8 +2292,8 @@ const SCHOOL_LOGO_MAP = [
     { keywords: ['raul leoni', 'raúl leoni'],         file: '6-Raul Leoni.png'            },
     { keywords: ['eduardo blanco', 'blanco'],         file: '7-Colegio_Eduardo_Blanco.png'},
     { keywords: ['cacica', 'urimare'],                file: '8-Cacica_Urimare.png'        },
-    { keywords: ['nueva barcelona', 'barcelona'],     file: '9-Nueva-Barcelona.jpg'       },
     { keywords: ['don bosco', 'bosco'],               file: '10-Don-Bosco.png'            },
+    { keywords: ['nueva barcelona', 'barcelona'],     file: '9-Nueva-Barcelona.jpg'       },
 ];
 
 const getSchoolLogoFile = (name) => {
@@ -2767,7 +2783,7 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
                         <h1 className="text-3xl font-black italic tracking-tighter uppercase">Ranking Dual en Vivo</h1>
                         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse inline-block"></span>
-                            Sincronizado en tiempo real · ADAGAMES V4.5
+                            Sincronizado en tiempo real · Robot Challenge 2026
                             {suspenseMode && (
                                 <span className="ml-4 flex items-center gap-1.5 bg-orange-500/20 px-2 py-0.5 rounded-lg border border-orange-500/30 text-orange-400 animate-pulse">
                                     <span className="w-1 h-1 rounded-full bg-orange-500"></span>
@@ -3210,7 +3226,7 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
                 <p className="text-xs font-bold uppercase tracking-widest flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Datos sincronizados en tiempo real
                 </p>
-                <p className="text-xs font-black italic tracking-tighter">ADAGAMES V4.0 - {viewCategory === 'line_follower' ? 'LINE FOLLOWER' : 'ROBOTICS QUEST'} ENGINE</p>
+                <p className="text-xs font-black italic tracking-tighter">ROBOT CHALLENGE 2026 - {viewCategory === 'line_follower' ? 'LINE FOLLOWER' : 'ROBOTICS QUEST'} ENGINE</p>
             </div>
         </div>
     );

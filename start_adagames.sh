@@ -11,7 +11,7 @@ cd "$(dirname "$0")"
 
 echo "###########################################################"
 echo "#                                                         #"
-echo "#          ADAGAMES V4.5 - ESTACION DE CONTROL            #"
+echo "#          Robot Challenge 2026 - ESTACION DE CONTROL            #"
 echo "#                                                         #"
 echo "###########################################################"
 echo ""

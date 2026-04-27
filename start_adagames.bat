@@ -2,12 +2,12 @@
 setlocal enabledelayedexpansion
 cd /d "%~dp0"
 
-title ADAGAMES V4.5 SERVER
+title Robot Challenge 2026 SERVER
 color 0b
 
 echo ###########################################################
 echo #                                                         #
-echo #          ADAGAMES V4.5 - ESTACION DE CONTROL            #
+echo #          Robot Challenge 2026 - ESTACION DE CONTROL            #
 echo #                                                         #
 echo ###########################################################
 echo.
