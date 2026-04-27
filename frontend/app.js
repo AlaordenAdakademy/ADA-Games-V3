@@ -31,9 +31,7 @@ const getTeamDisplayNames = (team) => {
     return { team: teamName, school: schoolName };
 };
 
-// --- COMPONENTE PRINCIPAL ---
 function App() {
-  const [activeTab, setActiveTab] = useState('registro');
   const [teams, setTeams] = useState([]);
   const [tracks, setTracks] = useState({});
   const [users, setUsers] = useState([]);
@@ -41,6 +39,9 @@ function App() {
   const [currentUser, setCurrentUser] = useState(() => {
     const saved = localStorage.getItem('ada_user');
     return saved ? JSON.parse(saved) : null;
+  });
+  const [activeTab, setActiveTab] = useState(() => {
+    return (currentUser?.role === 'tv') ? 'resultados' : 'registro';
   });
   
   // Estados para Competencia (v3.2)
@@ -648,7 +649,9 @@ function App() {
                   <Icon name="users" className="w-4 h-4 text-white" />
                </div>
                <div className="truncate">
-                  <p className="text-[10px] font-bold text-blue-300 uppercase leading-none">{currentUser.role === 'admin' ? 'Administrador' : 'Juez'}</p>
+                  <p className="text-[10px] font-bold text-blue-300 uppercase leading-none">
+                    {currentUser.role === 'admin' ? 'Administrador' : currentUser.role === 'tv' ? 'Operador TV' : 'Juez'}
+                  </p>
                   <p className="text-xs font-black truncate">{currentUser.name}</p>
                </div>
             </div>
@@ -691,13 +694,15 @@ function App() {
               <NavButton active={activeTab === 'sistema'} onClick={() => setActiveTab('sistema')} icon={<Icon name="settings" />} label="Sistema" />
             </>
           )}
-          <NavButton active={activeTab === 'evaluacion'} onClick={() => setActiveTab('evaluacion')} icon={<Icon name="play-circle" />} label="Evaluación" />
+          {currentUser.role !== 'tv' && (
+            <NavButton active={activeTab === 'evaluacion'} onClick={() => setActiveTab('evaluacion')} icon={<Icon name="play-circle" />} label="Evaluación" />
+          )}
           <NavButton active={activeTab === 'resultados'} onClick={() => setActiveTab('resultados')} icon={<Icon name="trophy" />} label="Ranking" />
         </div>
 
         {/* Sección Inferior de la Sidebar (Solo Desktop) */}
         <div className="hidden md:block p-4 border-t border-blue-900 space-y-3 mt-auto">
-            {currentUser.role === 'admin' && (
+            {(currentUser.role === 'admin' || currentUser.role === 'tv') && (
                 <div className="flex flex-col gap-2">
                     <div className="bg-blue-900/40 p-3 rounded-2xl border border-blue-800 mb-2">
                         <label className="flex items-center justify-between cursor-pointer group">

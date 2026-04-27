@@ -5,5 +5,6 @@
     {"id": "juez_quest_3", "name": "Juez Quest 3", "role": "judge", "password": "juezquest3"},
     {"id": "juez_quest_4", "name": "Juez Quest 4", "role": "judge", "password": "juezquest4"},
     {"id": "juez_line_1", "name": "Juez Line 1", "role": "judge", "password": "juezline1"},
-    {"id": "juez_line_2", "name": "Juez Line 2", "role": "judge", "password": "juezline2"}
+    {"id": "juez_line_2", "name": "Juez Line 2", "role": "judge", "password": "juezline2"},
+    {"id": "Pantalla", "name": "Operador de Pantalla", "role": "tv", "password": "PantallaRank"}
 ]
