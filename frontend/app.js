@@ -284,6 +284,24 @@ function App() {
     } catch(e) {}
   };
 
+  const toggleGlobalTimers = async () => {
+    const nextState = !questTimerActive; // Sincronizamos ambos al estado opuesto del principal
+    setQuestTimerActive(nextState);
+    setLineTimerActive(nextState);
+    localStorage.setItem('ada_quest_timer_active', nextState.toString());
+    localStorage.setItem('ada_line_timer_active', nextState.toString());
+    try {
+        await fetch(`${API_BASE}/timer`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                quest: { timer: questTimer, timerActive: nextState },
+                line_follower: { timer: lineTimer, timerActive: nextState }
+            })
+        });
+    } catch(e) {}
+  };
+
   const formatTime = (seconds) => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
@@ -601,14 +619,18 @@ function App() {
         formatTime={formatTime} 
         suspenseMode={rankingSuspenseMode}
         onExit={() => setCompetitionMode(null)} 
-        currentUser={currentUser} />}
+        currentUser={currentUser}
+        setRankingSuspenseMode={setRankingSuspenseMode}
+        toggleGlobalTimers={toggleGlobalTimers} />}
       {competitionMode === 'dual' && <CompetitionDualOverlay teams={teams} 
         questTimer={questTimer} questTimerActive={questTimerActive} toggleQuestTimer={toggleQuestTimer} resetQuestTimer={resetQuestTimer} questDuration={questDuration}
         lineTimer={lineTimer} lineTimerActive={lineTimerActive} toggleLineTimer={toggleLineTimer} resetLineTimer={resetLineTimer} lineDuration={lineDuration}
         formatTime={formatTime} 
         suspenseMode={rankingSuspenseMode}
         onExit={() => setCompetitionMode(null)} 
-        currentUser={currentUser} />}
+        currentUser={currentUser}
+        setRankingSuspenseMode={setRankingSuspenseMode}
+        toggleGlobalTimers={toggleGlobalTimers} />}
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-4 right-4 z-50 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl font-bold text-sm flex items-center gap-3 animate-fadeIn">
@@ -698,6 +720,14 @@ function App() {
                     >
                         <Icon name="layout" className="w-4 h-4" /> Lanzar TV Dual
                     </button>
+                    {currentUser.role === 'admin' && (
+                        <button 
+                            onClick={toggleGlobalTimers}
+                            className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all font-black text-[10px] uppercase tracking-widest shadow-lg ${questTimerActive && lineTimerActive ? 'bg-orange-600 shadow-orange-600/20' : 'bg-emerald-600 shadow-emerald-600/20 text-white'}`}
+                        >
+                            <Icon name="zap" className="w-4 h-4" /> {questTimerActive && lineTimerActive ? 'Pausa Global' : 'Inicio Global'}
+                        </button>
+                    )}
                 </div>
             )}
             
@@ -2575,15 +2605,35 @@ function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam, 
   );
 }
 
-function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQuestTimer, resetQuestTimer, questDuration, lineTimer, lineTimerActive, toggleLineTimer, resetLineTimer, lineDuration, formatTime, onExit, suspenseMode, currentUser }) {
+function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQuestTimer, resetQuestTimer, questDuration, lineTimer, lineTimerActive, toggleLineTimer, resetLineTimer, lineDuration, formatTime, onExit, suspenseMode, currentUser, setRankingSuspenseMode, toggleGlobalTimers }) {
     const [allTeams, setAllTeams] = useState(teams);
     const [selRondaView, setSelRondaView] = useState('global');
     const [shuffleSeed, setShuffleSeed] = useState(0);
     const [isShuffling, setIsShuffling] = useState(false);
-    
+    const [isAutoScrolling, setIsAutoScrolling] = useState(false);
     const questListRef = useRef(null);
     const lineListRef = useRef(null);
     const prevPositions = useRef({});
+
+    // Efecto de Auto-Scroll
+    useEffect(() => {
+        let interval;
+        if (isAutoScrolling) {
+            interval = setInterval(() => {
+                [questListRef, lineListRef].forEach(ref => {
+                    if (ref.current) {
+                        const maxScroll = ref.current.scrollHeight - ref.current.clientHeight;
+                        if (ref.current.scrollTop >= maxScroll - 5) {
+                            setTimeout(() => { if (ref.current) ref.current.scrollTop = 0; }, 2000);
+                        } else {
+                            ref.current.scrollTop += 1;
+                        }
+                    }
+                });
+            }, 50);
+        }
+        return () => clearInterval(interval);
+    }, [isAutoScrolling]);
 
     // Técnica FLIP para animaciones suaves
     useLayoutEffect(() => {
@@ -2766,6 +2816,28 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
+                    {(currentUser.role === 'admin' || currentUser.role === 'tv') && (
+                        <div className="flex items-center gap-3 bg-slate-900 px-4 py-2 rounded-2xl border border-slate-800">
+                            <span className="text-[9px] font-black uppercase text-blue-400 tracking-widest">Modo Suspenso</span>
+                            <button 
+                                onClick={() => setRankingSuspenseMode(!suspenseMode)}
+                                className={`w-10 h-5 rounded-full relative transition-all ${suspenseMode ? 'bg-orange-500' : 'bg-slate-700'}`}
+                            >
+                                <div className={`w-3.5 h-3.5 bg-white rounded-full absolute top-[3px] transition-all ${suspenseMode ? 'left-[22px]' : 'left-[4px]'}`}></div>
+                            </button>
+                        </div>
+                    )}
+                    {currentUser.role === 'admin' && (
+                        <button 
+                            onClick={toggleGlobalTimers}
+                            className={`px-6 py-3 rounded-xl font-black text-[10px] uppercase transition-all shadow-lg flex items-center gap-2 ${questTimerActive && lineTimerActive ? 'bg-orange-600 text-white shadow-orange-600/30' : 'bg-emerald-600 text-white shadow-emerald-600/30'}`}
+                        >
+                            <Icon name="zap" className="w-4 h-4" /> {questTimerActive && lineTimerActive ? 'Pausa Global' : 'Inicio Global'}
+                        </button>
+                    )}
+                    <button onClick={() => setIsAutoScrolling(!isAutoScrolling)} className={`px-6 py-3 rounded-xl font-black text-[10px] uppercase transition-all flex items-center gap-2 ${isAutoScrolling ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>
+                        <Icon name="chevron-down" className={`w-3 h-3 ${isAutoScrolling ? 'animate-bounce' : ''}`} /> {isAutoScrolling ? 'Auto Scroll' : 'Auto Scroll'}
+                    </button>
                     <div className="flex bg-slate-900 p-1 rounded-2xl border border-slate-800">
                         <button 
                             onClick={() => setSelRondaView('global')} 
@@ -2887,7 +2959,7 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
     );
 }
 
-function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTimer, resetQuestTimer, questDuration, lineTimer, lineTimerActive, toggleLineTimer, resetLineTimer, lineDuration, formatTime, onExit, initialCategory, suspenseMode, currentUser }) {
+function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTimer, resetQuestTimer, questDuration, lineTimer, lineTimerActive, toggleLineTimer, resetLineTimer, lineDuration, formatTime, onExit, initialCategory, suspenseMode, currentUser, setRankingSuspenseMode, toggleGlobalTimers }) {
     const [viewCategory, setViewCategory] = useState(initialCategory);
     const [vTeams, setVTeams] = useState(teams);
     const [selRondaView, setSelRondaView] = useState('global');
@@ -3137,6 +3209,25 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
                         </div>
                     )}
                     <div className="flex gap-2">
+                        {(currentUser.role === 'admin' || currentUser.role === 'tv') && (
+                            <div className="flex items-center gap-3 bg-slate-900 px-4 py-2 rounded-xl border border-slate-800 shadow-xl">
+                                <span className="text-[9px] font-black uppercase text-blue-400 tracking-widest">Modo Suspenso</span>
+                                <button 
+                                    onClick={() => setRankingSuspenseMode(!suspenseMode)}
+                                    className={`w-10 h-5 rounded-full relative transition-all ${suspenseMode ? 'bg-orange-500' : 'bg-slate-700'}`}
+                                >
+                                    <div className={`w-3.5 h-3.5 bg-white rounded-full absolute top-[3px] transition-all ${suspenseMode ? 'left-[22px]' : 'left-[4px]'}`}></div>
+                                </button>
+                            </div>
+                        )}
+                        {currentUser.role === 'admin' && (
+                            <button 
+                                onClick={toggleGlobalTimers}
+                                className={`px-6 py-3 rounded-xl font-black text-[10px] uppercase transition-all shadow-lg flex items-center gap-2 ${questTimerActive && lineTimerActive ? 'bg-orange-600 text-white shadow-orange-600/30' : 'bg-emerald-600 text-white shadow-emerald-600/30'}`}
+                            >
+                                <Icon name="zap" className="w-4 h-4" /> {questTimerActive && lineTimerActive ? 'Pausa Global' : 'Inicio Global'}
+                            </button>
+                        )}
                         <button onClick={() => setIsAutoScrolling(!isAutoScrolling)} className={`px-6 py-3 rounded-xl font-black text-[10px] uppercase transition-all flex items-center gap-2 ${isAutoScrolling ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>
                             <Icon name="chevron-down" className={`w-3 h-3 ${isAutoScrolling ? 'animate-bounce' : ''}`} /> {isAutoScrolling ? 'Detener Scroll' : 'Auto Scroll'}
                         </button>
