@@ -40,9 +40,7 @@ function App() {
     const saved = localStorage.getItem('ada_user');
     return saved ? JSON.parse(saved) : null;
   });
-  const [activeTab, setActiveTab] = useState(() => {
-    return (currentUser?.role === 'tv') ? 'resultados' : 'registro';
-  });
+  const [activeTab, setActiveTab] = useState('registro');
   
   // Estados para Competencia (v3.2)
   const [competitionMode, setCompetitionMode] = useState(null); // null | 'individual' | 'dual'
@@ -602,13 +600,15 @@ function App() {
         lineTimer={lineTimer} lineTimerActive={lineTimerActive} toggleLineTimer={toggleLineTimer} resetLineTimer={resetLineTimer} lineDuration={lineDuration}
         formatTime={formatTime} 
         suspenseMode={rankingSuspenseMode}
-        onExit={() => setCompetitionMode(null)} />}
+        onExit={() => setCompetitionMode(null)} 
+        currentUser={currentUser} />}
       {competitionMode === 'dual' && <CompetitionDualOverlay teams={teams} 
         questTimer={questTimer} questTimerActive={questTimerActive} toggleQuestTimer={toggleQuestTimer} resetQuestTimer={resetQuestTimer} questDuration={questDuration}
         lineTimer={lineTimer} lineTimerActive={lineTimerActive} toggleLineTimer={toggleLineTimer} resetLineTimer={resetLineTimer} lineDuration={lineDuration}
         formatTime={formatTime} 
         suspenseMode={rankingSuspenseMode}
-        onExit={() => setCompetitionMode(null)} />}
+        onExit={() => setCompetitionMode(null)} 
+        currentUser={currentUser} />}
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-4 right-4 z-50 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl font-bold text-sm flex items-center gap-3 animate-fadeIn">
@@ -642,39 +642,6 @@ function App() {
             </div>
             <h1 className="font-black text-base md:text-xl tracking-tighter leading-tight">ROBOT CHALLENGE<br/><span className="text-[8px] md:text-[10px] text-blue-400 font-bold tracking-widest uppercase">{currentUser.category === 'line_follower' ? 'Line Follower' : 'Robotics Quest'}</span></h1>
           </div>
-          
-          <div className="hidden md:block bg-blue-900/50 p-3 rounded-xl">
-            <div className="flex items-center gap-2 overflow-hidden mb-2">
-               <div className="w-8 h-8 rounded-full bg-blue-400 flex items-center justify-center flex-shrink-0">
-                  <Icon name="users" className="w-4 h-4 text-white" />
-               </div>
-               <div className="truncate">
-                  <p className="text-[10px] font-bold text-blue-300 uppercase leading-none">
-                    {currentUser.role === 'admin' ? 'Administrador' : currentUser.role === 'tv' ? 'Operador TV' : 'Juez'}
-                  </p>
-                  <p className="text-xs font-black truncate">{currentUser.name}</p>
-               </div>
-            </div>
-            {currentUser.role === 'admin' && (
-                <div className="mt-3 pt-3 border-t border-blue-800/50">
-                    <p className="text-[8px] font-black text-blue-400 uppercase tracking-widest mb-2 text-center">Cambiar Categoría</p>
-                    <div className="flex gap-1 p-1 bg-blue-950 rounded-xl border border-blue-800">
-                        <button 
-                            onClick={() => switchCategory('quest')}
-                            className={`flex-1 py-1.5 rounded-lg text-[9px] font-black transition-all ${currentUser.category === 'quest' ? 'bg-blue-600 text-white shadow-lg' : 'text-blue-300 hover:bg-black/20'}`}
-                        >
-                            QUEST
-                        </button>
-                        <button 
-                            onClick={() => switchCategory('line_follower')}
-                            className={`flex-1 py-1.5 rounded-lg text-[9px] font-black transition-all ${currentUser.category === 'line_follower' ? 'bg-blue-600 text-white shadow-lg' : 'text-blue-300 hover:bg-black/20'}`}
-                        >
-                            LINE
-                        </button>
-                    </div>
-                </div>
-            )}
-          </div>
 
           {/* Versión móvil del perfil - botón logout rápido */}
           <button onClick={logout} className="md:hidden p-2 bg-red-500/20 text-red-400 rounded-lg">
@@ -700,8 +667,8 @@ function App() {
           <NavButton active={activeTab === 'resultados'} onClick={() => setActiveTab('resultados')} icon={<Icon name="trophy" />} label="Ranking" />
         </div>
 
-        {/* Sección Inferior de la Sidebar (Solo Desktop) */}
-        <div className="hidden md:block p-4 border-t border-blue-900 space-y-3 mt-auto">
+        {/* Sección Inferior de la Sidebar */}
+        <div className="p-4 border-t border-blue-900 space-y-3 mt-auto">
             {(currentUser.role === 'admin' || currentUser.role === 'tv') && (
                 <div className="flex flex-col gap-2">
                     <div className="bg-blue-900/40 p-3 rounded-2xl border border-blue-800 mb-2">
@@ -2608,7 +2575,7 @@ function LineFollowerEvaluacion({ teams, addScore, currentUser, disqualifyTeam, 
   );
 }
 
-function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQuestTimer, resetQuestTimer, questDuration, lineTimer, lineTimerActive, toggleLineTimer, resetLineTimer, lineDuration, formatTime, onExit, suspenseMode }) {
+function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQuestTimer, resetQuestTimer, questDuration, lineTimer, lineTimerActive, toggleLineTimer, resetLineTimer, lineDuration, formatTime, onExit, suspenseMode, currentUser }) {
     const [allTeams, setAllTeams] = useState(teams);
     const [selRondaView, setSelRondaView] = useState('global');
     const [shuffleSeed, setShuffleSeed] = useState(0);
@@ -2838,12 +2805,14 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
                             </p>
                         </div>
                         
-                        <div className="flex gap-3 mt-5">
-                            <button onClick={toggleQuestTimer} className={`px-6 py-2 rounded-xl font-black text-xs uppercase shadow-xl transition-all ${questTimerActive ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-orange-500/30' : 'bg-green-500 hover:bg-green-600 text-white shadow-green-500/30'}`}>
-                                {questTimerActive ? 'Pausar' : 'Iniciar'}
-                            </button>
-                            <button onClick={resetQuestTimer} className="px-6 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl font-black text-xs uppercase text-slate-300 transition-all">Reset</button>
-                        </div>
+                        {currentUser.role === 'admin' && (
+                            <div className="flex gap-3 mt-5">
+                                <button onClick={toggleQuestTimer} className={`px-6 py-2 rounded-xl font-black text-xs uppercase shadow-xl transition-all ${questTimerActive ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-orange-500/30' : 'bg-green-500 hover:bg-green-600 text-white shadow-green-500/30'}`}>
+                                    {questTimerActive ? 'Pausar' : 'Iniciar'}
+                                </button>
+                                <button onClick={resetQuestTimer} className="px-6 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl font-black text-xs uppercase text-slate-300 transition-all">Reset</button>
+                            </div>
+                        )}
                         <p className="text-[10px] text-blue-400/50 uppercase tracking-widest mt-4 font-bold">{questTeams.length} equipos en ranking</p>
                     </div>
                     <div ref={questListRef} className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
@@ -2897,12 +2866,14 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
                             </p>
                         </div>
                         
-                        <div className="flex gap-3 mt-5">
-                            <button onClick={toggleLineTimer} className={`px-6 py-2 rounded-xl font-black text-xs uppercase shadow-xl transition-all ${lineTimerActive ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-orange-500/30' : 'bg-green-500 hover:bg-green-600 text-white shadow-green-500/30'}`}>
-                                {lineTimerActive ? 'Pausar' : 'Iniciar'}
-                            </button>
-                            <button onClick={resetLineTimer} className="px-6 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl font-black text-xs uppercase text-slate-300 transition-all">Reset</button>
-                        </div>
+                        {currentUser.role === 'admin' && (
+                            <div className="flex gap-3 mt-5">
+                                <button onClick={toggleLineTimer} className={`px-6 py-2 rounded-xl font-black text-xs uppercase shadow-xl transition-all ${lineTimerActive ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-orange-500/30' : 'bg-green-500 hover:bg-green-600 text-white shadow-green-500/30'}`}>
+                                    {lineTimerActive ? 'Pausar' : 'Iniciar'}
+                                </button>
+                                <button onClick={resetLineTimer} className="px-6 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl font-black text-xs uppercase text-slate-300 transition-all">Reset</button>
+                            </div>
+                        )}
                         <p className="text-[10px] text-emerald-400/50 uppercase tracking-widest mt-4 font-bold">{followerTeams.length} equipos en ranking</p>
                     </div>
                     <div ref={lineListRef} className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
@@ -2916,7 +2887,7 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
     );
 }
 
-function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTimer, resetQuestTimer, questDuration, lineTimer, lineTimerActive, toggleLineTimer, resetLineTimer, lineDuration, formatTime, onExit, initialCategory, suspenseMode }) {
+function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTimer, resetQuestTimer, questDuration, lineTimer, lineTimerActive, toggleLineTimer, resetLineTimer, lineDuration, formatTime, onExit, initialCategory, suspenseMode, currentUser }) {
     const [viewCategory, setViewCategory] = useState(initialCategory);
     const [vTeams, setVTeams] = useState(teams);
     const [selRondaView, setSelRondaView] = useState('global');
@@ -3145,23 +3116,27 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
                             {formatTime(viewCategory === 'quest' ? questTimer : lineTimer)}
                         </p>
                     </div>
+                    {currentUser.role === 'admin' && (
+                        <div className="flex gap-3">
+                            <button 
+                                onClick={viewCategory === 'quest' ? toggleQuestTimer : toggleLineTimer} 
+                                className={`px-6 py-3 rounded-xl font-black text-[10px] uppercase transition-all ${
+                                    (viewCategory === 'quest' ? questTimerActive : lineTimerActive) 
+                                    ? 'bg-orange-500 hover:bg-orange-600' 
+                                    : 'bg-green-600 hover:bg-green-700'
+                                }`}
+                            >
+                                {(viewCategory === 'quest' ? questTimerActive : lineTimerActive) ? 'Pausar' : 'Iniciar'}
+                            </button>
+                            <button 
+                                onClick={viewCategory === 'quest' ? resetQuestTimer : resetLineTimer} 
+                                className="px-6 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-black text-[10px] uppercase"
+                            >
+                                Reiniciar
+                            </button>
+                        </div>
+                    )}
                     <div className="flex gap-2">
-                        <button 
-                            onClick={viewCategory === 'quest' ? toggleQuestTimer : toggleLineTimer} 
-                            className={`px-6 py-3 rounded-xl font-black text-[10px] uppercase transition-all ${
-                                (viewCategory === 'quest' ? questTimerActive : lineTimerActive) 
-                                ? 'bg-orange-500 hover:bg-orange-600' 
-                                : 'bg-green-600 hover:bg-green-700'
-                            }`}
-                        >
-                            {(viewCategory === 'quest' ? questTimerActive : lineTimerActive) ? 'Pausar' : 'Iniciar'}
-                        </button>
-                        <button 
-                            onClick={viewCategory === 'quest' ? resetQuestTimer : resetLineTimer} 
-                            className="px-6 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-black text-[10px] uppercase"
-                        >
-                            Reiniciar
-                        </button>
                         <button onClick={() => setIsAutoScrolling(!isAutoScrolling)} className={`px-6 py-3 rounded-xl font-black text-[10px] uppercase transition-all flex items-center gap-2 ${isAutoScrolling ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>
                             <Icon name="chevron-down" className={`w-3 h-3 ${isAutoScrolling ? 'animate-bounce' : ''}`} /> {isAutoScrolling ? 'Detener Scroll' : 'Auto Scroll'}
                         </button>
