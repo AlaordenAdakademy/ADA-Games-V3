@@ -1,250 +1,6 @@
 {
     "teams": [
         {
-            "id": "17768923483993",
-            "teamName": "Doragons",
-            "schoolName": "U.E. Dr. Raúl Leoni",
-            "school": "Doragons — U.E. Dr. Raúl Leoni",
-            "captainName": "Ariel Cristina Algarín García",
-            "coachName": "Frangelith Villarroel",
-            "members": [
-                "Ariel Cristina Algarín García",
-                "Gabriel Jesús Molina Zapata",
-                "Ángel Luis Rodríguez Vegas"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "17768923483771",
-            "teamName": "IDEAL N°1",
-            "schoolName": "U.E. Instituto de Enseñanza América Latina (IDEAL)",
-            "school": "IDEAL N°1 — U.E. Instituto de Enseñanza América Latina (IDEAL)",
-            "captainName": "Kenay Rafael Silvera Romero",
-            "coachName": "Juan Diego Yepez Gil",
-            "members": [
-                "Kenay Rafael Silvera Romero",
-                "Diego Andrés García Mora",
-                "Ángelo Alessandro Mantovani Ortíz"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "1776892156424",
-            "teamName": "Jvg-bot",
-            "schoolName": "U. E. Colegio Juan Vicente Gonzalez",
-            "school": "Jvg-bot — Unidad Educativa Colegio Juan Vicente Gonzalez",
-            "captainName": "Christopher Roberto Sánchez Cepeda",
-            "coachName": "Luis Marcano",
-            "members": [
-                "Christopher Roberto Sánchez Cepeda",
-                "Sebastián Josué Carvajal Ochoa",
-                "Rahel de Jesús Carreño Medina"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "17768923484417",
-            "teamName": "Lambda",
-            "schoolName": "U.E. Cacica Urimare",
-            "school": "Lambda — UE Cacica Urimare",
-            "captainName": "José Daniel Ramos Marín",
-            "coachName": "Luis Gamboa",
-            "members": [
-                "José Daniel Ramos Marín",
-                "Adrián Antonio Güipe González",
-                "Camila Alejandra Vielma Moronta"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "17768923484518",
-            "teamName": "Los Blinders",
-            "schoolName": "U.E. Nueva Barcelona",
-            "school": "Los Blinders — U.E. Nueva Barcelona",
-            "captainName": "Ilan Zahir Ávila Guaiquirián",
-            "coachName": "Carolina Astudillo",
-            "members": [
-                "Ilan Zahir Ávila Guaiquirián",
-                "Geovanny Eduardo José Ortíz Lusinchi",
-                "Winston Gabriel Molina Mata"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "17768923484104",
-            "teamName": "Los Boys",
-            "schoolName": "U. E. ABAJO CADENAS",
-            "school": "Los Boys — UNIDAD EDUCATIVA ABAJO CADENAS",
-            "captainName": "Eduardo Girot",
-            "coachName": "Yatsmary Villarroel",
-            "members": [
-                "Eduardo Girot",
-                "Jorge Zamora",
-                "José Romero"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "238027238596759",
-            "teamName": "MENCA M3NS",
-            "schoolName": "U.E. Doña Menca de Leoni",
-            "school": "MENCA M3NS — U.E. Doña Menca de Leoni",
-            "captainName": "Jhean Brito",
-            "coachName": "Alberto Thomas",
-            "members": [
-                "Jhean Brito",
-                "Hiroshi Yoshida",
-                "Alejandro Cedeño"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0,
-            "judgeId": "admin",
-            "judgeName": "Administrador Central"
-        },
-        {
-            "id": "82112924798217",
-            "teamName": "NALA",
-            "schoolName": "U. E. Colegio Eduardo Blanco",
-            "school": "NALA — Unidad Educativa Colegio Eduardo Blanco",
-            "captainName": "Pedro Antonio Catamo Guzman",
-            "coachName": "Ramses Antolines",
-            "members": [
-                "Pedro Antonio Catamo Guzman",
-                "Nathalie Sofia Sanchez Carrero",
-                "Michell De Los Angeles Urbaneja Vasquez"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0,
-            "judgeId": "admin",
-            "judgeName": "Administrador Central"
-        },
-        {
             "id": "177689253971614",
             "teamName": "Don Bosco Tech",
             "schoolName": "U.E. Colegio Don Bosco",
@@ -561,6 +317,254 @@
                 "5": 1
             },
             "lastTime": 0
+        },
+        {
+            "id": "17768923483993",
+            "teamName": "Doragons",
+            "schoolName": "U.E. Dr. Raúl Leoni",
+            "school": "Doragons — U.E. Dr. Raúl Leoni",
+            "captainName": "Ariel Cristina Algarín García",
+            "coachName": "Frangelith Villarroel",
+            "members": [
+                "Ariel Cristina Algarín García",
+                "Gabriel Jesús Molina Zapata",
+                "Ángel Luis Rodríguez Vegas"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1,
+                5,
+                4,
+                3,
+                2
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "17768923483771",
+            "teamName": "IDEAL N°1",
+            "schoolName": "U.E. Instituto de Enseñanza América Latina (IDEAL)",
+            "school": "IDEAL N°1 — U.E. Instituto de Enseñanza América Latina (IDEAL)",
+            "captainName": "Kenay Rafael Silvera Romero",
+            "coachName": "Juan Diego Yepez Gil",
+            "members": [
+                "Kenay Rafael Silvera Romero",
+                "Diego Andrés García Mora",
+                "Ángelo Alessandro Mantovani Ortíz"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "1776892156424",
+            "teamName": "Jvg-bot",
+            "schoolName": "U. E. Colegio Juan Vicente Gonzalez",
+            "school": "Jvg-bot — Unidad Educativa Colegio Juan Vicente Gonzalez",
+            "captainName": "Christopher Roberto Sánchez Cepeda",
+            "coachName": "Luis Marcano",
+            "members": [
+                "Christopher Roberto Sánchez Cepeda",
+                "Sebastián Josué Carvajal Ochoa",
+                "Rahel de Jesús Carreño Medina"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "17768923484417",
+            "teamName": "Lambda",
+            "schoolName": "U.E. Cacica Urimare",
+            "school": "Lambda — UE Cacica Urimare",
+            "captainName": "José Daniel Ramos Marín",
+            "coachName": "Luis Gamboa",
+            "members": [
+                "José Daniel Ramos Marín",
+                "Adrián Antonio Güipe González",
+                "Camila Alejandra Vielma Moronta"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "17768923484518",
+            "teamName": "Los Blinders",
+            "schoolName": "U.E. Nueva Barcelona",
+            "school": "Los Blinders — U.E. Nueva Barcelona",
+            "captainName": "Ilan Zahir Ávila Guaiquirián",
+            "coachName": "Carolina Astudillo",
+            "members": [
+                "Ilan Zahir Ávila Guaiquirián",
+                "Geovanny Eduardo José Ortíz Lusinchi",
+                "Winston Gabriel Molina Mata"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "17768923484104",
+            "teamName": "Los Boys",
+            "schoolName": "U. E. ABAJO CADENAS",
+            "school": "Los Boys — UNIDAD EDUCATIVA ABAJO CADENAS",
+            "captainName": "Eduardo Girot",
+            "coachName": "Yatsmary Villarroel",
+            "members": [
+                "Eduardo Girot",
+                "Jorge Zamora",
+                "José Romero"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "238027238596759",
+            "teamName": "MENCA M3NS",
+            "schoolName": "U.E. Doña Menca de Leoni",
+            "school": "MENCA M3NS — U.E. Doña Menca de Leoni",
+            "captainName": "Jhean Brito",
+            "coachName": "Alberto Thomas",
+            "members": [
+                "Jhean Brito",
+                "Hiroshi Yoshida",
+                "Alejandro Cedeño"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0,
+            "judgeId": "admin",
+            "judgeName": "Administrador Central"
+        },
+        {
+            "id": "82112924798217",
+            "teamName": "NALA",
+            "schoolName": "U. E. Colegio Eduardo Blanco",
+            "school": "NALA — Unidad Educativa Colegio Eduardo Blanco",
+            "captainName": "Pedro Antonio Catamo Guzman",
+            "coachName": "Ramses Antolines",
+            "members": [
+                "Pedro Antonio Catamo Guzman",
+                "Nathalie Sofia Sanchez Carrero",
+                "Michell De Los Angeles Urbaneja Vasquez"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0,
+            "judgeId": "admin",
+            "judgeName": "Administrador Central"
         }
     ],
     "tracks": {
@@ -678,8 +682,9 @@
                 "guideX": 39.07657657657658,
                 "guideY": 67.47747747747748,
                 "bonusDir": "S",
-                "bonusRules": "El robot inicia en D6 y debe encender los LEDs en color azul al llegar a C2. Al alcanzar el punto final (E1), debe emitir un sonido de celebración y apagar todos los LEDs.",
-                "bonusStart": "D6"
+                "bonusRules": "El robot inicia en D6 y debe encender los LEDs en color azul al llegar a C2 y mantenerlo encendido. Al alcanzar el punto final (E1), debe apagar todos los LEDs.",
+                "bonusStart": "D6",
+                "bonusPoints": 3
             },
             "2": {
                 "sequence": [
@@ -692,7 +697,8 @@
                 "obstacles": [],
                 "bonusRules": "El robot comienza en F5 con los LEDs encendidos en amarillo. Debe pasar obligatoriamente por el punto central (E3) antes de llegar a I6, donde debe cambiar los LEDs a color morado.",
                 "bonusDir": "E",
-                "bonusStart": "F5"
+                "bonusStart": "F5",
+                "bonusPoints": 3
             },
             "3": {
                 "sequence": [
@@ -705,7 +711,8 @@
                 "obstacles": [],
                 "bonusStart": "A3",
                 "bonusDir": "E",
-                "bonusRules": "El robot inicia en A3 orientado hacia el Este y debe realizar un giro de 180 grados en el punto G3 antes de continuar hacia I1. Al finalizar debe mostrar en el display el número '5'."
+                "bonusRules": "El robot inicia en A3 orientado hacia el Este y debe realizar un giro de 180 grados en el punto G3 antes de continuar hacia I1. Al finalizar debe mostrar en el display el número '5'.",
+                "bonusPoints": 3
             },
             "4": {
                 "sequence": [
@@ -718,7 +725,8 @@
                 "obstacles": [],
                 "bonusStart": "H4",
                 "bonusDir": "S",
-                "bonusRules": "El robot inicia en H4 y solo puede moverse verticalmente hasta la fila 2, luego horizontalmente hasta la columna B, y continuar la ruta de forma libre."
+                "bonusRules": "El robot inicia en H4 y solo puede moverse verticalmente hasta la fila 2, luego horizontalmente hasta la columna B, y continuar la ruta de forma libre.",
+                "bonusPoints": 3
             },
             "5": {
                 "sequence": [
@@ -736,7 +744,8 @@
                 ],
                 "bonusStart": "C4",
                 "bonusDir": "N",
-                "bonusRules": "El robot comienza en C4 y debe evitar los siguientes puntos: B2, E5, F3, I5. Debe emitir un pitido corto cada vez que cambie de dirección durante su recorrido."
+                "bonusRules": "El robot comienza en C4 y debe evitar los siguientes puntos: B2, E5, F3, I5.",
+                "bonusPoints": 3
             }
         },
         "2": {
@@ -756,7 +765,8 @@
                 ],
                 "bonusStart": "B5",
                 "bonusDir": "E",
-                "bonusRules": "El robot inicia en B5 apuntando hacia el Este. No debe pasar por A4, D6, G1, J5. Al llegar a I1 debe encender todos los LEDs en color blanco durante 2 segundos."
+                "bonusRules": "El robot inicia en B5 apuntando hacia el Este. No debe pasar por A4, D6, G1, J5. Al llegar a I1 debe encender todos los LEDs en color blanco durante 2 segundos.",
+                "bonusPoints": 3
             },
             "2": {
                 "sequence": [
@@ -767,9 +777,10 @@
                     "J6"
                 ],
                 "obstacles": [
-                    "B6",
                     "E4",
-                    "H2"
+                    "H2",
+                    "B5",
+                    "B2"
                 ],
                 "bgImage": "/maps/mapa_ronda2_pista2.png?t=1775879446",
                 "points": [
@@ -883,7 +894,8 @@
                 "guideY": 29.099099099099103,
                 "bonusStart": "I3",
                 "bonusDir": "W",
-                "bonusRules": "El robot comienza en I3 hacia el Oeste. Los LEDs deben estar en color naranja entre I3 y A2, y en color cyan entre F1 y J6. Debe evitar los puntos B6, E4, H2."
+                "bonusRules": "El robot comienza en I3 hacia el Oeste. Los LEDs deben estar en color naranja entre I3 y A2, y en color cyan entre F1 y J6. Debe evitar los puntos B2, B5, E4, H2.",
+                "bonusPoints": 3
             },
             "3": {
                 "sequence": [
@@ -893,10 +905,14 @@
                     "E5",
                     "J2"
                 ],
-                "obstacles": [],
+                "obstacles": [
+                    "C3",
+                    "F5"
+                ],
                 "bonusStart": "G1",
                 "bonusDir": "N",
-                "bonusRules": "El robot inicia en G1 y debe emitir un sonido que aumente su tono progresivamente con cada punto visitado. Al llegar a J2 debe reproducir una melodía corta de 3 notas."
+                "bonusRules": "El robot inicia en G1 en orientación al Norte y debe completar el recorrido visitando todos los puntos en reversa indicados hasta llegar a J2.  Debe evitar los puntos C3 y F5.",
+                "bonusPoints": 3
             },
             "4": {
                 "sequence": [
@@ -906,10 +922,18 @@
                     "B1",
                     "J4"
                 ],
-                "obstacles": [],
+                "obstacles": [
+                    "F5",
+                    "F4",
+                    "F3",
+                    "F2",
+                    "H1",
+                    "H6"
+                ],
                 "bonusStart": "A6",
-                "bonusDir": "S",
-                "bonusRules": "El robot inicia en A6 orientado hacia el Sur y debe realizar todo el recorrido en reversa. Al finalizar en J4 debe mostrar en el display la letra 'R'."
+                "bonusDir": "N",
+                "bonusRules": "El robot inicia en A6 orientado hacia el Norte y debe realizar todo el recorrido en reversa. Al finalizar en J4 debe mostrar en el display la letra 'R'. Debe evitar los puntos F2, F3, F4, F5, H1 y H6.",
+                "bonusPoints": 3
             },
             "5": {
                 "sequence": [
@@ -927,7 +951,8 @@
                 ],
                 "bonusStart": "F2",
                 "bonusDir": "W",
-                "bonusRules": "El robot comienza en F2 y debe mostrar en el display cada punto visitado en formato de coordenadas. Debe evitar las áreas marcadas en rojo: D3, E6, G4, J1."
+                "bonusRules": "El robot comienza en F2 y debe mostrar en el display cada punto visitado en formato de coordenadas. Debe evitar las áreas marcadas en rojo: D3, E6, G4, J1.",
+                "bonusPoints": 3
             }
         },
         "3": {
@@ -937,15 +962,18 @@
                     "F4",
                     "A5",
                     "H2",
-                    "D6"
+                    "D6",
+                    "J6"
                 ],
                 "obstacles": [
                     "E4",
-                    "G5"
+                    "G5",
+                    "I6"
                 ],
                 "bonusStart": "C1",
                 "bonusDir": "E",
-                "bonusRules": "El robot inicia en C1 orientado al Este. Debe realizar un giro exacto de 90° hacia la derecha en el punto F4 antes de continuar. Al llegar a D6 debe emitir un sonido de tres tonos ascendentes."
+                "bonusRules": "El robot inicia en C1 orientado al Este. Debe colocar luces de cambio cada ves que gire, hacia izquierda color amarillo y hacia derecha color rojo.  Debe evitar los puntos E4, G5 y I6.",
+                "bonusPoints": 3
             },
             "2": {
                 "sequence": [
@@ -953,15 +981,18 @@
                     "D3",
                     "G1",
                     "B4",
-                    "E6"
+                    "E6",
+                    "E1"
                 ],
                 "obstacles": [
                     "C5",
-                    "H3"
+                    "H3",
+                    "E3"
                 ],
                 "bonusStart": "I5",
                 "bonusDir": "W",
-                "bonusRules": "El robot comienza en I5 hacia el Oeste. En el display debe mostrar el número del punto visitado (1, 2, 3...) cada vez que alcance una coordenada de la secuencia. Al finalizar en E6 debe mostrar 'FIN'."
+                "bonusRules": "El robot comienza en I5 hacia el Oeste. En el display debe mostrar el número del punto visitado (1, 2, 3...) cada vez que alcance una coordenada de la secuencia. Al finalizar en E1 debe mostrar 'FIN'. Debe evitar los puntos C5, E3 y H3.",
+                "bonusPoints": 3
             },
             "3": {
                 "sequence": [
@@ -969,11 +1000,13 @@
                     "E4",
                     "J1",
                     "C5",
-                    "G3"
+                    "G3",
+                    "H6"
                 ],
                 "obstacles": [
                     "F2",
-                    "H5"
+                    "H5",
+                    "G5"
                 ],
                 "bgImage": "/maps/mapa_ronda3_pista3.png?t=1775879577",
                 "points": [
@@ -1080,7 +1113,8 @@
                 "guideY": 38.46846846846847,
                 "bonusStart": "A2",
                 "bonusDir": "N",
-                "bonusRules": "El robot inicia en A2. Los LEDs deben cambiar de color en cada punto de la secuencia (rojo, verde, azul, amarillo, morado). Al llegar a G3 debe mostrar en el display el texto 'COLORES'."
+                "bonusRules": "El robot inicia en A2  orientado al Norte. Los LEDs deben cambiar de color en cada punto de la secuencia (rojo, verde, azul, amarillo, morado). Al llegar a H6 debe mostrar en el display el texto 'COLORES'. Debe evitar los puntos F2, G5 y H5.",
+                "bonusPoints": 3
             },
             "4": {
                 "sequence": [
@@ -1088,15 +1122,18 @@
                     "B2",
                     "F5",
                     "I3",
-                    "A1"
+                    "A1",
+                    "B6"
                 ],
                 "obstacles": [
                     "D4",
-                    "J2"
+                    "I2",
+                    "A2"
                 ],
                 "bonusStart": "H6",
                 "bonusDir": "S",
-                "bonusRules": "El robot inicia en H6 y debe encender LEDs azules al cruzar las coordenadas cuya columna sea B, D, F o H. Al iniciar el recorrido debe mostrar 'START' y al terminar en A1 debe mostrar 'END' en el display."
+                "bonusRules": "El robot inicia en H6 Apuntando hacia al Sur y debe encender LEDs azules al cruzar las coordenadas cuya columna sea B, D, F o H y apagar una vez pasadas. Al iniciar el recorrido debe mostrar 'START' y al terminar en B6 debe mostrar 'END' en el display. Debe evitar los puntos A2, D4 y I2.",
+                "bonusPoints": 3
             },
             "5": {
                 "sequence": [
@@ -1104,15 +1141,18 @@
                     "G5",
                     "B3",
                     "J4",
-                    "C6"
+                    "C6",
+                    "J5"
                 ],
                 "obstacles": [
                     "E2",
-                    "H3"
+                    "H3",
+                    "B4"
                 ],
                 "bonusStart": "D1",
                 "bonusDir": "E",
-                "bonusRules": "El robot comienza en D1 y debe evitar E2 y H3. Los LEDs deben ser de color verde en los puntos con número de fila par (2,4,6) y naranja en los de fila impar (1,3,5). Debe evitar obstáculos marcados en rojo."
+                "bonusRules": "El robot comienza en D1 orientado al Este y debe evitar B4, E2 y H3. Los LEDs deben ser de color verde en los puntos con número de fila par (2,4,6) y naranja en los de fila impar (1,3,5). Desde C6 hasta J5 debe ir en reversa.",
+                "bonusPoints": 3
             }
         },
         "4": {
@@ -1131,7 +1171,8 @@
                 ],
                 "bonusStart": "G6",
                 "bonusDir": "S",
-                "bonusRules": "El robot inicia en G6 en reversa. Debe evitar D5 y F3. En cada punto los LEDs cambian a un color aleatorio. Al finalizar en H5 debe parpadear todos los LEDs 3 veces."
+                "bonusRules": "El robot inicia en G6 orientado al Sur, debe moverse en reversa. Debe evitar D5 y F3. En cada punto los LEDs cambian a un color aleatorio. Al finalizar en H5 debe parpadear todos los LEDs 3 veces.",
+                "bonusPoints": 4
             },
             "2": {
                 "sequence": [
@@ -1149,8 +1190,9 @@
                     "I6"
                 ],
                 "bonusStart": "B1",
-                "bonusDir": "E",
-                "bonusRules": "El robot comienza en B1. Debe evitar C3, G5, E4 e I6. Los primeros 3 puntos en retroceso, los últimos 3 de frente. Mostrar 'R' en display en reversa y 'F' de frente."
+                "bonusDir": "O",
+                "bonusRules": "El robot comienza en B1 orientado al Oeste. Debe evitar C3, G5, E4 e I6. Los primeros 3 puntos en retroceso, los últimos 3 de frente. Mostrar 'R' en display en reversa y 'F' de frente.",
+                "bonusPoints": 4
             },
             "3": {
                 "sequence": [
@@ -1168,7 +1210,8 @@
                 ],
                 "bonusStart": "A6",
                 "bonusDir": "E",
-                "bonusRules": "El robot inicia en A6 en movimientos diagonales. Debe evitar B4, F6 y G2. Los LEDs alternan rojo y blanco como luces de ambulancia (200ms cada color) durante todo el recorrido."
+                "bonusRules": "El robot inicia en A6 en movimientos diagonales. Debe evitar B4, F6 y G2. Los LEDs alternan rojo y blanco como luces de ambulancia (200ms cada color) durante todo el recorrido.",
+                "bonusPoints": 4
             },
             "4": {
                 "sequence": [
@@ -1326,7 +1369,8 @@
                 "guideY": 45.31531531531531,
                 "bonusStart": "F6",
                 "bonusDir": "N",
-                "bonusRules": "El robot inicia en F6 orientado al Norte. Durante el recorrido puede usar movimientos diagonales. Debe evitar H6, C2, I4, E5 y A3. Solo en los puntos de coordenadas pares (columnas B,D,F,H,J y filas 2,4,6) debe mostrar en el display las coordenadas en formato 'LETRA+NÚMERO'."
+                "bonusRules": "El robot inicia en F6 orientado al Norte. Durante el recorrido puede usar movimientos diagonales. Debe evitar H6, C2, I4, E5 y A3. Solo en los puntos de coordenadas pares (columnas B,D,F,H,J y filas 2,4,6) debe mostrar en el display las coordenadas en formato 'LETRA+NÚMERO'.",
+                "bonusPoints": 4
             },
             "5": {
                 "sequence": [
@@ -1345,7 +1389,8 @@
                 ],
                 "bonusStart": "C3",
                 "bonusDir": "N",
-                "bonusRules": "El robot inicia en C3 orientado al Norte. Se permiten movimientos diagonales entre puntos. El buzzer debe emitir un sonido de frecuencia creciente por cada punto visitado (200Hz a 1200Hz). Los LEDs permanecen blancos."
+                "bonusRules": "El robot inicia en C3 orientado al Norte. Se permiten movimientos diagonales entre puntos. Los LEDs permanecen blancos.",
+                "bonusPoints": 4
             }
         },
         "5": {
@@ -1365,7 +1410,8 @@
                 ],
                 "bonusStart": "I6",
                 "bonusDir": "W",
-                "bonusRules": "El robot inicia en I6 en reversa completa. Debe evitar B6, E3 y J4. Los LEDs deben dividirse en cuadrantes: superior-izquierdo=rojo, superior-derecho=verde, inferior-izquierdo=azul, inferior-derecho=amarillo. Al finalizar en F2 debe mostrar 'CAMPEÓN' en display."
+                "bonusRules": "El robot inicia en I6 en reversa completa. Debe evitar B6, E3 y J4. Los LEDs deben dividirse en cuadrantes: superior-izquierdo=rojo, superior-derecho=verde, inferior-izquierdo=azul, inferior-derecho=amarillo. Al finalizar en F2 debe mostrar 'CAMPEÓN' en display.",
+                "bonusPoints": 5
             },
             "2": {
                 "sequence": [
@@ -1382,7 +1428,8 @@
                 ],
                 "bonusStart": "B4",
                 "bonusDir": "E",
-                "bonusRules": "El robot inicia en B4 hacia el Este. Debe realizar un trayecto en zigzag (alternando cambios de dirección) para evitar D5 y H4. El display debe mostrar la coordenada actual y la siguiente (ej: 'B4-G2'). LEDs azules en horizontal y verdes en vertical."
+                "bonusRules": "El robot inicia en B4 hacia el Este. Debe realizar un trayecto en zigzag (alternando cambios de dirección) para evitar D5 y H4. El display debe mostrar la coordenada actual y la siguiente (ej: 'B4-G2'). LEDs azules en horizontal y verdes en vertical.",
+                "bonusPoints": 5
             },
             "3": {
                 "sequence": [
@@ -1396,7 +1443,8 @@
                 "obstacles": [],
                 "bonusStart": "F1",
                 "bonusDir": "N",
-                "bonusRules": "El robot inicia en F1 hacia el Norte. (1) El buzzer emite un tono diferente por fila (Do, Re, Mi, Fa, Sol, La) y EL DISPLAY DEBE MOSTRAR EL NOMBRE DE LA NOTA. (2) Los LEDs son blancos si la suma fila+columna es par, magenta si es impar."
+                "bonusRules": "El robot inicia en F1 hacia el Norte. Los LEDs son blancos si la suma fila+columna es par, magenta si es impar.",
+                "bonusPoints": 5
             },
             "4": {
                 "sequence": [
@@ -1414,7 +1462,8 @@
                 ],
                 "bonusStart": "G5",
                 "bonusDir": "S",
-                "bonusRules": "El robot inicia en G5 en reversa. Debe evitar F5, B3 y H2. El display debe mostrar un contador regresivo desde 5 hasta 0 conforme avanza. Los LEDs siguen el patrón semáforo: verde=avanzando, amarillo=girando, rojo=detenido en cada punto."
+                "bonusRules": "El robot inicia en G5 en reversa. Debe evitar F5, B3 y H2. El display debe mostrar un contador regresivo desde 5 hasta 0 conforme avanza. Los LEDs siguen el patrón semáforo: verde=avanzando, amarillo=girando, rojo=detenido en cada punto.",
+                "bonusPoints": 5
             },
             "5": {
                 "sequence": [
@@ -1613,20 +1662,21 @@
                 "guideY": 42.972972972972975,
                 "bonusStart": "D3",
                 "bonusDir": "N",
-                "bonusRules": "DESAFÍO FINAL. El robot inicia en D3 hacia el Este. Trayectoria libre (se permiten diagonales). Debe evitar B2, G3, I5 y E4. Debe realizar un giro de 360° en cada punto. Al final reproduce una melodía. El display muestra la distancia total en celdas. LEDs con efecto arcoíris continuo."
+                "bonusRules": "DESAFÍO FINAL. El robot inicia en D3 hacia el Este. Trayectoria libre (se permiten diagonales). Debe evitar B2, G3, I5 y E4. Debe realizar un giro de 360° en cada punto. El display muestra la distancia total en celdas. LEDs con efecto arcoíris continuo.",
+                "bonusPoints": 5
             }
         }
     },
     "timers": {
         "quest": {
-            "timer": 1800,
+            "timer": 1500,
             "timerActive": false,
-            "updatedAt": 1776894459.9282799
+            "updatedAt": 1777338636.7825294
         },
         "line_follower": {
             "timer": 1800,
             "timerActive": false,
-            "updatedAt": 1777325716.5955215
+            "updatedAt": 1777338638.0912945
         }
     }
 }

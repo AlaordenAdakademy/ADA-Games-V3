@@ -1421,15 +1421,26 @@ function ConfigTab({ tracks, updateTrackData }) {
                   <h4 className="text-[9px] md:text-[10px] font-black text-yellow-600 uppercase tracking-widest flex items-center gap-1 mb-1">
                       <Icon name="star" className="w-3 h-3"/> Ajustes de Bonus
                   </h4>
-                  <div>
-                      <p className="text-[8px] md:text-[9px] font-bold text-yellow-600 mb-1 uppercase">Orientación</p>
-                      <div className="flex gap-1">
-                          {['N', 'S', 'E', 'O'].map(dir => (
-                              <button key={dir} onClick={() => updateTrackData(selRonda, selPista, { bonusDir: dir === currentTrack.bonusDir ? '' : dir })} className={`flex-1 py-1.5 rounded-lg text-[10px] font-black transition-all ${currentTrack.bonusDir === dir ? 'bg-yellow-500 text-white shadow-md' : 'bg-white text-yellow-600 border border-yellow-200 hover:bg-yellow-100'}`}>
-                                  {dir}
-                              </button>
-                          ))}
-                      </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                        <p className="text-[8px] md:text-[9px] font-bold text-yellow-600 mb-1 uppercase">Puntaje Bonus</p>
+                        <input 
+                            type="number"
+                            value={currentTrack.bonusPoints || 3}
+                            onChange={(e) => updateTrackData(selRonda, selPista, { bonusPoints: parseInt(e.target.value) || 0 })}
+                            className="w-full text-[12px] p-2 rounded-xl border border-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-yellow-800 font-black text-center"
+                        />
+                    </div>
+                    <div>
+                        <p className="text-[8px] md:text-[9px] font-bold text-yellow-600 mb-1 uppercase">Orientación</p>
+                        <div className="flex gap-1 h-[34px]">
+                            {['N', 'S', 'E', 'O'].map(dir => (
+                                <button key={dir} onClick={() => updateTrackData(selRonda, selPista, { bonusDir: dir === currentTrack.bonusDir ? '' : dir })} className={`flex-1 rounded-lg text-[10px] font-black transition-all ${currentTrack.bonusDir === dir ? 'bg-yellow-500 text-white shadow-md' : 'bg-white text-yellow-600 border border-yellow-200 hover:bg-yellow-100'}`}>
+                                    {dir}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                   </div>
                   <div>
                       <p className="text-[8px] md:text-[9px] font-bold text-yellow-600 mb-1 uppercase">Reglas</p>
@@ -1517,7 +1528,8 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
   };
 
   const confirmSave = () => {
-    const total = (progressIdx + 1) + (bonus ? 3 : 0);
+    const bonusValue = track.bonusPoints || 3;
+    const total = (progressIdx + 1) + (bonus ? bonusValue : 0);
     
     let finalTimeMs = 0;
     if (selPista === 5) {
@@ -1674,13 +1686,13 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
                   disabled={existingEvaluation || !bonusIntention}
                   className={`w-full py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all border-2 ${bonus ? 'bg-yellow-400 border-yellow-300 text-white shadow-lg shadow-yellow-400/30' : 'bg-white border-yellow-200 text-yellow-600 hover:bg-yellow-50'} ${existingEvaluation ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  <Icon name="star" className={bonus ? 'fill-white' : ''} /> LO LOGRARON (+3 PTS)
+                  <Icon name="star" className={bonus ? 'fill-white' : ''} /> LO LOGRARON (+{track.bonusPoints || 3} PTS)
                 </button>
               </div>
               <div className="bg-blue-600 rounded-3xl p-6 text-center shadow-2xl shadow-blue-600/30">
                 <p className="text-blue-100 text-[10px] font-black uppercase tracking-[0.2em] mb-1">Total a Sumar</p>
                 <div className="text-7xl font-black text-white">
-                  {existingEvaluation ? existingEvaluation.points : ((progressIdx + 1) + (bonus ? 3 : 0))}
+                  {existingEvaluation ? existingEvaluation.points : ((progressIdx + 1) + (bonus ? (track.bonusPoints || 3) : 0))}
                 </div>
               </div>
               <button 
@@ -1719,7 +1731,7 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
                     const id = `${c}${r}`;
                     const seqIdx = track.sequence.indexOf(id);
                     const isObs = track.obstacles.includes(id);
-                    const evalIdx = existingEvaluation ? existingEvaluation.points - (existingEvaluation.points > track.sequence.length ? 3 : 0) - 1 : -1;
+                    const evalIdx = existingEvaluation ? existingEvaluation.points - (existingEvaluation.points > track.sequence.length ? (track.bonusPoints || 3) : 0) - 1 : -1;
                     const isReached = seqIdx !== -1 && (existingEvaluation ? seqIdx <= evalIdx : seqIdx <= progressIdx);
                     const isBonusStart = bonusIntention && track.bonusStart === id;
                     
@@ -1812,12 +1824,12 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
                               </div>
                               <div className="text-right">
                                   <p className="text-[10px] text-yellow-500 uppercase font-black tracking-widest">Bonus</p>
-                                  <p className="text-2xl font-black text-yellow-400">{bonus ? '+3' : '+0'} <span className="text-xs text-yellow-600/50">PTS</span></p>
+                                  <p className="text-2xl font-black text-yellow-400">{bonus ? `+${track.bonusPoints || 3}` : '+0'} <span className="text-xs text-yellow-600/50">PTS</span></p>
                               </div>
                           </div>
                           <div className="bg-blue-600 p-3 rounded-xl border border-blue-500 text-center shadow-[0_0_20px_rgba(37,99,235,0.3)]">
                               <p className="text-[10px] text-blue-200 uppercase font-black tracking-widest mb-1">Puntaje Final a Registrar</p>
-                              <p className="text-4xl font-black text-white">{((progressIdx + 1) + (bonus ? 3 : 0))}</p>
+                              <p className="text-4xl font-black text-white">{((progressIdx + 1) + (bonus ? (track.bonusPoints || 3) : 0))}</p>
                           </div>
                       </div>
 
