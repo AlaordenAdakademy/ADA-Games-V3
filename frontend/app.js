@@ -1725,7 +1725,7 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
                 {COLS.map(c => <div key={c} className="p-2 md:p-3 text-center flex items-center justify-center">{c}</div>)}
               </div>
               {ROWS.map(r => (
-                <div key={r} className="grid grid-cols-11 border-b border-blue-50 last:border-0">
+                <div key={r} className="grid grid-cols-11 border-b border-blue-100 last:border-0">
                   <div className="bg-blue-600 text-white font-black text-[10px] md:text-[11px] flex items-center justify-center border-r border-blue-500/50 p-2 md:p-3">{r}</div>
                   {COLS.map(c => {
                     const id = `${c}${r}`;
@@ -1739,7 +1739,7 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
                       <button 
                         key={id} disabled={seqIdx === -1 || !selTeam || existingEvaluation}
                         onClick={() => setProgressIdx(seqIdx === progressIdx ? seqIdx - 1 : seqIdx)}
-                        className={`aspect-square border-r border-blue-50 last:border-0 flex items-center justify-center relative transition-all ${isReached ? 'bg-green-50' : ''}`}
+                        className={`aspect-square border-r border-blue-100 last:border-0 flex items-center justify-center relative transition-all ${isReached ? 'bg-green-50' : ''}`}
                       >
                         {isBonusStart && (
                             <div className="absolute -top-1 md:-top-2 -right-1 md:-right-2 w-5 h-5 md:w-8 md:h-8 bg-yellow-400 flex items-center justify-center shadow-xl rounded-full transform border border-yellow-200 z-20 text-[10px] md:text-sm animate-pulse">

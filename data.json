@@ -1,6 +1,254 @@
 {
     "teams": [
         {
+            "id": "17768923483993",
+            "teamName": "Doragons",
+            "schoolName": "U.E. Dr. Raúl Leoni",
+            "school": "Doragons — U.E. Dr. Raúl Leoni",
+            "captainName": "Ariel Cristina Algarín García",
+            "coachName": "Frangelith Villarroel",
+            "members": [
+                "Ariel Cristina Algarín García",
+                "Gabriel Jesús Molina Zapata",
+                "Ángel Luis Rodríguez Vegas"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1,
+                5,
+                4,
+                3,
+                2
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "17768923483771",
+            "teamName": "IDEAL N°1",
+            "schoolName": "U.E. Instituto de Enseñanza América Latina (IDEAL)",
+            "school": "IDEAL N°1 — U.E. Instituto de Enseñanza América Latina (IDEAL)",
+            "captainName": "Kenay Rafael Silvera Romero",
+            "coachName": "Juan Diego Yepez Gil",
+            "members": [
+                "Kenay Rafael Silvera Romero",
+                "Diego Andrés García Mora",
+                "Ángelo Alessandro Mantovani Ortíz"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "1776892156424",
+            "teamName": "Jvg-bot",
+            "schoolName": "U. E. Colegio Juan Vicente Gonzalez",
+            "school": "Jvg-bot — Unidad Educativa Colegio Juan Vicente Gonzalez",
+            "captainName": "Christopher Roberto Sánchez Cepeda",
+            "coachName": "Luis Marcano",
+            "members": [
+                "Christopher Roberto Sánchez Cepeda",
+                "Sebastián Josué Carvajal Ochoa",
+                "Rahel de Jesús Carreño Medina"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "17768923484417",
+            "teamName": "Lambda",
+            "schoolName": "U.E. Cacica Urimare",
+            "school": "Lambda — UE Cacica Urimare",
+            "captainName": "José Daniel Ramos Marín",
+            "coachName": "Luis Gamboa",
+            "members": [
+                "José Daniel Ramos Marín",
+                "Adrián Antonio Güipe González",
+                "Camila Alejandra Vielma Moronta"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "17768923484518",
+            "teamName": "Los Blinders",
+            "schoolName": "U.E. Nueva Barcelona",
+            "school": "Los Blinders — U.E. Nueva Barcelona",
+            "captainName": "Ilan Zahir Ávila Guaiquirián",
+            "coachName": "Carolina Astudillo",
+            "members": [
+                "Ilan Zahir Ávila Guaiquirián",
+                "Geovanny Eduardo José Ortíz Lusinchi",
+                "Winston Gabriel Molina Mata"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "17768923484104",
+            "teamName": "Los Boys",
+            "schoolName": "U. E. ABAJO CADENAS",
+            "school": "Los Boys — UNIDAD EDUCATIVA ABAJO CADENAS",
+            "captainName": "Eduardo Girot",
+            "coachName": "Yatsmary Villarroel",
+            "members": [
+                "Eduardo Girot",
+                "Jorge Zamora",
+                "José Romero"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0
+        },
+        {
+            "id": "238027238596759",
+            "teamName": "MENCA M3NS",
+            "schoolName": "U.E. Doña Menca de Leoni",
+            "school": "MENCA M3NS — U.E. Doña Menca de Leoni",
+            "captainName": "Jhean Brito",
+            "coachName": "Alberto Thomas",
+            "members": [
+                "Jhean Brito",
+                "Hiroshi Yoshida",
+                "Alejandro Cedeño"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0,
+            "judgeId": "admin",
+            "judgeName": "Administrador Central"
+        },
+        {
+            "id": "82112924798217",
+            "teamName": "NALA",
+            "schoolName": "U. E. Colegio Eduardo Blanco",
+            "school": "NALA — Unidad Educativa Colegio Eduardo Blanco",
+            "captainName": "Pedro Antonio Catamo Guzman",
+            "coachName": "Ramses Antolines",
+            "members": [
+                "Pedro Antonio Catamo Guzman",
+                "Nathalie Sofia Sanchez Carrero",
+                "Michell De Los Angeles Urbaneja Vasquez"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 0,
+            "history": [],
+            "category": "quest",
+            "qualifiedRounds": [
+                1
+            ],
+            "practiceTickets": 5,
+            "evaluationTickets": {
+                "1": 1,
+                "2": 1,
+                "3": 1,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 0,
+            "judgeId": "admin",
+            "judgeName": "Administrador Central"
+        },
+        {
             "id": "177689253971614",
             "teamName": "Don Bosco Tech",
             "schoolName": "U.E. Colegio Don Bosco",
@@ -13,16 +261,16 @@
             ],
             "studentsCount": 2,
             "status": "inspected",
-            "score": 65,
+            "score": 85,
             "history": [
                 {
                     "ronda": 1,
                     "pista": 1,
-                    "points": 65,
-                    "finalTimeMs": 11000,
+                    "points": 85,
+                    "finalTimeMs": 13000,
                     "practice": false,
                     "convertedFromPractice": false,
-                    "date": "6:21:45 p. m.",
+                    "date": "4:01:25 p. m.",
                     "judgeId": "admin",
                     "judgeName": "Administrador Central"
                 }
@@ -39,7 +287,7 @@
                 "4": 1,
                 "5": 1
             },
-            "lastTime": 11000
+            "lastTime": 13000
         },
         {
             "id": "63689415686062",
@@ -317,254 +565,6 @@
                 "5": 1
             },
             "lastTime": 0
-        },
-        {
-            "id": "17768923483993",
-            "teamName": "Doragons",
-            "schoolName": "U.E. Dr. Raúl Leoni",
-            "school": "Doragons — U.E. Dr. Raúl Leoni",
-            "captainName": "Ariel Cristina Algarín García",
-            "coachName": "Frangelith Villarroel",
-            "members": [
-                "Ariel Cristina Algarín García",
-                "Gabriel Jesús Molina Zapata",
-                "Ángel Luis Rodríguez Vegas"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1,
-                5,
-                4,
-                3,
-                2
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "17768923483771",
-            "teamName": "IDEAL N°1",
-            "schoolName": "U.E. Instituto de Enseñanza América Latina (IDEAL)",
-            "school": "IDEAL N°1 — U.E. Instituto de Enseñanza América Latina (IDEAL)",
-            "captainName": "Kenay Rafael Silvera Romero",
-            "coachName": "Juan Diego Yepez Gil",
-            "members": [
-                "Kenay Rafael Silvera Romero",
-                "Diego Andrés García Mora",
-                "Ángelo Alessandro Mantovani Ortíz"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "1776892156424",
-            "teamName": "Jvg-bot",
-            "schoolName": "U. E. Colegio Juan Vicente Gonzalez",
-            "school": "Jvg-bot — Unidad Educativa Colegio Juan Vicente Gonzalez",
-            "captainName": "Christopher Roberto Sánchez Cepeda",
-            "coachName": "Luis Marcano",
-            "members": [
-                "Christopher Roberto Sánchez Cepeda",
-                "Sebastián Josué Carvajal Ochoa",
-                "Rahel de Jesús Carreño Medina"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "17768923484417",
-            "teamName": "Lambda",
-            "schoolName": "U.E. Cacica Urimare",
-            "school": "Lambda — UE Cacica Urimare",
-            "captainName": "José Daniel Ramos Marín",
-            "coachName": "Luis Gamboa",
-            "members": [
-                "José Daniel Ramos Marín",
-                "Adrián Antonio Güipe González",
-                "Camila Alejandra Vielma Moronta"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "17768923484518",
-            "teamName": "Los Blinders",
-            "schoolName": "U.E. Nueva Barcelona",
-            "school": "Los Blinders — U.E. Nueva Barcelona",
-            "captainName": "Ilan Zahir Ávila Guaiquirián",
-            "coachName": "Carolina Astudillo",
-            "members": [
-                "Ilan Zahir Ávila Guaiquirián",
-                "Geovanny Eduardo José Ortíz Lusinchi",
-                "Winston Gabriel Molina Mata"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "17768923484104",
-            "teamName": "Los Boys",
-            "schoolName": "U. E. ABAJO CADENAS",
-            "school": "Los Boys — UNIDAD EDUCATIVA ABAJO CADENAS",
-            "captainName": "Eduardo Girot",
-            "coachName": "Yatsmary Villarroel",
-            "members": [
-                "Eduardo Girot",
-                "Jorge Zamora",
-                "José Romero"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "238027238596759",
-            "teamName": "MENCA M3NS",
-            "schoolName": "U.E. Doña Menca de Leoni",
-            "school": "MENCA M3NS — U.E. Doña Menca de Leoni",
-            "captainName": "Jhean Brito",
-            "coachName": "Alberto Thomas",
-            "members": [
-                "Jhean Brito",
-                "Hiroshi Yoshida",
-                "Alejandro Cedeño"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0,
-            "judgeId": "admin",
-            "judgeName": "Administrador Central"
-        },
-        {
-            "id": "82112924798217",
-            "teamName": "NALA",
-            "schoolName": "U. E. Colegio Eduardo Blanco",
-            "school": "NALA — Unidad Educativa Colegio Eduardo Blanco",
-            "captainName": "Pedro Antonio Catamo Guzman",
-            "coachName": "Ramses Antolines",
-            "members": [
-                "Pedro Antonio Catamo Guzman",
-                "Nathalie Sofia Sanchez Carrero",
-                "Michell De Los Angeles Urbaneja Vasquez"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0,
-            "judgeId": "admin",
-            "judgeName": "Administrador Central"
         }
     ],
     "tracks": {
@@ -1209,8 +1209,8 @@
                     "G2"
                 ],
                 "bonusStart": "A6",
-                "bonusDir": "E",
-                "bonusRules": "El robot inicia en A6 en movimientos diagonales. Debe evitar B4, F6 y G2. Los LEDs alternan rojo y blanco como luces de ambulancia (200ms cada color) durante todo el recorrido.",
+                "bonusDir": "",
+                "bonusRules": "El robot inicia en A6 en movimientos diagonales hasta I5. Debe evitar B4, F6 y G2. Los LEDs alternan rojo y blanco como luces de ambulancia (200ms cada color) durante todo el recorrido.",
                 "bonusPoints": 4
             },
             "4": {
@@ -1219,8 +1219,8 @@
                     "J3",
                     "B5",
                     "G1",
-                    "D4",
-                    "I6"
+                    "D3",
+                    "J6"
                 ],
                 "obstacles": [
                     "H6",
@@ -1388,8 +1388,8 @@
                     "I3"
                 ],
                 "bonusStart": "C3",
-                "bonusDir": "N",
-                "bonusRules": "El robot inicia en C3 orientado al Norte. Se permiten movimientos diagonales entre puntos. Los LEDs permanecen blancos.",
+                "bonusDir": "",
+                "bonusRules": "El robot debe ejecutar al menos una diagonal y un trayecto en reversa entre los puntos de la ruta. El Display debe mostrar las coordenadas destino de ambos movimientos especiales. Los LEDs RGB deben cambiar de color según el tipo de avance (frente, diagonal o reversa).",
                 "bonusPoints": 4
             }
         },
@@ -1424,26 +1424,52 @@
                 ],
                 "obstacles": [
                     "D5",
-                    "H4"
+                    "H4",
+                    "D2",
+                    "F4",
+                    "D1",
+                    "G6"
                 ],
                 "bonusStart": "B4",
-                "bonusDir": "E",
-                "bonusRules": "El robot inicia en B4 hacia el Este. Debe realizar un trayecto en zigzag (alternando cambios de dirección) para evitar D5 y H4. El display debe mostrar la coordenada actual y la siguiente (ej: 'B4-G2'). LEDs azules en horizontal y verdes en vertical.",
+                "bonusDir": "N",
+                "bonusRules": "El robot inicia en B4 hacia el Norte. Debe realizar un trayecto en diagonal desde B4 a G2. El display debe mostrar la coordenada actual y la siguiente (ej: 'B4-G2'). LEDs azules en horizontal y verdes en vertical. Debe evitar D1, D2, D5, F4, G6 y H4.",
                 "bonusPoints": 5
             },
             "3": {
                 "sequence": [
                     "F1",
                     "A3",
-                    "H5",
-                    "D2",
+                    "D6",
+                    "A1",
                     "J6",
-                    "B4"
+                    "J1"
                 ],
-                "obstacles": [],
+                "obstacles": [
+                    "E1",
+                    "E2",
+                    "E3",
+                    "G3",
+                    "G2",
+                    "G1",
+                    "F5",
+                    "F6",
+                    "B4",
+                    "B5",
+                    "B6",
+                    "I6",
+                    "I5",
+                    "I4",
+                    "A2",
+                    "B2",
+                    "C2",
+                    "J2",
+                    "I2",
+                    "C5",
+                    "H5"
+                ],
                 "bonusStart": "F1",
-                "bonusDir": "N",
-                "bonusRules": "El robot inicia en F1 hacia el Norte. Los LEDs son blancos si la suma fila+columna es par, magenta si es impar.",
+                "bonusDir": "S",
+                "bonusRules": "El robot inicia en F1 hacia el Sur. Los LEDs en las coordenadas son blancos si la suma fila+columna es par, magenta (255, 0, 255) si es impar. Al finalizar debe hacer un giro de 360°. Debe evitar los obstáculos que se muestran en la pista.",
                 "bonusPoints": 5
             },
             "4": {
@@ -1458,11 +1484,12 @@
                 "obstacles": [
                     "F5",
                     "B3",
-                    "H2"
+                    "H2",
+                    "B6"
                 ],
                 "bonusStart": "G5",
                 "bonusDir": "S",
-                "bonusRules": "El robot inicia en G5 en reversa. Debe evitar F5, B3 y H2. El display debe mostrar un contador regresivo desde 5 hasta 0 conforme avanza. Los LEDs siguen el patrón semáforo: verde=avanzando, amarillo=girando, rojo=detenido en cada punto.",
+                "bonusRules": "El robot inicia en G5 en orientación al Sur y debe moverse siempre en reversa. Debe evitar F5, B3, B6 y H2. El display debe mostrar un contador regresivo desde 5 hasta 0 conforme avanza. Los LEDs siguen el patrón semáforo: verde=avanzando, amarillo=girando, rojo=detenido en cada punto.",
                 "bonusPoints": 5
             },
             "5": {
@@ -1476,9 +1503,12 @@
                 ],
                 "obstacles": [
                     "B2",
-                    "G3",
-                    "I5",
-                    "E4"
+                    "A2",
+                    "G6",
+                    "I4",
+                    "C3",
+                    "E5",
+                    "H2"
                 ],
                 "bgImage": "/maps/mapa_ronda5_pista5.png?t=1775879780",
                 "points": [
@@ -1661,17 +1691,17 @@
                 "guideX": 46.95945945945946,
                 "guideY": 42.972972972972975,
                 "bonusStart": "D3",
-                "bonusDir": "N",
-                "bonusRules": "DESAFÍO FINAL. El robot inicia en D3 hacia el Este. Trayectoria libre (se permiten diagonales). Debe evitar B2, G3, I5 y E4. Debe realizar un giro de 360° en cada punto. El display muestra la distancia total en celdas. LEDs con efecto arcoíris continuo.",
+                "bonusDir": "E",
+                "bonusRules": "El robot inicia en D3 con dirección hacia el Este. Debe realizarse una diagonal en D3-J6. El display muestra las coordenadas al pasar por ellas y se mantienen. LEDs con efecto arcoíris continuo.\nDebe evitar A2,B2, C3, E5, G6, H2 y I4. ",
                 "bonusPoints": 5
             }
         }
     },
     "timers": {
         "quest": {
-            "timer": 1500,
+            "timer": 1800,
             "timerActive": false,
-            "updatedAt": 1777338636.7825294
+            "updatedAt": 1777406363.4719148
         },
         "line_follower": {
             "timer": 1800,
