@@ -381,8 +381,42 @@ function App() {
 
         // Recalcular puntaje global y último tiempo para este equipo si es necesario
         // En este sistema, el score global suele ser el acumulado de puntos.
-        let totalScore = newHistory.reduce((sum, h) => sum + (h.points || h.percentage || 0), 0);
-        let lastTime = newHistory.length > 0 ? newHistory[newHistory.length - 1].finalTimeMs || newHistory[newHistory.length - 1].finalTime || 0 : 0;
+        const offHist = newHistory.filter(h => !h.practice);
+        let totalScore = 0;
+        let lastTime = 0;
+        for (let r = 1; r <= 5; r++) {
+          const rh = offHist.filter(h => h.ronda === r);
+          if (rh.length > 0) {
+            if (t.category === 'quest') {
+              const globalEntry = rh.slice().reverse().find(h => h.pista === 0);
+              if (globalEntry) {
+                const cap = r >= 5 ? 55 : (r === 4 ? 50 : 40);
+                totalScore += Math.min(cap, (globalEntry.points || globalEntry.percentage || 0));
+                lastTime = globalEntry.finalTimeMs || globalEntry.finalTime || 0;
+              } else {
+                const uniqueTracks = {};
+                rh.forEach(h => { uniqueTracks[h.pista] = h; });
+                Object.values(uniqueTracks).forEach(h => {
+                  const cap = r >= 5 ? 11 : (r === 4 ? 10 : 8);
+                  totalScore += Math.min(cap, (h.points || h.percentage || 0));
+                });
+                const pista5 = uniqueTracks[5];
+                if (pista5) lastTime = pista5.finalTimeMs || 0;
+              }
+            } else {
+              const uniqueTracks = {};
+              rh.forEach(h => { uniqueTracks[h.pista] = h; });
+              Object.values(uniqueTracks).forEach(h => {
+                totalScore += (h.points || h.percentage || 0);
+                lastTime += (h.finalTimeMs || h.finalTime || 0);
+              });
+            }
+          }
+        }
+        if (t.category === 'quest' && lastTime === 0 && offHist.length > 0) {
+          const lastH = offHist[offHist.length - 1];
+          lastTime = lastH.finalTimeMs || lastH.finalTime || 0;
+        }
 
         return { ...t, history: newHistory, score: totalScore, lastTime };
       }
@@ -476,8 +510,42 @@ function App() {
     const newHistory = [...team.history];
     newHistory.splice(historyIndex, 1);
 
-    const newScore = newHistory.reduce((s, h) => s + (h.points || h.percentage || 0), 0);
-    const newTime = newHistory.reduce((s, h) => s + (h.finalTimeMs || h.finalTime || 0), 0);
+    const offHist = newHistory.filter(h => !h.practice);
+    let newScore = 0;
+    let newTime = 0;
+    for (let r = 1; r <= 5; r++) {
+      const rh = offHist.filter(h => h.ronda === r);
+      if (rh.length > 0) {
+        if (team.category === 'quest') {
+          const globalEntry = rh.slice().reverse().find(h => h.pista === 0);
+          if (globalEntry) {
+            const cap = r >= 5 ? 55 : (r === 4 ? 50 : 40);
+            newScore += Math.min(cap, (globalEntry.points || globalEntry.percentage || 0));
+            newTime = globalEntry.finalTimeMs || globalEntry.finalTime || 0;
+          } else {
+            const uniqueTracks = {};
+            rh.forEach(h => { uniqueTracks[h.pista] = h; });
+            Object.values(uniqueTracks).forEach(h => {
+              const cap = r >= 5 ? 11 : (r === 4 ? 10 : 8);
+              newScore += Math.min(cap, (h.points || h.percentage || 0));
+            });
+            const pista5 = uniqueTracks[5];
+            if (pista5) newTime = pista5.finalTimeMs || 0;
+          }
+        } else {
+          const uniqueTracks = {};
+          rh.forEach(h => { uniqueTracks[h.pista] = h; });
+          Object.values(uniqueTracks).forEach(h => {
+            newScore += (h.points || h.percentage || 0);
+            newTime += (h.finalTimeMs || h.finalTime || 0);
+          });
+        }
+      }
+    }
+    if (team.category === 'quest' && newTime === 0 && offHist.length > 0) {
+      const lastH = offHist[offHist.length - 1];
+      newTime = lastH.finalTimeMs || lastH.finalTime || 0;
+    }
 
     const updated = teams.map(t => t.id === teamId ? {
       ...t,
@@ -511,32 +579,59 @@ function App() {
   const addScore = (teamId, ronda, pista, points, finalTimeMs = null, attemptType = 'evaluation') => {
     const updated = teams.map(t => {
       if (t.id === teamId) {
-        // Inicializar tickets si no existen
-        const practiceTickets = t.practiceTickets !== undefined ? t.practiceTickets : 5;
-        const evalTickets = t.evaluationTickets || { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1 };
-
-        if (attemptType === 'practice') {
-          return {
-            ...t,
-            history: [...t.history, {
-              ronda, pista, points, finalTimeMs, practice: true,
-              date: new Date().toLocaleTimeString(),
-              judgeId: currentUser.id, judgeName: currentUser.name
-            }]
-          };
-        } else {
-          // Es evaluación oficial o práctica convertida a evaluación
-          return {
-            ...t,
-            score: (t.score || 0) + points,
-            lastTime: finalTimeMs !== null ? ((t.lastTime || 0) + finalTimeMs) : t.lastTime,
-            history: [...t.history, {
-              ronda, pista, points, finalTimeMs, practice: false, convertedFromPractice: attemptType === 'practice_to_eval',
-              date: new Date().toLocaleTimeString(),
-              judgeId: currentUser.id, judgeName: currentUser.name
-            }]
-          };
+        // --- Gestión de Tickets ---
+        let practiceTickets = t.practiceTickets !== undefined ? t.practiceTickets : 5;
+        if (attemptType === 'practice' || attemptType === 'practice_to_eval') {
+          practiceTickets = Math.max(0, practiceTickets - 1);
         }
+
+        const newHistory = [...t.history, {
+          ronda, pista, points, finalTimeMs, 
+          practice: attemptType === 'practice',
+          convertedFromPractice: attemptType === 'practice_to_eval',
+          date: new Date().toLocaleTimeString(),
+          judgeId: currentUser.id, judgeName: currentUser.name
+        }];
+
+        // Recalcular puntaje global y último tiempo para este equipo
+        const offHist = newHistory.filter(h => !h.practice);
+        let totalScore = 0;
+        let lastTime = 0;
+        for (let r = 1; r <= 5; r++) {
+          const rh = offHist.filter(h => h.ronda === r);
+          if (rh.length > 0) {
+            if (t.category === 'quest') {
+              const globalEntry = rh.slice().reverse().find(h => h.pista === 0);
+              if (globalEntry) {
+                const cap = r >= 5 ? 55 : (r === 4 ? 50 : 40);
+                totalScore += Math.min(cap, (globalEntry.points || globalEntry.percentage || 0));
+                lastTime = globalEntry.finalTimeMs || globalEntry.finalTime || 0;
+              } else {
+                const uniqueTracks = {};
+                rh.forEach(h => { uniqueTracks[h.pista] = h; });
+                Object.values(uniqueTracks).forEach(h => {
+                  const cap = r >= 5 ? 11 : (r === 4 ? 10 : 8);
+                  totalScore += Math.min(cap, (h.points || h.percentage || 0));
+                });
+                const pista5 = uniqueTracks[5];
+                if (pista5) lastTime = pista5.finalTimeMs || 0;
+              }
+            } else {
+              const uniqueTracks = {};
+              rh.forEach(h => { uniqueTracks[h.pista] = h; });
+              Object.values(uniqueTracks).forEach(h => {
+                totalScore += (h.points || h.percentage || 0);
+                lastTime += (h.finalTimeMs || h.finalTime || 0);
+              });
+            }
+          }
+        }
+        if (t.category === 'quest' && lastTime === 0 && offHist.length > 0) {
+          const lastH = offHist[offHist.length - 1];
+          lastTime = lastH.finalTimeMs || lastH.finalTime || 0;
+        }
+
+        return { ...t, history: newHistory, score: totalScore, lastTime, practiceTickets };
       }
       return t;
     });
@@ -591,8 +686,41 @@ function App() {
 
       // Recalcular score y lastTime desde todas las evaluaciones oficiales (no práctica)
       const officialEntries = newHistory.filter(h => !h.practice);
-      const newScore = officialEntries.reduce((sum, h) => sum + (h.points || h.percentage || 0), 0);
-      const newLastTime = officialEntries.reduce((sum, h) => sum + (h.finalTimeMs || h.finalTime || 0), 0);
+      let newScore = 0;
+      let newLastTime = 0;
+      for (let r = 1; r <= 5; r++) {
+        const rh = officialEntries.filter(h => h.ronda === r);
+        if (rh.length > 0) {
+          if (t.category === 'quest') {
+            const globalEntry = rh.slice().reverse().find(h => h.pista === 0);
+            if (globalEntry) {
+              const cap = r >= 5 ? 55 : (r === 4 ? 50 : 40);
+              newScore += Math.min(cap, (globalEntry.points || globalEntry.percentage || 0));
+              newLastTime = globalEntry.finalTimeMs || globalEntry.finalTime || 0;
+            } else {
+              const uniqueTracks = {};
+              rh.forEach(h => { uniqueTracks[h.pista] = h; });
+              Object.values(uniqueTracks).forEach(h => {
+                const cap = r >= 5 ? 11 : (r === 4 ? 10 : 8);
+                newScore += Math.min(cap, (h.points || h.percentage || 0));
+              });
+              const pista5 = uniqueTracks[5];
+              if (pista5) newLastTime = pista5.finalTimeMs || 0;
+            }
+          } else {
+            const uniqueTracks = {};
+            rh.forEach(h => { uniqueTracks[h.pista] = h; });
+            Object.values(uniqueTracks).forEach(h => {
+              newScore += (h.points || h.percentage || 0);
+              newLastTime += (h.finalTimeMs || h.finalTime || 0);
+            });
+          }
+        }
+      }
+      if (t.category === 'quest' && newLastTime === 0 && officialEntries.length > 0) {
+        const lastH = officialEntries[officialEntries.length - 1];
+        newLastTime = lastH.finalTimeMs || lastH.finalTime || 0;
+      }
 
       // extraPatch puede contener otros campos (ej: status) pero NO newHistoryEntries (ya procesado)
       const { newHistoryEntries: _removed, ...restPatch } = extraPatch;
@@ -1123,7 +1251,18 @@ function HistorialModal({ teams, selectedId, onClose, onDeleteEvaluation, onUpda
                     )}
                   </div>
                   <div className="flex-1 w-full text-center sm:text-left">
-                    <p className="font-black text-slate-800 uppercase tracking-tighter text-sm md:text-base">Pista {h.pista} - {h.ronda === 5 ? 'Gran Final' : `Ronda ${h.ronda}`}</p>
+                    <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
+                      <p className="font-black text-slate-800 uppercase tracking-tighter text-sm md:text-base">
+                        {h.pista === 0 ? `Valor global por ronda - ${h.ronda === 5 ? 'Gran Final' : `Ronda ${h.ronda}`}` : `Pista ${h.pista} - ${h.ronda === 5 ? 'Gran Final' : `Ronda ${h.ronda}`}`}
+                      </p>
+                      {h.practice ? (
+                        <span className="bg-slate-100 text-slate-500 border border-slate-200 px-2 py-0.5 rounded text-[8px] md:text-[9px] font-black uppercase tracking-widest">Pract</span>
+                      ) : h.convertedFromPractice ? (
+                        <span className="bg-purple-100 text-purple-600 border border-purple-200 px-2 py-0.5 rounded text-[8px] md:text-[9px] font-black uppercase tracking-widest">Pract+Eva</span>
+                      ) : (
+                        <span className="bg-green-100 text-green-600 border border-green-200 px-2 py-0.5 rounded text-[8px] md:text-[9px] font-black uppercase tracking-widest">Eva</span>
+                      )}
+                    </div>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center justify-center sm:justify-start gap-1.5 mt-1">
                       <Icon name="users" className="w-3 h-3" /> {h.judgeName || 'Juez'}
                     </p>
@@ -1562,7 +1701,9 @@ function EvaluacionTab({ teams, tracks, addScore, currentUser, disqualifyTeam, p
   // Cálculo dinámico de tickets por RONDA (Independencia de rondas)
   const practiceRemaining = useMemo(() => {
     if (!selectedTeamData) return 5;
-    const roundPractices = selectedTeamData.history?.filter(h => h.ronda === selRonda && h.practice === true) || [];
+    const roundPractices = selectedTeamData.history?.filter(h => 
+      h.ronda === selRonda && (h.practice === true || h.convertedFromPractice === true)
+    ) || [];
     return Math.max(0, 5 - roundPractices.length);
   }, [selectedTeamData, selRonda]);
 
@@ -2517,7 +2658,7 @@ function EditTeamModal({ team, onClose, onSave, onDelete, isContingencyMode, tot
                     <div>
                       <label className="text-[9px] font-black text-orange-600 uppercase tracking-widest block mb-1">Pista</label>
                       <select value={selPista} onChange={e => setSelPista(e.target.value)} className="w-full p-2.5 rounded-xl bg-white border-2 border-orange-200 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-orange-400">
-                        <option value={0}>0 - Total Ronda (Global)</option>
+                        <option value={0}>Valor global por ronda</option>
                         {[1, 2, 3, 4, 5].map(p => <option key={p} value={p}>Pista {p}</option>)}
                       </select>
                     </div>
@@ -2692,24 +2833,35 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
       h.practice !== true
     ) : [];
 
-    let totalScore = rh.reduce((sum, h) => {
-      let pts = (h.points || h.percentage || 0);
-      // Tope de seguridad para Quest: Máximo 8 puntos por pista
-      if (team.category === 'quest') pts = Math.min(8, pts);
-      return sum + pts;
-    }, 0);
+    let totalScore = 0;
+    let totalTime = 999999;
 
-    let totalTime = 0;
-
-    if (rh.length === 0) {
-      return { score: 0, time: 999999 };
-    }
-
-    if (team.category === 'quest') {
-      const pista5 = rh.find(h => h.pista === 5);
-      totalTime = pista5 ? (pista5.finalTimeMs || 0) : 1500000;
-    } else {
-      totalTime = rh.reduce((sum, h) => sum + (h.finalTimeMs || h.finalTime || 0), 0);
+    if (rh.length > 0) {
+      if (team.category === 'quest') {
+        const globalEntry = rh.slice().reverse().find(h => h.pista === 0);
+        if (globalEntry) {
+          const cap = globalEntry.ronda >= 5 ? 55 : (globalEntry.ronda === 4 ? 50 : 40);
+          totalScore = Math.min(cap, (globalEntry.points || globalEntry.percentage || 0));
+          totalTime = globalEntry.finalTimeMs || globalEntry.finalTime || 0;
+        } else {
+          const uniqueTracks = {};
+          rh.forEach(h => { uniqueTracks[h.pista] = h; });
+          Object.values(uniqueTracks).forEach(h => {
+            const cap = h.ronda >= 5 ? 11 : (h.ronda === 4 ? 10 : 8);
+            totalScore += Math.min(cap, (h.points || h.percentage || 0));
+          });
+          const pista5 = uniqueTracks[5];
+          totalTime = pista5 ? (pista5.finalTimeMs || 0) : 1500000;
+        }
+      } else {
+        totalTime = 0;
+        const uniqueTracks = {};
+        rh.forEach(h => { uniqueTracks[h.pista] = h; });
+        Object.values(uniqueTracks).forEach(h => {
+          totalScore += (h.points || h.percentage || 0);
+          totalTime += (h.finalTimeMs || h.finalTime || 0);
+        });
+      }
     }
 
     return { score: totalScore, time: totalTime };
@@ -3068,23 +3220,36 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
       (rd === null ? true : h.ronda === rd) && h.practice !== true
     ) : [];
 
-    let totalScore = rh.reduce((sum, h) => {
-      let pts = (h.points || h.percentage || 0);
-      // Tope de seguridad para Quest: Máximo 8 puntos por pista
-      if (cat === 'quest') pts = Math.min(8, pts);
-      return sum + pts;
-    }, 0);
+    let totalScore = 0;
+    let totalTime = 9999999;
 
-    let totalTime = 0;
-
-    if (rh.length === 0) return { score: 0, time: 9999999 };
-
-    if (cat === 'quest') {
-      const pista5 = rh.find(h => h.pista === 5);
-      totalTime = pista5 ? (pista5.finalTimeMs || 0) : 1500000;
-    } else {
-      totalTime = rh.reduce((sum, h) => sum + (h.finalTimeMs || h.finalTime || 0), 0);
-      if (totalTime === 0) totalTime = 1800000;
+    if (rh.length > 0) {
+      if (cat === 'quest') {
+        const globalEntry = rh.slice().reverse().find(h => h.pista === 0);
+        if (globalEntry) {
+          const cap = globalEntry.ronda >= 5 ? 55 : (globalEntry.ronda === 4 ? 50 : 40);
+          totalScore = Math.min(cap, (globalEntry.points || globalEntry.percentage || 0));
+          totalTime = globalEntry.finalTimeMs || globalEntry.finalTime || 0;
+        } else {
+          const uniqueTracks = {};
+          rh.forEach(h => { uniqueTracks[h.pista] = h; });
+          Object.values(uniqueTracks).forEach(h => {
+            const cap = h.ronda >= 5 ? 11 : (h.ronda === 4 ? 10 : 8);
+            totalScore += Math.min(cap, (h.points || h.percentage || 0));
+          });
+          const pista5 = uniqueTracks[5];
+          totalTime = pista5 ? (pista5.finalTimeMs || 0) : 1500000;
+        }
+      } else {
+        totalTime = 0;
+        const uniqueTracks = {};
+        rh.forEach(h => { uniqueTracks[h.pista] = h; });
+        Object.values(uniqueTracks).forEach(h => {
+          totalScore += (h.points || h.percentage || 0);
+          totalTime += (h.finalTimeMs || h.finalTime || 0);
+        });
+        if (totalTime === 0) totalTime = 1800000;
+      }
     }
     return { score: totalScore, time: totalTime };
   };
@@ -3461,23 +3626,36 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
       (rd === null ? true : h.ronda === rd) && h.practice !== true
     ) : [];
 
-    let totalScore = rh.reduce((sum, h) => {
-      let pts = (h.points || h.percentage || 0);
-      // Tope de seguridad para Quest: Máximo 8 puntos por pista
-      if (viewCategory === 'quest') pts = Math.min(8, pts);
-      return sum + pts;
-    }, 0);
+    let totalScore = 0;
+    let totalTime = 9999999;
 
-    let totalTime = 0;
-
-    if (rh.length === 0) return { score: 0, time: 9999999 };
-
-    if (viewCategory === 'quest') {
-      const pista5 = rh.find(h => h.pista === 5);
-      totalTime = pista5 ? (pista5.finalTimeMs || 0) : 1500000;
-    } else {
-      totalTime = rh.reduce((sum, h) => sum + (h.finalTimeMs || h.finalTime || 0), 0);
-      if (totalTime === 0) totalTime = 1800000;
+    if (rh.length > 0) {
+      if (viewCategory === 'quest') {
+        const globalEntry = rh.slice().reverse().find(h => h.pista === 0);
+        if (globalEntry) {
+          const cap = globalEntry.ronda >= 5 ? 55 : (globalEntry.ronda === 4 ? 50 : 40);
+          totalScore = Math.min(cap, (globalEntry.points || globalEntry.percentage || 0));
+          totalTime = globalEntry.finalTimeMs || globalEntry.finalTime || 0;
+        } else {
+          const uniqueTracks = {};
+          rh.forEach(h => { uniqueTracks[h.pista] = h; });
+          Object.values(uniqueTracks).forEach(h => {
+            const cap = h.ronda >= 5 ? 11 : (h.ronda === 4 ? 10 : 8);
+            totalScore += Math.min(cap, (h.points || h.percentage || 0));
+          });
+          const pista5 = uniqueTracks[5];
+          totalTime = pista5 ? (pista5.finalTimeMs || 0) : 1500000;
+        }
+      } else {
+        totalTime = 0;
+        const uniqueTracks = {};
+        rh.forEach(h => { uniqueTracks[h.pista] = h; });
+        Object.values(uniqueTracks).forEach(h => {
+          totalScore += (h.points || h.percentage || 0);
+          totalTime += (h.finalTimeMs || h.finalTime || 0);
+        });
+        if (totalTime === 0) totalTime = 1800000;
+      }
     }
 
     return { score: totalScore, time: totalTime };
@@ -3570,8 +3748,8 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
         <div className="flex flex-col items-end gap-4">
           {/* Timer dinámico según categoría seleccionada */}
           <div className={`p-8 rounded-[2.5rem] border-4 transition-all duration-500 shadow-2xl ${(viewCategory === 'quest' ? questTimer : lineTimer) < 300
-              ? 'bg-red-500/20 border-red-500 animate-pulse'
-              : 'bg-slate-900 border-blue-500/30'
+            ? 'bg-red-500/20 border-red-500 animate-pulse'
+            : 'bg-slate-900 border-blue-500/30'
             }`}>
             <p className="text-[10px] font-black text-center uppercase tracking-widest mb-1 text-slate-400">
               Tiempo: {viewCategory === 'quest' ? 'Robotics Quest' : 'Sigue Líneas'}
@@ -3585,8 +3763,8 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
               <button
                 onClick={viewCategory === 'quest' ? toggleQuestTimer : toggleLineTimer}
                 className={`px-6 py-3 rounded-xl font-black text-[10px] uppercase transition-all ${(viewCategory === 'quest' ? questTimerActive : lineTimerActive)
-                    ? 'bg-orange-500 hover:bg-orange-600'
-                    : 'bg-green-600 hover:bg-green-700'
+                  ? 'bg-orange-500 hover:bg-orange-600'
+                  : 'bg-green-600 hover:bg-green-700'
                   }`}
               >
                 {(viewCategory === 'quest' ? questTimerActive : lineTimerActive) ? 'Pausar' : 'Iniciar'}
@@ -4411,9 +4589,38 @@ function FasesTab({ teams, onUpdateQualified, onUpdateManyQualified, showToast, 
   const getStats = (team, ronda) => {
     const rh = team.history.filter(h => h.ronda === Number(ronda) && h.practice !== true);
     if (rh.length === 0) return { score: 0, time: 999999, played: false };
-    const score = rh.reduce((sum, h) => sum + (h.points || h.percentage || 0), 0);
-    const time = rh.reduce((sum, h) => sum + (h.finalTimeMs || h.finalTime || 0), 0);
-    return { score, time, played: true };
+
+    let totalScore = 0;
+    let totalTime = 999999;
+
+    if (team.category === 'quest') {
+      const globalEntry = rh.slice().reverse().find(h => h.pista === 0);
+      if (globalEntry) {
+        const cap = ronda >= 5 ? 55 : (ronda === 4 ? 50 : 40);
+        totalScore = Math.min(cap, (globalEntry.points || globalEntry.percentage || 0));
+        totalTime = globalEntry.finalTimeMs || globalEntry.finalTime || 0;
+      } else {
+        const uniqueTracks = {};
+        rh.forEach(h => { uniqueTracks[h.pista] = h; });
+        Object.values(uniqueTracks).forEach(h => {
+          const cap = ronda >= 5 ? 11 : (ronda === 4 ? 10 : 8);
+          totalScore += Math.min(cap, (h.points || h.percentage || 0));
+        });
+        const pista5 = uniqueTracks[5];
+        totalTime = pista5 ? (pista5.finalTimeMs || 0) : 1500000;
+      }
+    } else {
+      totalTime = 0;
+      const uniqueTracks = {};
+      rh.forEach(h => { uniqueTracks[h.pista] = h; });
+      Object.values(uniqueTracks).forEach(h => {
+        totalScore += (h.points || h.percentage || 0);
+        totalTime += (h.finalTimeMs || h.finalTime || 0);
+      });
+      if (totalTime === 0) totalTime = 1800000;
+    }
+
+    return { score: totalScore, time: totalTime, played: true };
   };
 
   const currentQualified = inspectedTeams.filter(t => (t.qualifiedRounds || [1]).includes(selRonda));
