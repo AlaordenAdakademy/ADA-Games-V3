@@ -1,257 +1,9 @@
 {
     "teams": [
         {
-            "id": "17768923483993",
-            "teamName": "Doragons",
-            "schoolName": "U.E. Dr. Raúl Leoni",
-            "school": "Doragons — U.E. Dr. Raúl Leoni",
-            "captainName": "Ariel Cristina Algarín García",
-            "coachName": "Frangelith Villarroel",
-            "members": [
-                "Ariel Cristina Algarín García",
-                "Gabriel Jesús Molina Zapata",
-                "Ángel Luis Rodríguez Vegas"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1,
-                5,
-                4,
-                3,
-                2
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "17768923483771",
-            "teamName": "IDEAL N°1",
-            "schoolName": "U.E. Instituto de Enseñanza América Latina (IDEAL)",
-            "school": "IDEAL N°1 — U.E. Instituto de Enseñanza América Latina (IDEAL)",
-            "captainName": "Kenay Rafael Silvera Romero",
-            "coachName": "Juan Diego Yepez Gil",
-            "members": [
-                "Kenay Rafael Silvera Romero",
-                "Diego Andrés García Mora",
-                "Ángelo Alessandro Mantovani Ortíz"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "1776892156424",
-            "teamName": "Jvg-bot",
-            "schoolName": "U. E. Colegio Juan Vicente Gonzalez",
-            "school": "Jvg-bot — Unidad Educativa Colegio Juan Vicente Gonzalez",
-            "captainName": "Christopher Roberto Sánchez Cepeda",
-            "coachName": "Luis Marcano",
-            "members": [
-                "Christopher Roberto Sánchez Cepeda",
-                "Sebastián Josué Carvajal Ochoa",
-                "Rahel de Jesús Carreño Medina"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "17768923484417",
-            "teamName": "Lambda",
-            "schoolName": "U.E. Cacica Urimare",
-            "school": "Lambda — UE Cacica Urimare",
-            "captainName": "José Daniel Ramos Marín",
-            "coachName": "Luis Gamboa",
-            "members": [
-                "José Daniel Ramos Marín",
-                "Adrián Antonio Güipe González",
-                "Camila Alejandra Vielma Moronta"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "17768923484518",
-            "teamName": "Los Blinders",
-            "schoolName": "U.E. Nueva Barcelona",
-            "school": "Los Blinders — U.E. Nueva Barcelona",
-            "captainName": "Ilan Zahir Ávila Guaiquirián",
-            "coachName": "Carolina Astudillo",
-            "members": [
-                "Ilan Zahir Ávila Guaiquirián",
-                "Geovanny Eduardo José Ortíz Lusinchi",
-                "Winston Gabriel Molina Mata"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "17768923484104",
-            "teamName": "Los Boys",
-            "schoolName": "U. E. ABAJO CADENAS",
-            "school": "Los Boys — UNIDAD EDUCATIVA ABAJO CADENAS",
-            "captainName": "Eduardo Girot",
-            "coachName": "Yatsmary Villarroel",
-            "members": [
-                "Eduardo Girot",
-                "Jorge Zamora",
-                "José Romero"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0
-        },
-        {
-            "id": "238027238596759",
-            "teamName": "MENCA M3NS",
-            "schoolName": "U.E. Doña Menca de Leoni",
-            "school": "MENCA M3NS — U.E. Doña Menca de Leoni",
-            "captainName": "Jhean Brito",
-            "coachName": "Alberto Thomas",
-            "members": [
-                "Jhean Brito",
-                "Hiroshi Yoshida",
-                "Alejandro Cedeño"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0,
-            "judgeId": "admin",
-            "judgeName": "Administrador Central"
-        },
-        {
-            "id": "82112924798217",
-            "teamName": "NALA",
-            "schoolName": "U. E. Colegio Eduardo Blanco",
-            "school": "NALA — Unidad Educativa Colegio Eduardo Blanco",
-            "captainName": "Pedro Antonio Catamo Guzman",
-            "coachName": "Ramses Antolines",
-            "members": [
-                "Pedro Antonio Catamo Guzman",
-                "Nathalie Sofia Sanchez Carrero",
-                "Michell De Los Angeles Urbaneja Vasquez"
-            ],
-            "studentsCount": 3,
-            "status": "inspected",
-            "score": 0,
-            "history": [],
-            "category": "quest",
-            "qualifiedRounds": [
-                1
-            ],
-            "practiceTickets": 5,
-            "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
-                "4": 1,
-                "5": 1
-            },
-            "lastTime": 0,
-            "judgeId": "admin",
-            "judgeName": "Administrador Central"
-        },
-        {
             "id": "177689253971614",
             "teamName": "Don Bosco Tech",
-            "schoolName": "U.E. Colegio Don Bosco",
+            "schoolName": "U.E. Colegio Don Bosco Nueva Barcelona",
             "school": "Don Bosco Tech — U.E. Colegio Don Bosco Nueva Barcelona",
             "captainName": "Augusto Anselmetti Bruzual",
             "coachName": "Manuel La Rosa Castillo",
@@ -261,38 +13,53 @@
             ],
             "studentsCount": 2,
             "status": "inspected",
-            "score": 85,
+            "score": 250,
             "history": [
                 {
                     "ronda": 1,
                     "pista": 1,
-                    "points": 85,
-                    "finalTimeMs": 13000,
+                    "points": 120,
+                    "finalTimeMs": 42000,
                     "practice": false,
                     "convertedFromPractice": false,
-                    "date": "4:01:25 p. m.",
-                    "judgeId": "admin",
-                    "judgeName": "Administrador Central"
+                    "date": "8:52:25 a.m.",
+                    "judgeId": "juez_line_2",
+                    "judgeName": "Juez Line 2"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 2,
+                    "points": 130,
+                    "finalTimeMs": 25000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "10:27:41 a.m.",
+                    "judgeId": "juez_line_2",
+                    "judgeName": "Juez Line 2",
+                    "percentage": 130,
+                    "finalTime": 25000
                 }
             ],
             "category": "line_follower",
             "qualifiedRounds": [
-                1
+                1,
+                2,
+                4
             ],
             "practiceTickets": 5,
             "evaluationTickets": {
                 "1": 0,
-                "2": 1,
+                "2": 0,
                 "3": 1,
                 "4": 1,
                 "5": 1
             },
-            "lastTime": 13000
+            "lastTime": 25000
         },
         {
             "id": "63689415686062",
             "teamName": "Guacamaya Squart",
-            "schoolName": "U. E. ABAJO CADENAS",
+            "schoolName": "UNIDAD EDUCATIVA ABAJO CADENAS",
             "school": "Guacamaya Squart — UNIDAD EDUCATIVA ABAJO CADENAS",
             "captainName": "Samuel José Gómez Gallardo",
             "coachName": "Yatsmary Villarroel",
@@ -303,21 +70,46 @@
             ],
             "studentsCount": 3,
             "status": "inspected",
-            "score": 0,
-            "history": [],
+            "score": 170,
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 120,
+                    "finalTimeMs": 28000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "9:06:26 a.m.",
+                    "judgeId": "juez_line_2",
+                    "judgeName": "Juez Line 2"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 2,
+                    "points": 50,
+                    "finalTimeMs": 25000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "10:53:50",
+                    "judgeId": "juez_line_1",
+                    "judgeName": "Juez Line 1"
+                }
+            ],
             "category": "line_follower",
             "qualifiedRounds": [
-                1
+                1,
+                2,
+                4
             ],
             "practiceTickets": 5,
             "evaluationTickets": {
-                "1": 1,
-                "2": 1,
+                "1": 0,
+                "2": 0,
                 "3": 1,
                 "4": 1,
                 "5": 1
             },
-            "lastTime": 0,
+            "lastTime": 53000,
             "judgeId": "admin",
             "judgeName": "Administrador Central"
         },
@@ -335,21 +127,48 @@
             ],
             "studentsCount": 3,
             "status": "inspected",
-            "score": 0,
-            "history": [],
+            "score": 140,
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 60,
+                    "finalTimeMs": 26000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "9:04:22 a.m.",
+                    "judgeId": "juez_line_2",
+                    "judgeName": "Juez Line 2"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 2,
+                    "points": 80,
+                    "finalTimeMs": 35000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "10:44:46 a.m.",
+                    "judgeId": "juez_line_2",
+                    "judgeName": "Juez Line 2",
+                    "percentage": 80,
+                    "finalTime": 35000
+                }
+            ],
             "category": "line_follower",
             "qualifiedRounds": [
-                1
+                1,
+                2,
+                4
             ],
             "practiceTickets": 5,
             "evaluationTickets": {
-                "1": 1,
-                "2": 1,
+                "1": 0,
+                "2": 0,
                 "3": 1,
                 "4": 1,
                 "5": 1
             },
-            "lastTime": 0
+            "lastTime": 35000
         },
         {
             "id": "177689253972715",
@@ -364,21 +183,48 @@
             ],
             "studentsCount": 2,
             "status": "inspected",
-            "score": 0,
-            "history": [],
+            "score": 250,
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 120,
+                    "finalTimeMs": 69000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "9:01:13",
+                    "judgeId": "juez_line_1",
+                    "judgeName": "Juez Line 1"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 2,
+                    "points": 130,
+                    "finalTimeMs": 95000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "10:30:41",
+                    "judgeId": "juez_line_1",
+                    "judgeName": "Juez Line 1",
+                    "percentage": 130,
+                    "finalTime": 95000
+                }
+            ],
             "category": "line_follower",
             "qualifiedRounds": [
-                1
+                1,
+                2,
+                4
             ],
             "practiceTickets": 5,
             "evaluationTickets": {
-                "1": 1,
-                "2": 1,
+                "1": 0,
+                "2": 0,
                 "3": 1,
                 "4": 1,
                 "5": 1
             },
-            "lastTime": 0
+            "lastTime": 95000
         },
         {
             "id": "177689253974817",
@@ -394,21 +240,59 @@
             ],
             "studentsCount": 3,
             "status": "inspected",
-            "score": 0,
-            "history": [],
+            "score": 255,
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 10,
+                    "finalTimeMs": 15000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "9:09:05",
+                    "judgeId": "juez_line_1",
+                    "judgeName": "Juez Line 1"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 2,
+                    "points": 130,
+                    "finalTimeMs": 37000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "10:47:17",
+                    "judgeId": "juez_line_1",
+                    "judgeName": "Juez Line 1",
+                    "percentage": 130,
+                    "finalTime": 37000
+                },
+                {
+                    "ronda": 3,
+                    "pista": 3,
+                    "points": 115,
+                    "finalTimeMs": 46000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "11:42:43",
+                    "judgeId": "juez_line_1",
+                    "judgeName": "Juez Line 1"
+                }
+            ],
             "category": "line_follower",
             "qualifiedRounds": [
-                1
+                1,
+                2,
+                3
             ],
             "practiceTickets": 5,
             "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
+                "1": 0,
+                "2": 0,
+                "3": 0,
                 "4": 1,
                 "5": 1
             },
-            "lastTime": 0
+            "lastTime": 83000
         },
         {
             "id": "98962413879397",
@@ -424,21 +308,46 @@
             ],
             "studentsCount": 3,
             "status": "inspected",
-            "score": 0,
-            "history": [],
+            "score": 245,
+            "history": [
+                {
+                    "ronda": 2,
+                    "pista": 2,
+                    "points": 130,
+                    "finalTimeMs": 20000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "10:52:51 a.m.",
+                    "judgeId": "juez_line_2",
+                    "judgeName": "Juez Line 2"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 3,
+                    "points": 115,
+                    "finalTimeMs": 29000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "11:36:31",
+                    "judgeId": "juez_line_1",
+                    "judgeName": "Juez Line 1"
+                }
+            ],
             "category": "line_follower",
             "qualifiedRounds": [
-                1
+                1,
+                2,
+                3
             ],
             "practiceTickets": 5,
             "evaluationTickets": {
                 "1": 1,
-                "2": 1,
-                "3": 1,
+                "2": 0,
+                "3": 0,
                 "4": 1,
                 "5": 1
             },
-            "lastTime": 0,
+            "lastTime": 49000,
             "judgeId": "admin",
             "judgeName": "Administrador Central"
         },
@@ -456,26 +365,40 @@
             ],
             "studentsCount": 3,
             "status": "inspected",
-            "score": 0,
-            "history": [],
+            "score": 25,
+            "history": [
+                {
+                    "ronda": 2,
+                    "pista": 2,
+                    "points": 25,
+                    "finalTimeMs": 14000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "10:45:31 a.m.",
+                    "judgeId": "juez_line_2",
+                    "judgeName": "Juez Line 2"
+                }
+            ],
             "category": "line_follower",
             "qualifiedRounds": [
-                1
+                1,
+                2,
+                3
             ],
             "practiceTickets": 5,
             "evaluationTickets": {
                 "1": 1,
-                "2": 1,
+                "2": 0,
                 "3": 1,
                 "4": 1,
                 "5": 1
             },
-            "lastTime": 0
+            "lastTime": 14000
         },
         {
             "id": "105227871001476",
             "teamName": "Onorix",
-            "schoolName": "U. E. Colegio Eduardo Blanco",
+            "schoolName": "Unidad Educativa Colegio Eduardo Blanco",
             "school": "Onorix — Unidad Educativa Colegio Eduardo Blanco",
             "captainName": "Daniella Alejandra Lira Bonilla",
             "coachName": "Sircar Bello",
@@ -486,28 +409,57 @@
             ],
             "studentsCount": 3,
             "status": "inspected",
-            "score": 0,
-            "history": [],
+            "score": 205,
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 75,
+                    "finalTimeMs": 6000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "9:01:53 a.m.",
+                    "judgeId": "juez_line_2",
+                    "judgeName": "Juez Line 2",
+                    "percentage": 75,
+                    "finalTime": 6000
+                },
+                {
+                    "ronda": 2,
+                    "pista": 2,
+                    "points": 130,
+                    "finalTimeMs": 16000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "10:28:35 a.m.",
+                    "judgeId": "juez_line_2",
+                    "judgeName": "Juez Line 2",
+                    "percentage": 130,
+                    "finalTime": 16000
+                }
+            ],
             "category": "line_follower",
             "qualifiedRounds": [
-                1
+                1,
+                2,
+                4
             ],
             "practiceTickets": 5,
             "evaluationTickets": {
-                "1": 1,
-                "2": 1,
+                "1": 0,
+                "2": 0,
                 "3": 1,
                 "4": 1,
                 "5": 1
             },
-            "lastTime": 0,
+            "lastTime": 16000,
             "judgeId": "admin",
             "judgeName": "Administrador Central"
         },
         {
             "id": "99491260164374",
             "teamName": "PyBulls",
-            "schoolName": "U.E. Cacica Urimare",
+            "schoolName": "UE Cacica Urimare",
             "school": "PyBulls — UE Cacica Urimare",
             "captainName": "Leonardo Andrés Rodríguez Farías",
             "coachName": "Daniel Ramos",
@@ -518,28 +470,67 @@
             ],
             "studentsCount": 3,
             "status": "inspected",
-            "score": 0,
-            "history": [],
+            "score": 245,
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 0,
+                    "finalTimeMs": 1000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "9:19:28 a.m.",
+                    "judgeId": "juez_line_2",
+                    "judgeName": "Juez Line 2"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 2,
+                    "points": 130,
+                    "finalTimeMs": 35000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "10:29:49 a.m.",
+                    "judgeId": "juez_line_2",
+                    "judgeName": "Juez Line 2",
+                    "percentage": 130,
+                    "finalTime": 35000
+                },
+                {
+                    "ronda": 3,
+                    "pista": 3,
+                    "points": 115,
+                    "finalTimeMs": 17000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "11:39:17 a.m.",
+                    "judgeId": "juez_line_2",
+                    "judgeName": "Juez Line 2"
+                }
+            ],
             "category": "line_follower",
             "qualifiedRounds": [
-                1
+                1,
+                2,
+                3,
+                4
             ],
             "practiceTickets": 5,
             "evaluationTickets": {
-                "1": 1,
-                "2": 1,
-                "3": 1,
+                "1": 0,
+                "2": 0,
+                "3": 0,
                 "4": 1,
                 "5": 1
             },
-            "lastTime": 0,
+            "lastTime": 52000,
             "judgeId": "admin",
             "judgeName": "Administrador Central"
         },
         {
             "id": "1776892474497",
             "teamName": "Wall-e",
-            "schoolName": "U. E. Colegio Juan Vicente Gonzalez",
+            "schoolName": "Unidad Educativa Colegio Juan Vicente Gonzalez",
             "school": "Wall-e — Unidad Educativa Colegio Juan Vicente Gonzalez",
             "captainName": "Josué Isai Aular Guacaran",
             "coachName": "Luis Marcano",
@@ -550,21 +541,1262 @@
             ],
             "studentsCount": 3,
             "status": "inspected",
-            "score": 0,
-            "history": [],
+            "score": 185,
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 0,
+                    "finalTimeMs": 6000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "9:11:13",
+                    "judgeId": "juez_line_1",
+                    "judgeName": "Juez Line 1"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 2,
+                    "points": 120,
+                    "finalTimeMs": 28000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "10:52:26",
+                    "judgeId": "juez_line_1",
+                    "judgeName": "Juez Line 1"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 3,
+                    "points": 65,
+                    "finalTimeMs": 15000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "11:38:37 a.m.",
+                    "judgeId": "juez_line_2",
+                    "judgeName": "Juez Line 2"
+                }
+            ],
             "category": "line_follower",
             "qualifiedRounds": [
-                1
+                1,
+                2,
+                3
             ],
             "practiceTickets": 5,
             "evaluationTickets": {
+                "1": 0,
+                "2": 0,
+                "3": 0,
+                "4": 1,
+                "5": 1
+            },
+            "lastTime": 49000
+        },
+        {
+            "id": "17768923483993",
+            "teamName": "Doragons",
+            "schoolName": "U.E. Dr. Raúl Leoni",
+            "school": "Doragons — U.E. Dr. Raúl Leoni",
+            "captainName": "Ariel Cristina Algarín García",
+            "coachName": "Frangelith Villarroel",
+            "members": [
+                "Ariel Cristina Algarín García",
+                "Gabriel Jesús Molina Zapata",
+                "Ángel Luis Rodríguez Vegas"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 37,
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 2,
+                    "finalTimeMs": 0,
+                    "practice": true,
+                    "date": "8:58:07 a.m.",
+                    "judgeId": "juez_quest_1",
+                    "judgeName": "Juez Quest 1"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 5,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "9:02:31 a.m.",
+                    "judgeId": "juez_quest_1",
+                    "judgeName": "Juez Quest 1"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 2,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "9:06:05 a.m.",
+                    "judgeId": "juez_quest_1",
+                    "judgeName": "Juez Quest 1"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 3,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "convertedFromPractice": true,
+                    "date": "9:12:00 a.m.",
+                    "judgeId": "juez_quest_1",
+                    "judgeName": "Juez Quest 1"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 4,
+                    "points": 4,
+                    "finalTimeMs": 0,
+                    "practice": true,
+                    "date": "9:15:55 a.m.",
+                    "judgeId": "juez_quest_1",
+                    "judgeName": "Juez Quest 1"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 5,
+                    "points": 2,
+                    "finalTimeMs": 1413000,
+                    "practice": true,
+                    "date": "9:19:52 a.m.",
+                    "judgeId": "juez_quest_1",
+                    "judgeName": "Juez Quest 1"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 5,
+                    "points": 2,
+                    "finalTimeMs": 1500000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "9:22:01 a.m.",
+                    "judgeId": "juez_quest_1",
+                    "judgeName": "Juez Quest 1"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 4,
+                    "points": 4,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "9:22:26 a.m.",
+                    "judgeId": "juez_quest_1",
+                    "judgeName": "Juez Quest 1"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 1,
+                    "points": 2,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 2,
+                    "points": 2,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 3,
+                    "points": 2,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 4,
+                    "points": 2,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 5,
+                    "points": 2,
+                    "finalTimeMs": 900000,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                }
+            ],
+            "category": "quest",
+            "qualifiedRounds": [
+                1,
+                3
+            ],
+            "practiceTickets": 1,
+            "evaluationTickets": {
+                "1": 0,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0
+            },
+            "lastTime": 900000
+        },
+        {
+            "id": "17768923483771",
+            "teamName": "IDEAL N°1",
+            "schoolName": "U.E. Instituto de Enseñanza América Latina (IDEAL)",
+            "school": "IDEAL N°1 — U.E. Instituto de Enseñanza América Latina (IDEAL)",
+            "captainName": "Kenay Rafael Silvera Romero",
+            "coachName": "Juan Diego Yepez Gil",
+            "members": [
+                "Kenay Rafael Silvera Romero",
+                "Diego Andrés García Mora",
+                "Ángelo Alessandro Mantovani Ortíz"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 76,
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "09:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 2,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "09:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 3,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "09:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 4,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "09:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 5,
+                    "points": 8,
+                    "finalTimeMs": 600000,
+                    "practice": false,
+                    "date": "09:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 1,
+                    "points": 4,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "12:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 2,
+                    "points": 4,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "12:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 3,
+                    "points": 5,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "12:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 4,
+                    "points": 5,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "12:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 5,
+                    "points": 8,
+                    "finalTimeMs": 863855,
+                    "practice": false,
+                    "date": "12:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 1,
+                    "points": 2,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 2,
+                    "points": 2,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 3,
+                    "points": 2,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 4,
+                    "points": 2,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 5,
+                    "points": 2,
+                    "finalTimeMs": 900000,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                }
+            ],
+            "category": "quest",
+            "qualifiedRounds": [
+                1,
+                2,
+                3
+            ],
+            "practiceTickets": 0,
+            "evaluationTickets": {
+                "1": 0,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0
+            },
+            "lastTime": 900000
+        },
+        {
+            "id": "1776892156424",
+            "teamName": "Jvg-bot",
+            "schoolName": "Unidad Educativa Colegio Juan Vicente Gonzalez",
+            "school": "Jvg-bot — Unidad Educativa Colegio Juan Vicente Gonzalez",
+            "captainName": "Christopher Roberto Sánchez Cepeda",
+            "coachName": "Luis Marcano",
+            "members": [
+                "Christopher Roberto Sánchez Cepeda",
+                "Sebastián Josué Carvajal Ochoa",
+                "Rahel de Jesús Carreño Medina"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 76,
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "09:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 2,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "09:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 3,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "09:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 4,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "09:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 5,
+                    "points": 8,
+                    "finalTimeMs": 610000,
+                    "practice": false,
+                    "date": "09:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 1,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": true,
+                    "date": "10:32:51 a.m.",
+                    "judgeId": "juez_quest_3",
+                    "judgeName": "Juez Quest 3",
+                    "percentage": 8,
+                    "finalTime": 0
+                },
+                {
+                    "ronda": 2,
+                    "pista": 1,
+                    "points": 5,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "12:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 2,
+                    "points": 5,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "12:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 3,
+                    "points": 4,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "12:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 4,
+                    "points": 7,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "12:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 5,
+                    "points": 5,
+                    "finalTimeMs": 788930,
+                    "practice": false,
+                    "date": "12:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 1,
+                    "points": 2,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 2,
+                    "points": 2,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 3,
+                    "points": 2,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 4,
+                    "points": 2,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 5,
+                    "points": 2,
+                    "finalTimeMs": 900000,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                }
+            ],
+            "category": "quest",
+            "qualifiedRounds": [
+                1,
+                2,
+                3
+            ],
+            "practiceTickets": 1,
+            "evaluationTickets": {
+                "1": 0,
+                "2": 0,
+                "3": 1,
+                "4": 0,
+                "5": 0
+            },
+            "lastTime": 900000
+        },
+        {
+            "id": "17768923484417",
+            "teamName": "Lambda",
+            "schoolName": "UE Cacica Urimare",
+            "school": "Lambda — UE Cacica Urimare",
+            "captainName": "José Daniel Ramos Marín",
+            "coachName": "Luis Gamboa",
+            "members": [
+                "José Daniel Ramos Marín",
+                "Adrián Antonio Güipe González",
+                "Camila Alejandra Vielma Moronta"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 72,
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "09:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 2,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "09:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 3,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "09:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 4,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "09:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 5,
+                    "points": 8,
+                    "finalTimeMs": 620000,
+                    "practice": false,
+                    "date": "09:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 1,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "11:30:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 2,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "11:30:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 3,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "11:30:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 4,
+                    "points": 8,
+                    "finalTimeMs": 690970,
+                    "practice": false,
+                    "date": "11:30:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                }
+            ],
+            "category": "quest",
+            "qualifiedRounds": [
+                1,
+                2,
+                4
+            ],
+            "practiceTickets": 0,
+            "evaluationTickets": {
+                "1": 0,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0
+            },
+            "lastTime": 690970
+        },
+        {
+            "id": "17768923484518",
+            "teamName": "Los Blinders",
+            "schoolName": "U.E. Nueva Barcelona",
+            "school": "Los Blinders — U.E. Nueva Barcelona",
+            "captainName": "Ilan Zahir Ávila Guaiquirián",
+            "coachName": "Carolina Astudillo",
+            "members": [
+                "Ilan Zahir Ávila Guaiquirián",
+                "Geovanny Eduardo José Ortíz Lusinchi",
+                "Winston Gabriel Molina Mata"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 46,
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 4,
+                    "points": 1,
+                    "finalTimeMs": 0,
+                    "practice": true,
+                    "date": "9:07:34 a.m.",
+                    "judgeId": "juez_quest_4",
+                    "judgeName": "Juez Quest 4"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 4,
+                    "points": 4,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "9:11:21 a.m.",
+                    "judgeId": "juez_quest_4",
+                    "judgeName": "Juez Quest 4"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 5,
+                    "points": 3,
+                    "finalTimeMs": 1100000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "9:14:41 a.m.",
+                    "judgeId": "juez_quest_4",
+                    "judgeName": "Juez Quest 4"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 2,
+                    "points": 1,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "9:18:26 a.m.",
+                    "judgeId": "juez_quest_4",
+                    "judgeName": "Juez Quest 4"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 3,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "9:33:00 a.m.",
+                    "judgeId": "juez_quest_4",
+                    "judgeName": "Juez Quest 4"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 1,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 2,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 3,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 4,
+                    "points": 6,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 5,
+                    "points": 0,
+                    "finalTimeMs": 700000,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                }
+            ],
+            "category": "quest",
+            "qualifiedRounds": [
+                1,
+                3,
+                4
+            ],
+            "practiceTickets": 4,
+            "evaluationTickets": {
                 "1": 1,
-                "2": 1,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0
+            },
+            "lastTime": 700000
+        },
+        {
+            "id": "17768923484104",
+            "teamName": "Los Boys",
+            "schoolName": "UNIDAD EDUCATIVA ABAJO CADENAS",
+            "school": "Los Boys — UNIDAD EDUCATIVA ABAJO CADENAS",
+            "captainName": "Eduardo Girot",
+            "coachName": "Yatsmary Villarroel",
+            "members": [
+                "Eduardo Girot",
+                "Jorge Zamora",
+                "José Romero"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 63,
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "8:59:22 a.m.",
+                    "judgeId": "juez_quest_2",
+                    "judgeName": "Juez Quest 2"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 2,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "convertedFromPractice": true,
+                    "date": "9:02:46 a.m.",
+                    "judgeId": "juez_quest_2",
+                    "judgeName": "Juez Quest 2"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 3,
+                    "points": 4,
+                    "finalTimeMs": 0,
+                    "practice": true,
+                    "date": "9:04:42 a.m.",
+                    "judgeId": "juez_quest_2",
+                    "judgeName": "Juez Quest 2"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 3,
+                    "points": 3,
+                    "finalTimeMs": 0,
+                    "practice": true,
+                    "date": "9:09:43 a.m.",
+                    "judgeId": "juez_quest_2",
+                    "judgeName": "Juez Quest 2"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 3,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "9:10:50 a.m.",
+                    "judgeId": "juez_quest_2",
+                    "judgeName": "Juez Quest 2"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 4,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "9:13:00 a.m.",
+                    "judgeId": "juez_quest_2",
+                    "judgeName": "Juez Quest 2"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 5,
+                    "points": 2,
+                    "finalTimeMs": 1261000,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "9:17:20 a.m.",
+                    "judgeId": "juez_quest_2",
+                    "judgeName": "Juez Quest 2"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 1,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 2,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 3,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 4,
+                    "points": 5,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 5,
+                    "points": 0,
+                    "finalTimeMs": 700000,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                }
+            ],
+            "category": "quest",
+            "qualifiedRounds": [
+                1,
+                3,
+                4
+            ],
+            "practiceTickets": 2,
+            "evaluationTickets": {
+                "1": 0,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0
+            },
+            "lastTime": 700000
+        },
+        {
+            "id": "238027238596759",
+            "teamName": "MENCA M3NS",
+            "schoolName": "U.E. Doña Menca de Leoni",
+            "school": "MENCA M3NS — U.E. Doña Menca de Leoni",
+            "captainName": "Jhean Brito",
+            "coachName": "Alberto Thomas",
+            "members": [
+                "Jhean Brito",
+                "Hiroshi Yoshida",
+                "Alejandro Cedeño"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 68,
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "09:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 2,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "09:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 3,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "09:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 4,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "09:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 5,
+                    "points": 8,
+                    "finalTimeMs": 630000,
+                    "practice": false,
+                    "date": "09:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Administrador Central"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 1,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "11:30:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 2,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "11:30:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 3,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "11:30:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 2,
+                    "pista": 4,
+                    "points": 4,
+                    "finalTimeMs": 698700,
+                    "practice": false,
+                    "date": "11:30:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                }
+            ],
+            "category": "quest",
+            "qualifiedRounds": [
+                1,
+                2,
+                4
+            ],
+            "practiceTickets": 0,
+            "evaluationTickets": {
+                "1": 0,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0
+            },
+            "lastTime": 698700,
+            "judgeId": "admin",
+            "judgeName": "Administrador Central"
+        },
+        {
+            "id": "82112924798217",
+            "teamName": "NALA",
+            "schoolName": "Unidad Educativa Colegio Eduardo Blanco",
+            "school": "NALA — Unidad Educativa Colegio Eduardo Blanco",
+            "captainName": "Pedro Antonio Catamo Guzman",
+            "coachName": "Ramses Antolines",
+            "members": [
+                "Pedro Antonio Catamo Guzman",
+                "Nathalie Sofia Sanchez Carrero",
+                "Michell De Los Angeles Urbaneja Vasquez"
+            ],
+            "studentsCount": 3,
+            "status": "inspected",
+            "score": 44,
+            "history": [
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 4,
+                    "finalTimeMs": 0,
+                    "practice": true,
+                    "date": "9:04:38 a.m.",
+                    "judgeId": "juez_quest_4",
+                    "judgeName": "Juez Quest 4"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 1,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "9:12:56 a.m.",
+                    "judgeId": "juez_quest_4",
+                    "judgeName": "Juez Quest 4"
+                },
+                {
+                    "ronda": 1,
+                    "pista": 2,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "convertedFromPractice": false,
+                    "date": "9:26:31 a.m.",
+                    "judgeId": "juez_quest_4",
+                    "judgeName": "Juez Quest 4"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 1,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 2,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 3,
+                    "points": 8,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 4,
+                    "points": 4,
+                    "finalTimeMs": 0,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                },
+                {
+                    "ronda": 3,
+                    "pista": 5,
+                    "points": 0,
+                    "finalTimeMs": 700000,
+                    "practice": false,
+                    "date": "13:00:00",
+                    "judgeId": "admin",
+                    "judgeName": "Admin"
+                }
+            ],
+            "category": "quest",
+            "qualifiedRounds": [
+                1,
+                3,
+                4
+            ],
+            "practiceTickets": 4,
+            "evaluationTickets": {
+                "1": 0,
+                "2": 0,
                 "3": 1,
                 "4": 1,
                 "5": 1
             },
-            "lastTime": 0
+            "lastTime": 700000,
+            "judgeId": "admin",
+            "judgeName": "Administrador Central"
         }
     ],
     "tracks": {
@@ -1363,6 +2595,13 @@
                         "y": 81.89189189189189,
                         "value": 5,
                         "isCompleted": false
+                    },
+                    {
+                        "id": 1777423060294,
+                        "x": 92.12403059097866,
+                        "y": 8.731246440314203,
+                        "value": 5,
+                        "isCompleted": false
                     }
                 ],
                 "guideX": 44.932432432432435,
@@ -1701,12 +2940,12 @@
         "quest": {
             "timer": 1800,
             "timerActive": false,
-            "updatedAt": 1777406363.4719148
+            "updatedAt": 1777507493.4096477
         },
         "line_follower": {
-            "timer": 1800,
+            "timer": 1799,
             "timerActive": false,
-            "updatedAt": 1777338638.0912945
+            "updatedAt": 1777503950.1455774
         }
     }
 }
