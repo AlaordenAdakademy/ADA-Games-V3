@@ -533,11 +533,25 @@ function App() {
             if (pista5) newTime = pista5.finalTimeMs || 0;
           }
         } else {
-          const uniqueTracks = {};
-          rh.forEach(h => { uniqueTracks[h.pista] = h; });
-          Object.values(uniqueTracks).forEach(h => {
-            newScore += (h.points || h.percentage || 0);
-            newTime += (h.finalTimeMs || h.finalTime || 0);
+          // LINE FOLLOWER: Mejor de 3 intentos por pista
+          const trackGroups = {};
+          rh.forEach(h => {
+            const p = h.pista;
+            if (!trackGroups[p]) trackGroups[p] = [];
+            trackGroups[p].push(h);
+          });
+          Object.values(trackGroups).forEach(intentos => {
+            const validos = intentos.filter(h => !h.voided);
+            if (validos.length === 0) return;
+            const mejor = validos.reduce((best, h) => {
+              const bPts = best.points || best.percentage || 0;
+              const hPts = h.points || h.percentage || 0;
+              if (hPts > bPts) return h;
+              if (hPts === bPts && (h.finalTimeMs || 0) < (best.finalTimeMs || 0)) return h;
+              return best;
+            });
+            newScore += (mejor.points || mejor.percentage || 0);
+            newTime += (mejor.finalTimeMs || mejor.finalTime || 0);
           });
         }
       }
@@ -617,11 +631,25 @@ function App() {
                 if (pista5) lastTime = pista5.finalTimeMs || 0;
               }
             } else {
-              const uniqueTracks = {};
-              rh.forEach(h => { uniqueTracks[h.pista] = h; });
-              Object.values(uniqueTracks).forEach(h => {
-                totalScore += (h.points || h.percentage || 0);
-                lastTime += (h.finalTimeMs || h.finalTime || 0);
+              // LINE FOLLOWER: Mejor de 3 intentos por pista
+              const trackGroups = {};
+              rh.forEach(h => {
+                const p = h.pista;
+                if (!trackGroups[p]) trackGroups[p] = [];
+                trackGroups[p].push(h);
+              });
+              Object.values(trackGroups).forEach(intentos => {
+                const validos = intentos.filter(h => !h.voided);
+                if (validos.length === 0) return;
+                const mejor = validos.reduce((best, h) => {
+                  const bPts = best.points || best.percentage || 0;
+                  const hPts = h.points || h.percentage || 0;
+                  if (hPts > bPts) return h;
+                  if (hPts === bPts && (h.finalTimeMs || 0) < (best.finalTimeMs || 0)) return h;
+                  return best;
+                });
+                totalScore += (mejor.points || mejor.percentage || 0);
+                lastTime += (mejor.finalTimeMs || mejor.finalTime || 0);
               });
             }
           }
@@ -986,6 +1014,7 @@ function App() {
               isRunningInMainApp={true}
               onUpdateTeamBase={handleUpdateTeamBase}
               onDeleteTeam={handleDeleteTeam}
+              viewCategory={currentUser.category}
             />
         )}
         {activeTab === 'usuarios' && currentUser.role === 'admin' && (
@@ -1013,6 +1042,7 @@ function App() {
               isRunningInMainApp={true}
               onUpdateTeamBase={handleUpdateTeamBase}
               onDeleteTeam={handleDeleteTeam}
+              viewCategory={currentUser.category}
             />
         )}
         {activeTab === 'resultados' && <ResultadosTab teams={teams} currentUser={currentUser} onShowHistory={setSelectedTeamHistory} />}
@@ -2854,12 +2884,26 @@ function ResultadosTab({ teams, currentUser, onShowHistory }) {
           totalTime = pista5 ? (pista5.finalTimeMs || 0) : 1500000;
         }
       } else {
+        // LINE FOLLOWER: Mejor de 3 intentos por pista
         totalTime = 0;
-        const uniqueTracks = {};
-        rh.forEach(h => { uniqueTracks[h.pista] = h; });
-        Object.values(uniqueTracks).forEach(h => {
-          totalScore += (h.points || h.percentage || 0);
-          totalTime += (h.finalTimeMs || h.finalTime || 0);
+        const trackGroups = {};
+        rh.forEach(h => {
+          const p = h.pista;
+          if (!trackGroups[p]) trackGroups[p] = [];
+          trackGroups[p].push(h);
+        });
+        Object.values(trackGroups).forEach(intentos => {
+          const validos = intentos.filter(h => !h.voided);
+          if (validos.length === 0) return;
+          const mejor = validos.reduce((best, h) => {
+            const bPts = best.points || best.percentage || 0;
+            const hPts = h.points || h.percentage || 0;
+            if (hPts > bPts) return h;
+            if (hPts === bPts && (h.finalTimeMs || 0) < (best.finalTimeMs || 0)) return h;
+            return best;
+          });
+          totalScore += (mejor.points || mejor.percentage || 0);
+          totalTime += (mejor.finalTimeMs || mejor.finalTime || 0);
         });
       }
     }
@@ -3241,12 +3285,26 @@ function CompetitionDualOverlay({ teams, questTimer, questTimerActive, toggleQue
           totalTime = pista5 ? (pista5.finalTimeMs || 0) : 1500000;
         }
       } else {
+        // LINE FOLLOWER: Mejor de 3 intentos por pista
         totalTime = 0;
-        const uniqueTracks = {};
-        rh.forEach(h => { uniqueTracks[h.pista] = h; });
-        Object.values(uniqueTracks).forEach(h => {
-          totalScore += (h.points || h.percentage || 0);
-          totalTime += (h.finalTimeMs || h.finalTime || 0);
+        const trackGroups = {};
+        rh.forEach(h => {
+          const p = h.pista;
+          if (!trackGroups[p]) trackGroups[p] = [];
+          trackGroups[p].push(h);
+        });
+        Object.values(trackGroups).forEach(intentos => {
+          const validos = intentos.filter(h => !h.voided);
+          if (validos.length === 0) return;
+          const mejor = validos.reduce((best, h) => {
+            const bPts = best.points || best.percentage || 0;
+            const hPts = h.points || h.percentage || 0;
+            if (hPts > bPts) return h;
+            if (hPts === bPts && (h.finalTimeMs || 0) < (best.finalTimeMs || 0)) return h;
+            return best;
+          });
+          totalScore += (mejor.points || mejor.percentage || 0);
+          totalTime += (mejor.finalTimeMs || mejor.finalTime || 0);
         });
         if (totalTime === 0) totalTime = 1800000;
       }
@@ -3647,12 +3705,26 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
           totalTime = pista5 ? (pista5.finalTimeMs || 0) : 1500000;
         }
       } else {
+        // LINE FOLLOWER: Mejor de 3 intentos por pista
         totalTime = 0;
-        const uniqueTracks = {};
-        rh.forEach(h => { uniqueTracks[h.pista] = h; });
-        Object.values(uniqueTracks).forEach(h => {
-          totalScore += (h.points || h.percentage || 0);
-          totalTime += (h.finalTimeMs || h.finalTime || 0);
+        const trackGroups = {};
+        rh.forEach(h => {
+          const p = h.pista;
+          if (!trackGroups[p]) trackGroups[p] = [];
+          trackGroups[p].push(h);
+        });
+        Object.values(trackGroups).forEach(intentos => {
+          const validos = intentos.filter(h => !h.voided);
+          if (validos.length === 0) return;
+          const mejor = validos.reduce((best, h) => {
+            const bPts = best.points || best.percentage || 0;
+            const hPts = h.points || h.percentage || 0;
+            if (hPts > bPts) return h;
+            if (hPts === bPts && (h.finalTimeMs || 0) < (best.finalTimeMs || 0)) return h;
+            return best;
+          });
+          totalScore += (mejor.points || mejor.percentage || 0);
+          totalTime += (mejor.finalTimeMs || mejor.finalTime || 0);
         });
         if (totalTime === 0) totalTime = 1800000;
       }
@@ -3874,7 +3946,7 @@ function CompetitionOverlay({ teams, questTimer, questTimerActive, toggleQuestTi
 }
 
 
-function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, activeTeams, addScore, currentUser, disqualifyTeam, postTeams, showToast, isRunningInMainApp, onUpdateTeamBase, onDeleteTeam }) {
+function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, activeTeams, addScore, currentUser, disqualifyTeam, postTeams, showToast, isRunningInMainApp, onUpdateTeamBase, onDeleteTeam, viewCategory }) {
   const [mode, setMode] = useState(initialMode || 'edit');
   const [penalties, setPenalties] = useState(0);
   const [attempts, setAttempts] = useState(['pending', 'pending', 'pending']);
@@ -4040,8 +4112,40 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
   const existingEvaluation = React.useMemo(() => {
     if (!selTeam || !teams) return null;
     const team = teams.find(t => t.id === selTeam);
-    return team?.history.find(h => h.ronda === selRonda && h.pista === selPista);
-  }, [teams, selTeam, selRonda, selPista]);
+    const hist = team?.history.filter(h => h.ronda === selRonda && h.pista === selPista && !h.practice) || [];
+    
+    if (viewCategory === 'quest') {
+      return hist.length > 0 ? hist[0] : null;
+    } else {
+      // LINE FOLLOWER: Solo bloquea si ya tiene 3 o más intentos oficiales
+      return hist.length >= 3 ? hist[hist.length - 1] : null;
+    }
+  }, [teams, selTeam, selRonda, selPista, viewCategory]);
+
+  // Sincronizar intentos locales con el historial real al cambiar de equipo o pista
+  useEffect(() => {
+    if (mode === 'evaluate' && selTeam && teams) {
+      const team = teams.find(t => t.id === selTeam);
+      const hist = team?.history.filter(h => h.ronda === selRonda && h.pista === selPista && !h.practice) || [];
+      
+      const newAttempts = ['pending', 'pending', 'pending'];
+      hist.forEach((h, i) => {
+        if (i < 3) newAttempts[i] = h.voided ? 'nulled' : 'valid';
+      });
+      
+      setAttempts(newAttempts);
+      setCurrentAttempt(Math.min(2, hist.length));
+      setSavedResults(null);
+      
+      // Reset inline (no podemos llamar resetEvaluation() porque aún no está definida)
+      const trackData = tracks?.[selRonda]?.[selPista];
+      const basePoints = trackData?.points || [];
+      setPoints(basePoints.map(p => ({ ...p, isCompleted: false })));
+      setPenalties(0);
+      setIsTimerRunning(false);
+      setTimeLeft(120);
+    }
+  }, [selTeam, selRonda, selPista, mode]);
 
   const handleCanvasClick = (e) => {
     if (mode !== 'edit') return;
@@ -4108,11 +4212,39 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
 
   const handleNulledAttempt = () => {
     if (currentAttempt > 2 || attempts[currentAttempt] === 'valid') return;
+    if (!selTeam || !addScore) return;
+    
+    // Guardar intento nulo en la base de datos con 0 puntos y flag voided
+    const updated = teams.map(t => {
+      if (t.id === selTeam) {
+        const newHistory = [...t.history, {
+          ronda: selRonda, pista: selPista, points: 0, finalTimeMs: 0,
+          voided: true, practice: false,
+          date: new Date().toLocaleTimeString(),
+          judgeId: currentUser.id, judgeName: currentUser.name
+        }];
+        return { ...t, history: newHistory };
+      }
+      return t;
+    });
+    postTeams(updated);
+    
     const newAttempts = [...attempts];
     newAttempts[currentAttempt] = 'nulled';
     setAttempts(newAttempts);
-    resetEvaluation();
-    if (currentAttempt < 2) setCurrentAttempt(currentAttempt + 1);
+    
+    // Resetear mapa para siguiente intento
+    const trackData = tracks?.[selRonda]?.[selPista];
+    const basePoints = trackData?.points || [];
+    setPoints(basePoints.map(p => ({ ...p, isCompleted: false })));
+    setPenalties(0);
+    setIsTimerRunning(false);
+    setTimeLeft(120);
+    
+    if (currentAttempt < 2) {
+      setCurrentAttempt(currentAttempt + 1);
+    }
+    showToast('Intento anulado registrado');
   };
 
   const handleValidAttempt = () => {
@@ -4144,9 +4276,40 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
 
   const handleConfirmSave = () => {
     if (!selTeam || !addScore || existingEvaluation || !savedResults) return;
+    
+    // Guardar en base de datos
     addScore(selTeam, selRonda, selPista, savedResults.score, (savedResults.finalTime * 1000));
-    handleResetMatch();
-    setSelTeam('');
+    
+    // Si es Quest, terminamos con este equipo
+    if (viewCategory === 'quest') {
+      handleResetMatch();
+      setSelTeam('');
+    } else {
+      // LINE FOLLOWER: verificar cuántos intentos lleva (el actual + 1 por el que estamos guardando)
+      const nextAttemptIdx = currentAttempt + 1;
+      
+      if (nextAttemptIdx >= 3) {
+        // Ya completó los 3 intentos
+        handleResetMatch();
+        setSelTeam('');
+      } else {
+        // Preparar para el siguiente intento del mismo equipo
+        const newAttempts = [...attempts];
+        // El intento actual ya está marcado como 'valid'
+        setAttempts(newAttempts);
+        setCurrentAttempt(nextAttemptIdx);
+        setSavedResults(null);
+        
+        // Reset inline del mapa
+        const trackData = tracks?.[selRonda]?.[selPista];
+        const basePoints = trackData?.points || [];
+        setPoints(basePoints.map(p => ({ ...p, isCompleted: false })));
+        setPenalties(0);
+        setIsTimerRunning(false);
+        setTimeLeft(120);
+      }
+    }
+    
     setShowConfirmSave(false);
   };
 
@@ -4261,7 +4424,7 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
               )}
               {!savedResults && currentAttempt <= 2 ? (
                 <button onClick={handleValidAttempt} disabled={(!isTimerRunning && timeLeft === 120) || !selTeam} className="w-full bg-green-600 hover:bg-green-500 disabled:bg-slate-700 disabled:text-slate-400 text-white font-bold px-2 py-3.5 rounded-xl transition-colors shadow-lg flex items-center justify-center gap-2">
-                  <Icon name="check-circle" className="w-4 h-4" /> REGISTRAR INTENTO VÁLIDO
+                  <Icon name="check-circle" className="w-4 h-4" /> REGISTRAR INTENTO {currentAttempt + 1} VÁLIDO
                 </button>
               ) : (
                 <button onClick={handleResetMatch} className="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2 text-sm">
@@ -4269,7 +4432,7 @@ function EvaluadorDePistas({ initialMode, tracks, updateTrackData, teams, active
                 </button>
               )}
               <button onClick={safeSaveRealApp} disabled={!savedResults || existingEvaluation} className="w-full bg-blue-600 hover:bg-blue-500 flex-wrap disabled:bg-slate-700 disabled:text-slate-400 text-white font-bold px-2 py-3.5 rounded-xl transition-colors shadow-lg flex items-center justify-center gap-2">
-                <Icon name="save" className="w-4 h-4" /> GUARDAR RESULTADO FINAL
+                <Icon name="save" className="w-4 h-4" /> GUARDAR INTENTO {currentAttempt + 1}
               </button>
             </div>
           </div>
@@ -4610,12 +4773,26 @@ function FasesTab({ teams, onUpdateQualified, onUpdateManyQualified, showToast, 
         totalTime = pista5 ? (pista5.finalTimeMs || 0) : 1500000;
       }
     } else {
+      // LINE FOLLOWER: Mejor de 3 intentos por pista
       totalTime = 0;
-      const uniqueTracks = {};
-      rh.forEach(h => { uniqueTracks[h.pista] = h; });
-      Object.values(uniqueTracks).forEach(h => {
-        totalScore += (h.points || h.percentage || 0);
-        totalTime += (h.finalTimeMs || h.finalTime || 0);
+      const trackGroups = {};
+      rh.forEach(h => {
+        const p = h.pista;
+        if (!trackGroups[p]) trackGroups[p] = [];
+        trackGroups[p].push(h);
+      });
+      Object.values(trackGroups).forEach(intentos => {
+        const validos = intentos.filter(h => !h.voided);
+        if (validos.length === 0) return;
+        const mejor = validos.reduce((best, h) => {
+          const bPts = best.points || best.percentage || 0;
+          const hPts = h.points || h.percentage || 0;
+          if (hPts > bPts) return h;
+          if (hPts === bPts && (h.finalTimeMs || 0) < (best.finalTimeMs || 0)) return h;
+          return best;
+        });
+        totalScore += (mejor.points || mejor.percentage || 0);
+        totalTime += (mejor.finalTimeMs || mejor.finalTime || 0);
       });
       if (totalTime === 0) totalTime = 1800000;
     }
